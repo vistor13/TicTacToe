@@ -1,0 +1,80 @@
+name: Bug Report
+description: Report a bug to help us improve the Tic-Tac-Toe game
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: bug_summary
+    attributes:
+      label: "Bug Summary"
+      description: "Briefly summarize the issue related to the game."
+      placeholder: "E.g., The game crashes when a player tries to place an 'X' in the center cell."
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: "Steps to Reproduce"
+      description: "How can we reproduce this issue in the Tic-Tac-Toe game? Please list the steps."
+      placeholder: |
+        1. Start a new Tic-Tac-Toe game.
+        2. Player 1 places an 'X' in the center cell.
+        3. Player 2 tries to place an 'O' in the top-left cell.
+        4. Observe that the game board freezes.
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: "Expected Behavior"
+      description: "What was supposed to happen in the game?"
+      placeholder: "E.g., The 'O' should appear in the top-left cell, and it should become Player 1's turn again."
+
+  - type: textarea
+    id: actual_behavior
+    attributes:
+      label: "Actual Behavior"
+      description: "What actually happened during the game?"
+      placeholder: "E.g., The game board froze, and no further moves were possible."
+
+  - type: input
+    id: software_version
+    attributes:
+      label: "Game Version"
+      description: "Which version of the Tic-Tac-Toe game are you using?"
+      placeholder: "E.g., v2.0.1"
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: "Browser"
+      description: "If you're playing the game in a browser, which one are you using?"
+      options:
+        - "Google Chrome"
+        - "Mozilla Firefox"
+        - "Microsoft Edge"
+        - "Safari"
+        - "Other"
+
+  - type: input
+    id: operating_system
+    attributes:
+      label: "Operating System"
+      description: "Which OS are you using to play the game?"
+      placeholder: "E.g., Windows 11, macOS Ventura"
+
+  - type: textarea
+    id: additional_info
+    attributes:
+      label: "Additional Information"
+      description: "Include logs, screenshots, or describe any other relevant details."
+      placeholder: "E.g., Screenshot of the frozen game board or error message."
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: "Priority"
+      description: "How urgent is this issue for you while playing Tic-Tac-Toe?"
+      options:
+        - "P2 - Low (Doesn't impact gameplay much)"
+        - "P1 - High (Affects gameplay but has a workaround)"
+        - "P0 - Critical (Game is unplayable)"
+
