@@ -23,7 +23,7 @@ jobs:
         run: dotnet restore ./backend/TicTacToe/TicTacToe.sln
 
       - name: Build project
-        run: dotnet build ./backend/TicTacToe/TicTacToe.sln --configuration Release
+        run: dotnet build ./backend/TicTacToe/TicTacToe.sln
 
       - name: Run tests
         run: dotnet test ./backend/TicTacToe/TicTacToe.sln --no-build --verbosity normal
@@ -73,5 +73,5 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           ~/.sonar/scanner/dotnet-sonarscanner begin /k:"vistor13_TicTacToe" /o:"vistor13" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          dotnet build ./backend/TicTacToe/TicTacToe.sln --configuration Release
+          dotnet build ./backend/TicTacToe/TicTacToe.sln
           ~/.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
