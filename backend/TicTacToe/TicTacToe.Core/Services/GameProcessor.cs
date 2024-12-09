@@ -14,14 +14,13 @@ namespace TicTacToe.Core.Models
 		X,
 		Y
 	}
-
-	public class Game
+	public class GameProcessor
 	{
 		public Board GameBoard { get; set; }
 		public GameState State { get; set; }
 		public PlayerTurn CurrentTurn{ get; set; }
 		private MoveValidator validationChain { get; set; }
-		public Game() 
+		public GameProcessor() 
 		{
 			GameBoard= new Board();
 			State = GameState.Ongoing;
@@ -39,6 +38,7 @@ namespace TicTacToe.Core.Models
 
 			validationChain = playerCurrentValidator;
 		}
+
 		public bool IsValidMove(int row, int col,PlayerTurn playerTurn)
 		{
 			return validationChain.ValidateMove(row, col, this,playerTurn);

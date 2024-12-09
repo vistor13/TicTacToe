@@ -4,7 +4,7 @@ namespace TicTacToe.Core.Validators
 {
 	public class OwnerCellValidator : MoveValidator
 	{
-		public override bool ValidateMove(int row, int col, Game game,PlayerTurn playerTurn)
+		public override bool ValidateMove(int row, int col, GameProcessor game,PlayerTurn playerTurn)
 		{
 			if (game.GameBoard.Grid[row,col]!=' ')
 			{

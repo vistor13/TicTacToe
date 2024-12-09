@@ -6,7 +6,7 @@ namespace TicTacToe.Core.Validators
 	public class PlayerCurrentValidator : MoveValidator
 	{
 		public override bool ValidateMove(int row, int col, 
-			Game game, PlayerTurn playerTurn )
+			GameProcessor game, PlayerTurn playerTurn )
 		{
 			if (game.CurrentTurn != playerTurn)
 				return false;

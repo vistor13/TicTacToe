@@ -13,6 +13,6 @@ namespace TicTacToe.Core.Validators
 			return next;
 		}
 
-		public abstract bool ValidateMove(int row,int col,Game game, PlayerTurn playerTurn);
+		public abstract bool ValidateMove(int row,int col,GameProcessor game, PlayerTurn playerTurn);
 	}
 }
