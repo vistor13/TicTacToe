@@ -24,10 +24,10 @@ Please link related issues or PRs using the appropriate GitHub keywords. This en
 If there are no linked issues, mention **"No linked issues"** explicitly.
 
 ## Contributor Checklist
-- [] Code follows the repository's style guidelines.  
-- [] All changes are covered by relevant tests.  
-- [] Documentation has been updated (if applicable).  
-- [] Code is self-explanatory or includes comments where needed.  
+- [ ] Code follows the repository's style guidelines.  
+- [ ] All changes are covered by relevant tests.  
+- [ ] Documentation has been updated (if applicable).  
+- [ ] Code is self-explanatory or includes comments where needed.   
 ---
 
 _Thank you for your valuable contribution! Your efforts help make this project better!_

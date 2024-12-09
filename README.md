@@ -22,7 +22,7 @@ This is a personal project developed as part of a mentorship program. The goal i
 ### Local Development Setup
 - Clone the repository to your local machine:  
    ```bash
-   git clone <repository_url>
+   git clone https://github.com/vistor13/TicTacToe.git
 - Open the solution file (`.sln`) in **Visual Studio**.  
 - Build the solution by pressing `Ctrl+Shift+B`.  
 - Run the project by pressing `F5`.  

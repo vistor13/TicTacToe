@@ -1,0 +1,61 @@
+name: Feature request
+description: Suggest a new feature or improvement for the project.
+title: "[Feature] Short title describing the feature"
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a new feature! Please provide the following details to help us understand your request.
+
+  - type: textarea
+    id: feature_description
+    attributes:
+      label: Clear and concise description of the problem
+      description: "Explain the problem or need that this feature will address."
+      placeholder: "Describe the problem here..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected behavior
+      description: "What should happen if this feature is implemented?"
+      placeholder: "Describe the expected behavior..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: Steps to reproduce or additional context
+      description: "Provide details or steps to illustrate the need for this feature."
+      placeholder: "Provide detailed steps or context here..."
+
+  - type: textarea
+    id: suggested_solution
+    attributes:
+      label: Suggested solution
+      description: "If you have an idea for how to implement this, describe it here."
+      placeholder: "Describe your proposed solution..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: "List other solutions or features you've considered and why they were not chosen."
+      placeholder: "Describe alternatives here..."
+
+  - type: checkboxes
+    id: validations
+    attributes:
+      label: Validations
+      description: "Ensure the following points before submitting your feature request:"
+      options:
+        - label: I have searched the repository for similar features to avoid duplicates.
+          required: true
+        - label: I have read and followed the [Contributing Guide](.github/CONTRIBUTING.md).
+          required: true
