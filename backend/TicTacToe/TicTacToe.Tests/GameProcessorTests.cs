@@ -25,7 +25,7 @@ namespace TicTacToe.Tests
 			// Arrange
 			var game = new GameProcessor();
 
-			// Виконуємо перший валідний хід
+
 			game.MakeMove(0, 0, PlayerTurn.X);
 
 			// Act
@@ -62,6 +62,59 @@ namespace TicTacToe.Tests
 			// Assert
 			Assert.False(result);
 			Assert.Equal(PlayerTurn.X, game.CurrentTurn);
+		}
+
+		[Fact]
+		public void TestHorizontalWin()
+		{
+			// Arrange
+			var game = new GameProcessor();
+
+			// Act
+			game.MakeMove(0, 0, PlayerTurn.X);
+			game.MakeMove(1, 0, PlayerTurn.Y);
+			game.MakeMove(0, 1, PlayerTurn.X);
+			game.MakeMove(1, 1, PlayerTurn.Y);
+			game.MakeMove(0, 2, PlayerTurn.X);
+
+			// Assert
+			Assert.Equal(GameState.PlayerOneWin, game.State);
+		}
+
+		[Fact]
+		public void TestVerticalWin()
+		{
+			// Arrange
+			var game = new GameProcessor();
+
+			// Act
+			game.MakeMove(0, 0, PlayerTurn.X);
+			game.MakeMove(0, 1, PlayerTurn.Y);
+			game.MakeMove(1, 0, PlayerTurn.X);
+			game.MakeMove(1, 1, PlayerTurn.Y);
+			game.MakeMove(2, 0, PlayerTurn.X);
+
+
+			// Assert
+			Assert.Equal(GameState.PlayerOneWin, game.State);
+		}
+
+		[Fact]
+		public void TestDiagonalWin()
+		{
+			// Arrange
+			var game = new GameProcessor();
+
+			// Act
+			game.MakeMove(0, 0, PlayerTurn.X);
+			game.MakeMove(0, 1, PlayerTurn.Y);
+			game.MakeMove(1, 1, PlayerTurn.X);
+			game.MakeMove(1, 2, PlayerTurn.Y);
+			game.MakeMove(2, 2, PlayerTurn.X);
+
+
+			// Assert
+			Assert.Equal(GameState.PlayerOneWin, game.State);
 		}
 	}
 }
