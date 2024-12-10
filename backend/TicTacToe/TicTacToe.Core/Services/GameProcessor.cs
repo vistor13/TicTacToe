@@ -1,4 +1,5 @@
-﻿using TicTacToe.Core.Validators;
+﻿using TicTacToe.Core.States;
+using TicTacToe.Core.Validators;
 
 namespace TicTacToe.Core.Models
 {
@@ -20,11 +21,14 @@ namespace TicTacToe.Core.Models
 		public GameState State { get; set; }
 		public PlayerTurn CurrentTurn{ get; set; }
 		private MoveValidator validationChain { get; set; }
+		private State CurrentState {  get; set; }
+
 		public GameProcessor() 
 		{
 			GameBoard= new Board();
 			State = GameState.Ongoing;
 			CurrentTurn = PlayerTurn.X;
+			CurrentState = new PlayerXState();
 			InitializeValidationChain();
 		}
 		private void InitializeValidationChain()
@@ -43,7 +47,16 @@ namespace TicTacToe.Core.Models
 		{
 			return validationChain.ValidateMove(row, col, this,playerTurn);
 		}
-
+		public bool MakeMove(int row, int col, PlayerTurn player)
+		{
+			return CurrentState.MakeMove(row, col, this,player);
+		}
+		public void SwitchTurn()
+		{
+			CurrentState = CurrentState is PlayerXState
+				? new PlayerYState()
+				: new PlayerXState();
+		}
 	}
 	
 }
