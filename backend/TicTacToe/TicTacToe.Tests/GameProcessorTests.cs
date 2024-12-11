@@ -5,7 +5,7 @@ namespace TicTacToe.Tests
 	public class GameProcessorTests
 	{
 		[Fact]
-		public void MakeMove_ValidMove_UpdatesBoardAndSwitchesPlayer()
+		public void GameProcessor_MakeMove_ShouldUpdateBoardAndSwitchPlayer_WhenMoveIsValid()
 		{
 			// Arrange
 			var game = new GameProcessor();
@@ -20,12 +20,10 @@ namespace TicTacToe.Tests
 		}
 
 		[Fact]
-		public void MakeMove_InvalidMove_DoesNotSwitchPlayer()
+		public void GameProcessor_MakeMove_ShouldNotSwitchPlayer_WhenMoveIsInvalid()
 		{
 			// Arrange
 			var game = new GameProcessor();
-
-
 			game.MakeMove(0, 0, PlayerTurn.X);
 
 			// Act
@@ -37,7 +35,7 @@ namespace TicTacToe.Tests
 		}
 
 		[Fact]
-		public void MakeMove_InvalidMove_WentBeyondTheBoundaries()
+		public void GameProcessor_MakeMove_ShouldReturnFalse_WhenMoveIsOutOfBounds()
 		{
 			// Arrange
 			var game = new GameProcessor();
@@ -51,7 +49,7 @@ namespace TicTacToe.Tests
 		}
 
 		[Fact]
-		public void MakeMove_CorrectlyValidatesTurnOrder()
+		public void GameProcessor_MakeMove_ShouldValidateTurnOrder_WhenMoveIsMadeByIncorrectPlayer()
 		{
 			// Arrange
 			var game = new GameProcessor();
@@ -64,8 +62,9 @@ namespace TicTacToe.Tests
 			Assert.Equal(PlayerTurn.X, game.CurrentTurn);
 		}
 
+
 		[Fact]
-		public void TestHorizontalWin()
+		public void GameProcessor_ShouldDeclarePlayerOneWin_WhenHorizontalLineIsFormed()
 		{
 			// Arrange
 			var game = new GameProcessor();
@@ -82,7 +81,7 @@ namespace TicTacToe.Tests
 		}
 
 		[Fact]
-		public void TestVerticalWin()
+		public void GameProcessor_ShouldDeclarePlayerOneWin_WhenVerticalLineIsFormed()
 		{
 			// Arrange
 			var game = new GameProcessor();
@@ -94,13 +93,12 @@ namespace TicTacToe.Tests
 			game.MakeMove(1, 1, PlayerTurn.Y);
 			game.MakeMove(2, 0, PlayerTurn.X);
 
-
 			// Assert
 			Assert.Equal(GameState.PlayerOneWin, game.State);
 		}
 
 		[Fact]
-		public void TestDiagonalWin()
+		public void GameProcessor_ShouldDeclarePlayerOneWin_WhenDiagonalLineIsFormed()
 		{
 			// Arrange
 			var game = new GameProcessor();
@@ -112,9 +110,30 @@ namespace TicTacToe.Tests
 			game.MakeMove(1, 2, PlayerTurn.Y);
 			game.MakeMove(2, 2, PlayerTurn.X);
 
-
 			// Assert
 			Assert.Equal(GameState.PlayerOneWin, game.State);
+		}
+		[Fact]
+		public void GameProcessor_ShouldDeclareDraw_WhenAllCellsAreFilledWithoutWinner()
+		{
+			// Arrange
+			var game = new GameProcessor();
+
+			game.MakeMove(0, 0, PlayerTurn.X);
+			game.MakeMove(0, 1, PlayerTurn.Y);
+			game.MakeMove(0, 2, PlayerTurn.X);
+			game.MakeMove(1, 1, PlayerTurn.Y);
+			game.MakeMove(1, 0, PlayerTurn.X);
+			game.MakeMove(1, 2, PlayerTurn.Y);
+			game.MakeMove(2, 1, PlayerTurn.X);
+			game.MakeMove(2, 0, PlayerTurn.Y);
+			game.MakeMove(2, 2, PlayerTurn.X);
+
+			// Assert
+			Assert.Equal(GameState.Draw, game.State);
+
+			var moveAfterDraw = game.MakeMove(0, 0, PlayerTurn.Y);
+			Assert.False(moveAfterDraw);
 		}
 	}
 }
