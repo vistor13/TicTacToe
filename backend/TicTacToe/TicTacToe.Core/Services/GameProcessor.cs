@@ -1,128 +1,82 @@
-﻿using TicTacToe.Core.States;
-using TicTacToe.Core.Validators;
-
-namespace TicTacToe.Core.Models
+﻿namespace TicTacToe.Core.Models
 {
 	public enum GameState
 	{
 		Ongoing,
 		Draw,
-		PlayerOneWin,
-		PlayerTwoWin
+		Win
 	}
 	public enum PlayerTurn
 	{
 		X,
-		Y
+		О
 	}
 	public class GameProcessor
 	{
 		public Board GameBoard { get; set; }
 		public GameState State { get; set; }
 		public PlayerTurn CurrentTurn { get; set; }
-		private MoveValidator validationChain { get; set; }
-		private State CurrentState { get; set; }
 
 		public GameProcessor()
 		{
 			GameBoard = new Board();
 			State = GameState.Ongoing;
 			CurrentTurn = PlayerTurn.X;
-			CurrentState = new PlayerXState();
-			InitializeValidationChain();
 		}
-		private void InitializeValidationChain()
+		public bool MakeMove(MoveParameters moveParameters)
 		{
-			var boundsValidator = new BoundsValidator();
-			var ownerCellValidator = new OwnerCellValidator();
-			var playerCurrentValidator = new PlayerCurrentValidator();
+			if (State != GameState.Ongoing || CurrentTurn != moveParameters.PlayerTurn)
+				return false;
 
-			playerCurrentValidator.SetNext(boundsValidator)
-								  .SetNext(ownerCellValidator);
+			if (!GameBoard.CanMakeMove(moveParameters))
+				return false;
 
-			validationChain = playerCurrentValidator;
-		}
+			GameBoard.MakeMove(moveParameters);
 
-		public bool IsValidMove(int row, int col, PlayerTurn playerTurn)
-		{
-			return validationChain.ValidateMove(row, col, this, playerTurn);
-		}
-		public bool MakeMove(int row, int col, PlayerTurn player)
-		{
-			if (State != GameState.Ongoing)
+			if (CheckWin())
 			{
+				State = GameState.Win;
 				return false;
 			}
 
-			if (!CurrentState.MakeMove(row, col, this, player))
-			{
-				return false;
-			}
-
-			if (CheckWin(player))
-			{
-				State = player == PlayerTurn.X ? GameState.PlayerOneWin : GameState.PlayerTwoWin;
-			}
-			else if (IsBoardFull())
+			if (CheckDraw())
 			{
 				State = GameState.Draw;
+				return false;
 			}
+
+			SwitchTurn();
+
 			return true;
 		}
-		public void SwitchTurn()
+		private void SwitchTurn()
 		{
-			CurrentState = CurrentState is PlayerXState
-				? new PlayerYState()
-				: new PlayerXState();
+			CurrentTurn = CurrentTurn is PlayerTurn.X
+				? PlayerTurn.О
+				: PlayerTurn.X;
 		}
-		private bool CheckWin(PlayerTurn player)
+		private bool CheckWin()
 		{
-			char currentplayer = player == PlayerTurn.X ? 'X' : 'Y';
-			int size = GameBoard.Grid.GetLength(0);
-
-			for (int i = 0; i < size; i++)
-			{
-				if (CheckLine(0, 0, 0, 1, size, currentplayer))
-					return true;
-			}
-
-			for (int i = 0; i < size; i++)
-			{
-				if (CheckLine(0, 0, 1, 0, size, currentplayer))
-					return true;
-			}
-
-			if (CheckLine(0, 0, 1, 1, size, currentplayer))
+			return CheckLines(uniqueCells => uniqueCells.Count == 1 && !uniqueCells.Contains(' '));
+		}
+		private bool CheckDraw()
+		{
+			if (GameBoard.IsBoardFull())
 				return true;
 
-			if (CheckLine(0, 0, 1, size - 1, size, currentplayer))
-				return true;
+			return !CheckLines(uniqueCells => uniqueCells.Count == 2 && uniqueCells.Contains(' '));
+		}
+		private bool CheckLines(Predicate<HashSet<char>> condition)
+		{
+			var lines = GameBoard.GetAllLines();
+
+			foreach (var line in lines)
+			{
+				var uniqueCells = new HashSet<char>(line);
+				if (condition(uniqueCells))
+					return true;
+			}
 			return false;
-
-		}
-		private bool CheckLine(int startRow, int startCol, int deltarow, int deltacol, int size, char symbol)
-		{
-			for (int i = 0; i < size; i++)
-			{
-				if (GameBoard.Grid[startRow + i * deltarow, startCol + i * deltacol] != symbol)
-					return false;
-			}
-			return true;
-
-		}
-		private bool IsBoardFull()
-		{
-			for (int i = 0; i < GameBoard.Grid.GetLength(0); i++)
-			{
-				for (int j = 0; j < GameBoard.Grid.GetLength(1); j++)
-				{
-					if (GameBoard.Grid[i, j] == ' ')
-					{
-						return false;
-					}
-				}
-			}
-			return true;
 		}
 
 	}
