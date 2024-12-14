@@ -1,28 +1,13 @@
-﻿namespace TicTacToe.Core.Models
+﻿using TicTacToe.Core.Models;
+
+namespace TicTacToe.Core.Services
 {
-	public enum GameState
-	{
-		Ongoing,
-		Draw,
-		Win
-	}
-	public enum PlayerTurn
-	{
-		X,
-		О
-	}
 	public class GameProcessor
 	{
-		public Board GameBoard { get; set; }
-		public GameState State { get; set; }
-		public PlayerTurn CurrentTurn { get; set; }
+		public Board GameBoard { get; private set; } = new();
+		public GameState State { get; private set; } = GameState.Ongoing;
+		public PlayerTurn CurrentTurn { get; private set; } = PlayerTurn.X;
 
-		public GameProcessor()
-		{
-			GameBoard = new Board();
-			State = GameState.Ongoing;
-			CurrentTurn = PlayerTurn.X;
-		}
 		public bool MakeMove(MoveParameters moveParameters)
 		{
 			if (State != GameState.Ongoing || CurrentTurn != moveParameters.PlayerTurn)
@@ -33,51 +18,29 @@
 
 			GameBoard.MakeMove(moveParameters);
 
-			if (CheckWin())
-			{
-				State = GameState.Win;
+			State = GameBoard.GetGameStatus();
+			
+			if (State != GameState.Ongoing)
 				return false;
-			}
-
-			if (CheckDraw())
-			{
-				State = GameState.Draw;
-				return false;
-			}
-
+			
 			SwitchTurn();
 
 			return true;
 		}
 		private void SwitchTurn()
 		{
-			CurrentTurn = CurrentTurn is PlayerTurn.X
-				? PlayerTurn.О
-				: PlayerTurn.X;
+			CurrentTurn = CurrentTurn is PlayerTurn.X ? PlayerTurn.О : PlayerTurn.X;
 		}
-		private bool CheckWin()
-		{
-			return CheckLines(uniqueCells => uniqueCells.Count == 1 && !uniqueCells.Contains(' '));
-		}
-		private bool CheckDraw()
-		{
-			if (GameBoard.IsBoardFull())
-				return true;
-
-			return !CheckLines(uniqueCells => uniqueCells.Count == 2 && uniqueCells.Contains(' '));
-		}
-		private bool CheckLines(Predicate<HashSet<char>> condition)
-		{
-			var lines = GameBoard.GetAllLines();
-
-			foreach (var line in lines)
-			{
-				var uniqueCells = new HashSet<char>(line);
-				if (condition(uniqueCells))
-					return true;
-			}
-			return false;
-		}
-
+	}
+	public enum GameState
+	{
+		Ongoing,
+		Draw,
+		Win
+	}
+	public enum PlayerTurn
+	{
+		X,
+		О
 	}
 }
