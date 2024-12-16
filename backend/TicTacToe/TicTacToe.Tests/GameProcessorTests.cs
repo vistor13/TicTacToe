@@ -168,5 +168,19 @@ namespace TicTacToe.Tests
 			var moveAfterBoardIsFull = game.MakeMove(new MoveParameters(2, 2, PlayerTurn.О));
 			Assert.False(moveAfterBoardIsFull);
 		}
+		
+		[Fact]
+		public void GameProcessor_GameStatusIsOngoing_AfterInitialization()
+		{
+			// Arrange
+			var game = new GameProcessor();
+
+			// Act
+			var gameStatus = game.State;
+
+			// Assert
+			Assert.Equal(GameState.Ongoing, gameStatus);
+		}
+		
 	}
 }
