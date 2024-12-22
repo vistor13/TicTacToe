@@ -12,6 +12,11 @@ namespace TicTacToe.Core.Models
         private readonly List<IValidator> _validators = InitializeValidators();
         public char[,] Grid { get; } = InitializeBoard();
 
+        public char GetCell(int row, int col)
+        {
+            return Grid[row, col];
+        }
+
         public bool CanMakeMove(MoveParameters moveParameters)
         {
             return _validators.All(validator => validator.Validate(moveParameters, this));

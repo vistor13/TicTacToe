@@ -32,5 +32,10 @@ namespace TicTacToe.Core.Services
         {
             CurrentTurn = CurrentTurn is PlayerTurn.X ? PlayerTurn.О : PlayerTurn.X;
         }
+
+        public Board GetBoard()
+        {
+            return GameBoard;
+        }
     }
 }
