@@ -39,4 +39,26 @@ Welcome to Tic-Tac-Toe!
 Prepare for a battle of wits. Will you claim victory or face defeat?
 Type 'Help' to see the game instructions or 'Start' to begin the game. Good luck!
 ";
+
+    public const string WinnerMessage = @"
+    ================================
+             GAME OVER
+    ================================
+          Player {0} wins!
+    ================================
+    ";
+
+    public const string DrawMessage = @"
+    ================================
+             GAME OVER
+    ================================
+             It's a draw!
+    ================================
+";
+
+    public const string EndGamePrompt = @"
+    Would you like to play again?
+    Type 'replay' to start a new game.
+    Type 'exit' to quit the game.
+";
 }

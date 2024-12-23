@@ -20,10 +20,8 @@ namespace TicTacToe.Core.Services
 
             State = GameBoard.GetGameStatus();
 
-            if (State != GameState.Ongoing)
-                return false;
-
-            SwitchTurn();
+            if (State == GameState.Ongoing)
+                SwitchTurn();
 
             return true;
         }

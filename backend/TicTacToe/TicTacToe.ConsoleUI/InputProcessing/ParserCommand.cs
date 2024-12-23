@@ -32,7 +32,13 @@ public class ParserCommand : IParseCommand
 
     private ICommand? ParseMoveCommand(string? input)
     {
-        var moveData = input!.Substring(5).Trim();
+        if (input!.Length <= 5)
+        {
+            _consoleRenderer.RenderError("Invalid move command. Please provide coordinates after 'move'.");
+            return null;
+        }
+
+        var moveData = input.Substring(5).Trim();
         if (TryParseMove(moveData, out var moveParameters)) return new MoveCommand(_gameProcessor, moveParameters);
 
         return null;
@@ -48,7 +54,11 @@ public class ParserCommand : IParseCommand
             !int.TryParse(parts[1], out var col) ||
             row < 1 || row > 3 ||
             col < 1 || col > 3)
+        {
+            _consoleRenderer.RenderError(@"Coordinates are out of bounds! 
+Please enter numbers between 1 and 3 for both row and column.");
             return false;
+        }
 
         moveParameters = new MoveParameters(row - 1, col - 1, _gameProcessor.CurrentTurn);
         return true;
@@ -58,8 +68,9 @@ public class ParserCommand : IParseCommand
     {
         return new Dictionary<Command, ICommand>
         {
-            { Command.Start, new StartCommand(_gameProcessor) },
+            { Command.Start, new StartCommand(_gameProcessor, _consoleRenderer) },
             { Command.Help, new InstructionCommand(_consoleRenderer) },
+            { Command.Replay, new ReplayCommand(_gameProcessor, _consoleRenderer) },
             { Command.Exit, new ExitCommand() }
         };
     }

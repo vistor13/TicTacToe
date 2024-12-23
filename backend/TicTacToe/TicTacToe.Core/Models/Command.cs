@@ -4,5 +4,6 @@ public enum Command
 {
     Start,
     Help,
-    Exit
+    Exit,
+    Replay
 }

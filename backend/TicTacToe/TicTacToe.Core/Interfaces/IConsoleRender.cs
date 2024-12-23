@@ -10,4 +10,7 @@ public interface IConsoleRenderer
     void RenderPrompt(string text);
     void RenderMessage(string text);
     void RenderWelcome();
+    void RenderWin(PlayerTurn playerTurn);
+    void RenderProposeRestoreGame();
+    void RenderDraw();
 }

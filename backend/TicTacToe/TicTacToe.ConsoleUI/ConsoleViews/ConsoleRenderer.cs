@@ -25,6 +25,23 @@ public class ConsoleRenderer : IConsoleRenderer
         }
     }
 
+    public void RenderProposeRestoreGame()
+    {
+        RenderMessage(ConsoleMessages.EndGamePrompt);
+    }
+
+    public void RenderDraw()
+    {
+        Console.Clear();
+        RenderMessage(ConsoleMessages.DrawMessage);
+    }
+
+    public void RenderWin(PlayerTurn playerTurn)
+    {
+        Console.Clear();
+        RenderMessage(string.Format(ConsoleMessages.WinnerMessage, playerTurn));
+    }
+
     public void RenderWelcome()
     {
         PrintColoredText(ConsoleMessages.WelcomeMessage, MessagesColor, true);
