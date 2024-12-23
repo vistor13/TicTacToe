@@ -6,11 +6,15 @@ namespace TicTacToe.ConsoleUI.ConsoleViews;
 public class ConsoleRenderer : IConsoleRenderer
 {
     private const string VerticalLine = "│";
-    private const string HorizontalLine = "────";
+    private const string HorizontalLine = "─────";
     private const string CornerLine = "┼";
 
     private const ConsoleColor XColor = ConsoleColor.Magenta;
     private const ConsoleColor OColor = ConsoleColor.DarkCyan;
+    private const ConsoleColor HelpColor = ConsoleColor.Cyan;
+    private const ConsoleColor ErrorColor = ConsoleColor.Red;
+    private const ConsoleColor InputTextColor = ConsoleColor.Blue;
+    private const ConsoleColor MessagesColor = ConsoleColor.Green;
 
     public void RenderBoard(Board board)
     {
@@ -21,9 +25,29 @@ public class ConsoleRenderer : IConsoleRenderer
         }
     }
 
+    public void RenderWelcome()
+    {
+        PrintColoredText(ConsoleMessages.WelcomeMessage, MessagesColor, true);
+    }
+
     public void RenderInstruction()
     {
-        Console.WriteLine(ConsoleMessages.Instruction);
+        PrintColoredText(ConsoleMessages.Instruction, HelpColor, true);
+    }
+
+    public void RenderPrompt(string text)
+    {
+        PrintColoredText(text, InputTextColor);
+    }
+
+    public void RenderMessage(string text)
+    {
+        PrintColoredText(text, MessagesColor, true);
+    }
+
+    public void RenderError(string text)
+    {
+        PrintColoredText($"Error : {text}", ErrorColor, true);
     }
 
     private void RenderRow(Board board, int rowIndex)
@@ -49,19 +73,27 @@ public class ConsoleRenderer : IConsoleRenderer
         switch (cell)
         {
             case 'X':
-                Console.ForegroundColor = XColor;
-                Console.Write(cell);
+                PrintColoredText(cell.ToString(), XColor);
                 break;
             case 'O':
-                Console.ForegroundColor = OColor;
-                Console.Write(cell);
+                PrintColoredText(cell.ToString(), OColor);
                 break;
             default:
                 Console.Write(cell);
                 break;
         }
 
-        Console.ResetColor();
         Console.Write("  ");
+    }
+
+    private void PrintColoredText(string text, ConsoleColor color, bool isWriteLine = false)
+    {
+        Console.ForegroundColor = color;
+        if (isWriteLine)
+            Console.WriteLine(text);
+        else
+            Console.Write(text);
+
+        Console.ResetColor();
     }
 }

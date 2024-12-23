@@ -4,9 +4,9 @@ namespace TicTacToe.Core.Services
 {
     public class GameProcessor
     {
-        public Board GameBoard { get; } = new();
-        public GameState State { get; private set; } = GameState.Ongoing;
-        public PlayerTurn CurrentTurn { get; private set; } = PlayerTurn.X;
+        public Board GameBoard { get; private set; } = null!;
+        public GameState State { get; private set; }
+        public PlayerTurn CurrentTurn { get; private set; }
 
         public bool MakeMove(MoveParameters moveParameters)
         {
@@ -26,6 +26,13 @@ namespace TicTacToe.Core.Services
             SwitchTurn();
 
             return true;
+        }
+
+        public void InitializeGame()
+        {
+            GameBoard = new Board();
+            State = GameState.Ongoing;
+            CurrentTurn = PlayerTurn.X;
         }
 
         private void SwitchTurn()
