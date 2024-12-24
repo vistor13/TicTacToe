@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TicTacToe.ConsoleUI": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
