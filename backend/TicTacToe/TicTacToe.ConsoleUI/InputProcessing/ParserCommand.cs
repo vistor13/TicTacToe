@@ -1,4 +1,3 @@
-using TicTacToe.ConsoleUI.ConsoleViews;
 using TicTacToe.Core.Commands;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
@@ -21,7 +20,12 @@ public class ParserCommand : IParseCommand
 
     public ICommand? CommandParse(string? input)
     {
-        if (input!.Contains("move", StringComparison.OrdinalIgnoreCase)) return ParseMoveCommand(input);
+        if (input!.StartsWith("move", StringComparison.OrdinalIgnoreCase))
+        {
+            var moveCommand = ParseMoveCommand(input);
+            if (moveCommand != null)
+                return moveCommand;
+        }
 
         if (Enum.TryParse(input, true, out Command command) &&
             _commands.TryGetValue(command, out var executableCommand))
@@ -34,7 +38,8 @@ public class ParserCommand : IParseCommand
     private ICommand? ParseMoveCommand(string input)
     {
         var moveData = input.Substring(4).Trim();
-        if (TryParseMove(moveData, out var moveParameters)) return new MoveCommand(_gameProcessor, moveParameters);
+        if (TryParseMove(moveData, out var moveParameters))
+            return new MoveCommand(_gameProcessor, moveParameters);
 
         return null;
     }
@@ -46,11 +51,8 @@ public class ParserCommand : IParseCommand
         var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (parts.Length != 2 ||
             !int.TryParse(parts[0], out var row) ||
-            !int.TryParse(parts[1], out var col) ||
-            row < 1 || row > 3 ||
-            col < 1 || col > 3)
+            !int.TryParse(parts[1], out var col))
         {
-            _consoleRenderer.RenderError(ConsoleMessages.OutOfBoundsErrorMessage);
             return false;
         }
 

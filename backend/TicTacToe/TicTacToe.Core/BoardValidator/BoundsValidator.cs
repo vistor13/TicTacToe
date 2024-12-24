@@ -10,7 +10,7 @@ namespace TicTacToe.Core.BoardValidator
         public bool Validate(MoveParameters moveParameters, Board board)
         {
             return moveParameters.Row >= LowerBound && moveParameters.Row < Board.BoardSize &&
-                   moveParameters.Col >= LowerBound && moveParameters.Row < Board.BoardSize;
+                   moveParameters.Col >= LowerBound && moveParameters.Col < Board.BoardSize;
         }
     }
 }

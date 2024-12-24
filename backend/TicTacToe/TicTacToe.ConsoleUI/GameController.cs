@@ -1,4 +1,3 @@
-using TicTacToe.ConsoleUI.InputProcessing;
 using TicTacToe.Core.Commands;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
@@ -7,7 +6,7 @@ using TicTacToe.Core.Services;
 namespace TicTacToe.ConsoleUI;
 
 public class GameController(
-    ParserCommand parserCommand,
+    IParseCommand parserCommand,
     GameProcessor gameProcessor,
     IConsoleRenderer consoleRenderer,
     ICommandInvoker commandInvoker)
@@ -66,7 +65,8 @@ public class GameController(
             consoleRenderer.RenderPrompt("Write your command: ");
             commandInput = Console.ReadLine();
 
-            if (string.IsNullOrEmpty(commandInput)) consoleRenderer.RenderError("Please, write a valid command");
+            if (string.IsNullOrEmpty(commandInput))
+                consoleRenderer.RenderError("Please, write a valid command (cannot be empty or just spaces)");
         } while (string.IsNullOrEmpty(commandInput));
 
         return commandInput;
