@@ -8,7 +8,6 @@ public class CommandInvoker(GameProcessor gameProcessor) : ICommandInvoker
 {
     private readonly List<Type> _commonCommands = InitializeCommonCommands();
 
-
     public bool Execute(ICommand command)
     {
         var commandType = command.GetType();
@@ -19,17 +18,18 @@ public class CommandInvoker(GameProcessor gameProcessor) : ICommandInvoker
         if (gameProcessor.State != GameState.NotStarted && commandType == typeof(ReplayCommand))
             return command.Execute();
 
-        if (gameProcessor.State == GameState.Ongoing || _commonCommands.Contains(commandType)) return command.Execute();
+        if (gameProcessor.State == GameState.Ongoing || _commonCommands.Contains(commandType))
+            return command.Execute();
 
         return false;
     }
 
     private static List<Type> InitializeCommonCommands()
     {
-        return new List<Type>
-        {
+        return
+        [
             typeof(InstructionCommand),
             typeof(ExitCommand)
-        };
+        ];
     }
 }

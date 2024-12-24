@@ -1,3 +1,4 @@
+using TicTacToe.ConsoleUI.ConsoleViews;
 using TicTacToe.Core.Commands;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
@@ -30,15 +31,9 @@ public class ParserCommand : IParseCommand
         return null;
     }
 
-    private ICommand? ParseMoveCommand(string? input)
+    private ICommand? ParseMoveCommand(string input)
     {
-        if (input!.Length <= 5)
-        {
-            _consoleRenderer.RenderError("Invalid move command. Please provide coordinates after 'move'.");
-            return null;
-        }
-
-        var moveData = input.Substring(5).Trim();
+        var moveData = input.Substring(4).Trim();
         if (TryParseMove(moveData, out var moveParameters)) return new MoveCommand(_gameProcessor, moveParameters);
 
         return null;
@@ -48,15 +43,14 @@ public class ParserCommand : IParseCommand
     {
         moveParameters = null!;
 
-        var parts = input?.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        if (parts == null || parts.Length != 2 ||
+        var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length != 2 ||
             !int.TryParse(parts[0], out var row) ||
             !int.TryParse(parts[1], out var col) ||
             row < 1 || row > 3 ||
             col < 1 || col > 3)
         {
-            _consoleRenderer.RenderError(@"Coordinates are out of bounds! 
-Please enter numbers between 1 and 3 for both row and column.");
+            _consoleRenderer.RenderError(ConsoleMessages.OutOfBoundsErrorMessage);
             return false;
         }
 

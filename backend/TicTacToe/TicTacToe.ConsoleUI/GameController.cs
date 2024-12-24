@@ -12,39 +12,36 @@ public class GameController(
     IConsoleRenderer consoleRenderer,
     ICommandInvoker commandInvoker)
 {
-    private readonly ICommandInvoker _commandInvoker = commandInvoker;
-    private readonly IConsoleRenderer _consoleRenderer = consoleRenderer;
-    private readonly GameProcessor _gameProcessor = gameProcessor;
     private readonly IParseCommand _parserCommand = parserCommand;
 
     public void Execute()
     {
-        _consoleRenderer.RenderWelcome();
+        consoleRenderer.RenderWelcome();
         while (true)
         {
             var command = GetCommand();
-            if (!_commandInvoker.Execute(command))
+            if (!commandInvoker.Execute(command))
             {
-                _consoleRenderer.RenderError("An error occurred during execution");
+                consoleRenderer.RenderError("An error occurred during execution");
                 continue;
             }
 
             if (command is MoveCommand)
             {
-                var showCommand = new ShowBoardCommand(_gameProcessor, _consoleRenderer);
+                var showCommand = new ShowBoardCommand(gameProcessor, consoleRenderer);
                 showCommand.Execute();
             }
 
-            if (_gameProcessor.State is GameState.Win)
+            if (gameProcessor.State is GameState.Win)
             {
-                _consoleRenderer.RenderWin(_gameProcessor.CurrentTurn);
-                _consoleRenderer.RenderProposeRestoreGame();
+                consoleRenderer.RenderWin(gameProcessor.CurrentTurn);
+                consoleRenderer.RenderProposeRestoreGame();
             }
 
-            if (_gameProcessor.State is GameState.Draw)
+            if (gameProcessor.State is GameState.Draw)
             {
-                _consoleRenderer.RenderDraw();
-                _consoleRenderer.RenderProposeRestoreGame();
+                consoleRenderer.RenderDraw();
+                consoleRenderer.RenderProposeRestoreGame();
             }
         }
     }
@@ -66,10 +63,10 @@ public class GameController(
         string? commandInput;
         do
         {
-            _consoleRenderer.RenderPrompt("Write your command: ");
+            consoleRenderer.RenderPrompt("Write your command: ");
             commandInput = Console.ReadLine();
 
-            if (string.IsNullOrEmpty(commandInput)) _consoleRenderer.RenderError("Please, write a valid command");
+            if (string.IsNullOrEmpty(commandInput)) consoleRenderer.RenderError("Please, write a valid command");
         } while (string.IsNullOrEmpty(commandInput));
 
         return commandInput;

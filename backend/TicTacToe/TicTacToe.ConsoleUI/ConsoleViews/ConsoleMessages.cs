@@ -17,6 +17,7 @@ Commands:
 - 'Start': Displays the current game board.
 - 'Help': Shows these instructions.
 - 'Exit': Ends the game.
+- 'Replay': Replay the game.
 
 Example Gameplay:
 Initial game board:
@@ -42,15 +43,15 @@ Type 'Help' to see the game instructions or 'Start' to begin the game. Good luck
 
     public const string WinnerMessage = @"
     ================================
-             GAME OVER
+               GAME OVER
     ================================
-          Player {0} wins!
+           Player {0} wins!
     ================================
     ";
 
     public const string DrawMessage = @"
     ================================
-             GAME OVER
+              GAME OVER
     ================================
              It's a draw!
     ================================
@@ -61,4 +62,7 @@ Type 'Help' to see the game instructions or 'Start' to begin the game. Good luck
     Type 'replay' to start a new game.
     Type 'exit' to quit the game.
 ";
+
+    public const string OutOfBoundsErrorMessage =
+        "Coordinates are out of bounds! Please enter numbers between 1 and 3 for both row and column.";
 }
