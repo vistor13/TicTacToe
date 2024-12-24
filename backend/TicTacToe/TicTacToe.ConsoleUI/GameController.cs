@@ -11,8 +11,6 @@ public class GameController(
     IConsoleRenderer consoleRenderer,
     ICommandInvoker commandInvoker)
 {
-    private readonly IParseCommand _parserCommand = parserCommand;
-
     public void Execute()
     {
         consoleRenderer.RenderWelcome();
@@ -51,7 +49,7 @@ public class GameController(
         while (command is null)
         {
             var commandInput = GetValidCommandInput();
-            command = _parserCommand.CommandParse(commandInput);
+            command = parserCommand.CommandParse(commandInput);
         }
 
         return command;
