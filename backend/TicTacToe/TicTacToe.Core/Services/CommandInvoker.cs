@@ -18,7 +18,8 @@ public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
         if (gameProcessor.State != GameState.NotStarted && commandType == typeof(ReplayCommand))
             return command.Execute();
 
-        if (gameProcessor.State == GameState.Ongoing || _commonCommands.Contains(commandType))
+        if ((gameProcessor.State == GameState.Ongoing && commandType == typeof(MoveCommand)) ||
+            _commonCommands.Contains(commandType))
             return command.Execute();
 
         return false;

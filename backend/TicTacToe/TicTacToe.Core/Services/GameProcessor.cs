@@ -6,8 +6,9 @@ namespace TicTacToe.Core.Services
     public class GameProcessor : IGameProcessor
     {
         public Board GameBoard { get; private set; } = null!;
-        public GameState State { get; private set; }
+        public GameState State { get; private set; } = GameState.NotStarted;
         public PlayerTurn CurrentTurn { get; private set; }
+
 
         public bool MakeMove(MoveParameters moveParameters)
         {

@@ -34,8 +34,7 @@ public class GameController(
                 consoleRenderer.RenderWin(gameProcessor.CurrentTurn);
                 consoleRenderer.RenderProposeRestoreGame();
             }
-
-            if (gameProcessor.State is GameState.Draw)
+            else if (gameProcessor.State is GameState.Draw)
             {
                 consoleRenderer.RenderDraw();
                 consoleRenderer.RenderProposeRestoreGame();
