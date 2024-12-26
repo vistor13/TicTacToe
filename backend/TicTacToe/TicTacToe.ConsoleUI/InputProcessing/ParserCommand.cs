@@ -1,7 +1,6 @@
 using TicTacToe.Core.Commands;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
-using TicTacToe.Core.Services;
 
 namespace TicTacToe.ConsoleUI.InputProcessing;
 
@@ -9,9 +8,9 @@ public class ParserCommand : IParseCommand
 {
     private readonly Dictionary<Command, ICommand> _commands;
     private readonly IUiRender _consoleRenderer;
-    private readonly GameProcessor _gameProcessor;
+    private readonly IGameProcessor _gameProcessor;
 
-    public ParserCommand(GameProcessor gameProcessor, IUiRender consoleRenderer)
+    public ParserCommand(IGameProcessor gameProcessor, IUiRender consoleRenderer)
     {
         _gameProcessor = gameProcessor;
         _consoleRenderer = consoleRenderer;

@@ -1,8 +1,9 @@
-﻿using TicTacToe.Core.Models;
+﻿using TicTacToe.Core.Interfaces;
+using TicTacToe.Core.Models;
 
 namespace TicTacToe.Core.Services
 {
-    public class GameProcessor
+    public class GameProcessor : IGameProcessor
     {
         public Board GameBoard { get; private set; } = null!;
         public GameState State { get; private set; }
@@ -33,14 +34,14 @@ namespace TicTacToe.Core.Services
             CurrentTurn = PlayerTurn.X;
         }
 
-        private void SwitchTurn()
-        {
-            CurrentTurn = CurrentTurn is PlayerTurn.X ? PlayerTurn.О : PlayerTurn.X;
-        }
-
         public Board GetBoard()
         {
             return GameBoard;
+        }
+
+        private void SwitchTurn()
+        {
+            CurrentTurn = CurrentTurn is PlayerTurn.X ? PlayerTurn.О : PlayerTurn.X;
         }
     }
 }

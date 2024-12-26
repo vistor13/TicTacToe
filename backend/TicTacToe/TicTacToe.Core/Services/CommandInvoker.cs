@@ -4,7 +4,7 @@ using TicTacToe.Core.Models;
 
 namespace TicTacToe.Core.Services;
 
-public class CommandInvoker(GameProcessor gameProcessor) : ICommandInvoker
+public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
 {
     private readonly List<Type> _commonCommands = InitializeCommonCommands();
 

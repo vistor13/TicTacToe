@@ -1,13 +1,12 @@
 using TicTacToe.Core.Commands;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
-using TicTacToe.Core.Services;
 
 namespace TicTacToe.ConsoleUI;
 
 public class GameController(
     IParseCommand parserCommand,
-    GameProcessor gameProcessor,
+    IGameProcessor gameProcessor,
     IUiRender consoleRenderer,
     ICommandInvoker commandInvoker)
 {
