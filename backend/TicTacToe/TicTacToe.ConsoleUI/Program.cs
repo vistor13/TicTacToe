@@ -2,10 +2,18 @@
 using TicTacToe.ConsoleUI;
 using TicTacToe.ConsoleUI.ConsoleViews;
 using TicTacToe.ConsoleUI.InputProcessing;
+using TicTacToe.Core.Commands;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Services;
 
 var services = new ServiceCollection();
+
+//Commands
+services.AddScoped<StartCommand>();
+services.AddScoped<InstructionCommand>();
+services.AddScoped<ReplayCommand>();
+services.AddScoped<ExitCommand>();
+
 services.AddScoped<IGameProcessor, GameProcessor>();
 services.AddScoped<IUiRender, ConsoleRenderer>();
 services.AddScoped<ICommandInvoker, CommandInvoker>();

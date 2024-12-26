@@ -1,22 +1,13 @@
+using Microsoft.Extensions.DependencyInjection;
 using TicTacToe.Core.Commands;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
 namespace TicTacToe.ConsoleUI.InputProcessing;
 
-public class CommandParser : ICommandParser
+public class CommandParser(IGameProcessor gameProcessor, IUiRender consoleRenderer, IServiceProvider serviceProvider)
+    : ICommandParser
 {
-    private readonly Dictionary<Command, ICommand> _commands;
-    private readonly IUiRender _consoleRenderer;
-    private readonly IGameProcessor _gameProcessor;
-
-    public CommandParser(IGameProcessor gameProcessor, IUiRender consoleRenderer)
-    {
-        _gameProcessor = gameProcessor;
-        _consoleRenderer = consoleRenderer;
-        _commands = InitializeDictionary();
-    }
-
     public ICommand? CommandParse(string? input)
     {
         if (input!.StartsWith("move", StringComparison.OrdinalIgnoreCase))
@@ -26,19 +17,27 @@ public class CommandParser : ICommandParser
                 return moveCommand;
         }
 
-        if (Enum.TryParse(input, true, out Command command) &&
-            _commands.TryGetValue(command, out var executableCommand))
-            return executableCommand;
+        if (!Enum.TryParse(input, true, out Command command))
+        {
+            consoleRenderer.RenderError("Please, write a valid command");
+            return null;
+        }
 
-        _consoleRenderer.RenderError("Please, write a valid command");
-        return null;
+        return command switch
+        {
+            Command.Start => serviceProvider.GetRequiredService<StartCommand>(),
+            Command.Help => serviceProvider.GetRequiredService<InstructionCommand>(),
+            Command.Replay => serviceProvider.GetRequiredService<ReplayCommand>(),
+            Command.Exit => serviceProvider.GetRequiredService<ExitCommand>(),
+            _ => null
+        };
     }
 
     private ICommand? ParseMoveCommand(string input)
     {
         var moveData = input.Substring(4).Trim();
         if (TryParseMove(moveData, out var moveParameters))
-            return new MoveCommand(_gameProcessor, moveParameters);
+            return new MoveCommand(gameProcessor, moveParameters);
 
         return null;
     }
@@ -55,18 +54,7 @@ public class CommandParser : ICommandParser
             return false;
         }
 
-        moveParameters = new MoveParameters(row - 1, col - 1, _gameProcessor.CurrentTurn);
+        moveParameters = new MoveParameters(row - 1, col - 1, gameProcessor.CurrentTurn);
         return true;
-    }
-
-    private Dictionary<Command, ICommand> InitializeDictionary()
-    {
-        return new Dictionary<Command, ICommand>
-        {
-            { Command.Start, new StartCommand(_gameProcessor, _consoleRenderer) },
-            { Command.Help, new InstructionCommand(_consoleRenderer) },
-            { Command.Replay, new ReplayCommand(_gameProcessor, _consoleRenderer) },
-            { Command.Exit, new ExitCommand() }
-        };
     }
 }
