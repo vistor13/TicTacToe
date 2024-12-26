@@ -1,6 +1,6 @@
 namespace TicTacToe.Core.Interfaces;
 
-public interface IParseCommand
+public interface ICommandParser
 {
     ICommand? CommandParse(string? input);
 }

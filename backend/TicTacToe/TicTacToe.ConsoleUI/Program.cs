@@ -9,7 +9,7 @@ var services = new ServiceCollection();
 services.AddScoped<IGameProcessor, GameProcessor>();
 services.AddScoped<IUiRender, ConsoleRenderer>();
 services.AddScoped<ICommandInvoker, CommandInvoker>();
-services.AddScoped<IParseCommand, ParserCommand>();
+services.AddScoped<ICommandParser, CommandParser>();
 services.AddScoped<GameController>();
 
 var serviceProvider = services.BuildServiceProvider();

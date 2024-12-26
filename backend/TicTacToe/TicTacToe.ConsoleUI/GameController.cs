@@ -5,7 +5,7 @@ using TicTacToe.Core.Models;
 namespace TicTacToe.ConsoleUI;
 
 public class GameController(
-    IParseCommand parserCommand,
+    ICommandParser parserCommandParser,
     IGameProcessor gameProcessor,
     IUiRender consoleRenderer,
     ICommandInvoker commandInvoker)

@@ -4,13 +4,13 @@ using TicTacToe.Core.Models;
 
 namespace TicTacToe.ConsoleUI.InputProcessing;
 
-public class ParserCommand : IParseCommand
+public class CommandParser : ICommandParser
 {
     private readonly Dictionary<Command, ICommand> _commands;
     private readonly IUiRender _consoleRenderer;
     private readonly IGameProcessor _gameProcessor;
 
-    public ParserCommand(IGameProcessor gameProcessor, IUiRender consoleRenderer)
+    public CommandParser(IGameProcessor gameProcessor, IUiRender consoleRenderer)
     {
         _gameProcessor = gameProcessor;
         _consoleRenderer = consoleRenderer;
