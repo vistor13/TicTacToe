@@ -8,7 +8,8 @@ public class GameController(
     ICommandParser parserCommandParser,
     IGameProcessor gameProcessor,
     IUiRender consoleRenderer,
-    ICommandInvoker commandInvoker)
+    ICommandInvoker commandInvoker,
+    IInputReader reader)
 {
     public void Execute()
     {
@@ -47,25 +48,10 @@ public class GameController(
         ICommand? command = null;
         while (command is null)
         {
-            var commandInput = GetValidCommandInput();
-            command = parserCommand.CommandParse(commandInput);
+            var commandInput = reader.GetValidCommandInput();
+            command = parserCommandParser.CommandParse(commandInput);
         }
 
         return command;
-    }
-
-    private string GetValidCommandInput()
-    {
-        string? commandInput;
-        do
-        {
-            consoleRenderer.RenderPrompt("Write your command: ");
-            commandInput = Console.ReadLine();
-
-            if (string.IsNullOrEmpty(commandInput))
-                consoleRenderer.RenderError("Please, write a valid command (cannot be empty or just spaces)");
-        } while (string.IsNullOrEmpty(commandInput));
-
-        return commandInput;
     }
 }
