@@ -8,10 +8,10 @@ namespace TicTacToe.ConsoleUI.InputProcessing;
 public class ParserCommand : IParseCommand
 {
     private readonly Dictionary<Command, ICommand> _commands;
-    private readonly IConsoleRenderer _consoleRenderer;
+    private readonly IUiRender _consoleRenderer;
     private readonly GameProcessor _gameProcessor;
 
-    public ParserCommand(GameProcessor gameProcessor, IConsoleRenderer consoleRenderer)
+    public ParserCommand(GameProcessor gameProcessor, IUiRender consoleRenderer)
     {
         _gameProcessor = gameProcessor;
         _consoleRenderer = consoleRenderer;

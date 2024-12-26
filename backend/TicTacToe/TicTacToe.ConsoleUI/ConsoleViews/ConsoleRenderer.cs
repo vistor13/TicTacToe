@@ -3,7 +3,7 @@ using TicTacToe.Core.Models;
 
 namespace TicTacToe.ConsoleUI.ConsoleViews;
 
-public class ConsoleRenderer : IConsoleRenderer
+public class ConsoleRenderer : IUiRender
 {
     private const string VerticalLine = "│";
     private const string HorizontalLine = "─────";

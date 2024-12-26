@@ -8,7 +8,7 @@ namespace TicTacToe.ConsoleUI;
 public class GameController(
     IParseCommand parserCommand,
     GameProcessor gameProcessor,
-    IConsoleRenderer consoleRenderer,
+    IUiRender consoleRenderer,
     ICommandInvoker commandInvoker)
 {
     public void Execute()

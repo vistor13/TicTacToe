@@ -2,7 +2,7 @@ using TicTacToe.Core.Models;
 
 namespace TicTacToe.Core.Interfaces;
 
-public interface IConsoleRenderer
+public interface IUiRender
 {
     void RenderBoard(Board board);
     void RenderInstruction();

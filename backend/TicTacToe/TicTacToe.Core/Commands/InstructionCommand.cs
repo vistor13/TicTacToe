@@ -2,7 +2,7 @@ using TicTacToe.Core.Interfaces;
 
 namespace TicTacToe.Core.Commands;
 
-public class InstructionCommand(IConsoleRenderer renderer) : ICommand
+public class InstructionCommand(IUiRender renderer) : ICommand
 {
     public bool Execute()
     {

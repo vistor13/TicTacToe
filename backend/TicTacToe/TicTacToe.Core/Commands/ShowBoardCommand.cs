@@ -3,7 +3,7 @@ using TicTacToe.Core.Services;
 
 namespace TicTacToe.Core.Commands;
 
-public class ShowBoardCommand(GameProcessor gameProcessor, IConsoleRenderer renderer) : ICommand
+public class ShowBoardCommand(GameProcessor gameProcessor, IUiRender renderer) : ICommand
 {
     public bool Execute()
     {
