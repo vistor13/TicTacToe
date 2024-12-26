@@ -1,13 +1,19 @@
-﻿using TicTacToe.ConsoleUI;
+﻿using Microsoft.Extensions.DependencyInjection;
+using TicTacToe.ConsoleUI;
 using TicTacToe.ConsoleUI.ConsoleViews;
 using TicTacToe.ConsoleUI.InputProcessing;
+using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Services;
 
-var gameProcessor = new GameProcessor();
-var consoleRenderer = new ConsoleRenderer();
-var commandInvoker = new CommandInvoker(gameProcessor);
-var parserCommand = new ParserCommand(gameProcessor, consoleRenderer);
+var services = new ServiceCollection();
+services.AddScoped<IGameProcessor, GameProcessor>();
+services.AddScoped<IUiRender, ConsoleRenderer>();
+services.AddScoped<ICommandInvoker, CommandInvoker>();
+services.AddScoped<IParseCommand, ParserCommand>();
+services.AddScoped<GameController>();
 
-var gameController = new GameController(parserCommand, gameProcessor, consoleRenderer, commandInvoker);
+var serviceProvider = services.BuildServiceProvider();
+var scopeFactory = serviceProvider.CreateScope();
 
+var gameController = scopeFactory.ServiceProvider.GetRequiredService<GameController>();
 gameController.Execute();
