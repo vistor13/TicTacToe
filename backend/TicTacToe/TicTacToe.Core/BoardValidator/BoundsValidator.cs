@@ -10,11 +10,10 @@ namespace TicTacToe.Core.BoardValidator
 
         public OperationResult Validate(MoveParameters moveParameters, Board board)
         {
-            if (moveParameters.Row >= LowerBound && moveParameters.Row < Board.BoardSize &&
-                moveParameters.Col >= LowerBound && moveParameters.Col < Board.BoardSize)
-                return OperationResult.Success();
-
-            return OperationResult.Failure(Messages.Error.OutOfBoundsErrorMessage);
+            return moveParameters.Row >= LowerBound && moveParameters.Row < Board.BoardSize &&
+                   moveParameters.Col >= LowerBound && moveParameters.Col < Board.BoardSize
+                ? OperationResult.Success()
+                : OperationResult.Failure(Messages.Error.OutOfBoundsErrorMessage);
         }
     }
 }
