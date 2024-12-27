@@ -6,7 +6,7 @@ public interface IGameProcessor
 {
     GameState State { get; }
     PlayerTurn CurrentTurn { get; }
-    bool MakeMove(MoveParameters moveParameters);
+    OperationResult MakeMove(MoveParameters moveParameters);
     void InitializeGame();
     Board GetBoard();
 }

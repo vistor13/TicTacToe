@@ -5,7 +5,7 @@ namespace TicTacToe.Core.Commands;
 
 public class MoveCommand(IGameProcessor gameProcessor, MoveParameters moveParameters) : ICommand
 {
-    public bool Execute()
+    public OperationResult Execute()
     {
         return gameProcessor.MakeMove(moveParameters);
     }

@@ -2,8 +2,8 @@
 
 namespace TicTacToe.Core.Interfaces
 {
-	public interface IValidator
-	{
-		bool Validate(MoveParameters moveParameters, Board board);
-	}
+    public interface IValidator
+    {
+        OperationResult Validate(MoveParameters moveParameters, Board board);
+    }
 }

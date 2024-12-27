@@ -1,12 +1,13 @@
 using TicTacToe.Core.Interfaces;
+using TicTacToe.Core.Models;
 
 namespace TicTacToe.Core.Commands;
 
 public class ExitCommand : ICommand
 {
-    public bool Execute()
+    public OperationResult Execute()
     {
         Environment.Exit(0);
-        return true;
+        return OperationResult.Success();
     }
 }

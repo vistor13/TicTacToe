@@ -1,12 +1,13 @@
 using TicTacToe.Core.Interfaces;
+using TicTacToe.Core.Models;
 
 namespace TicTacToe.Core.Commands;
 
 public class InstructionCommand(IUiRender renderer) : ICommand
 {
-    public bool Execute()
+    public OperationResult Execute()
     {
         renderer.RenderInstruction();
-        return true;
+        return OperationResult.Success();
     }
 }

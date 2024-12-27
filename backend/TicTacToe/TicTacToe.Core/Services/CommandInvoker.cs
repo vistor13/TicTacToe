@@ -8,7 +8,7 @@ public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
 {
     private readonly List<Type> _commonCommands = InitializeCommonCommands();
 
-    public bool Execute(ICommand command)
+    public OperationResult Execute(ICommand command)
     {
         var commandType = command.GetType();
 
@@ -22,7 +22,7 @@ public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
             _commonCommands.Contains(commandType))
             return command.Execute();
 
-        return false;
+        return OperationResult.Failure("An error occurred during execution");
     }
 
     private static List<Type> InitializeCommonCommands()

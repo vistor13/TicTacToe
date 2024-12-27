@@ -1,4 +1,3 @@
-using TicTacToe.ConsoleUI.ConsoleViews;
 using TicTacToe.Core.Commands;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
@@ -18,9 +17,10 @@ public class GameController(
         while (true)
         {
             var command = GetCommand();
-            if (!commandInvoker.Execute(command))
+            var executionResult = commandInvoker.Execute(command);
+            if (!executionResult.IsSuccess)
             {
-                consoleRenderer.RenderError(ConsoleMessages.Error.ExecutionError);
+                consoleRenderer.RenderError(executionResult.ErrorMessage);
                 continue;
             }
 

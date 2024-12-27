@@ -17,9 +17,13 @@ namespace TicTacToe.Core.Models
             return Grid[row, col];
         }
 
-        public bool CanMakeMove(MoveParameters moveParameters)
+        public OperationResult CanMakeMove(MoveParameters moveParameters)
         {
-            return _validators.All(validator => validator.Validate(moveParameters, this));
+            var failedResult = _validators
+                .Select(validator => validator.Validate(moveParameters, this))
+                .FirstOrDefault(result => !result.IsSuccess);
+
+            return failedResult ?? OperationResult.Success();
         }
 
         public void MakeMove(MoveParameters moveParameters)

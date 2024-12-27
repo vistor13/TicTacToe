@@ -13,11 +13,6 @@ public static class ConsoleMessages
             """
             Please, write a valid command
             """;
-
-        public const string ExecutionError =
-            """
-            An error occurred during execution
-            """;
     }
 
     public static class GameMessages

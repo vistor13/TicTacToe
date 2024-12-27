@@ -17,7 +17,7 @@ namespace TicTacToe.Tests
             var result = game.MakeMove(move);
 
             // Assert
-            Assert.True(result);
+            Assert.True(result.IsSuccess);
             Assert.Equal('X', game.GameBoard.Grid[0, 0]);
             Assert.Equal(PlayerTurn.О, game.CurrentTurn);
         }
@@ -36,7 +36,7 @@ namespace TicTacToe.Tests
             var result = game.MakeMove(moveY);
 
             // Assert
-            Assert.False(result);
+            Assert.False(result.IsSuccess);
             Assert.Equal(PlayerTurn.О, game.CurrentTurn);
         }
 
@@ -52,7 +52,7 @@ namespace TicTacToe.Tests
             var result = game.MakeMove(move);
 
             // Assert
-            Assert.False(result);
+            Assert.False(result.IsSuccess);
             Assert.Equal(PlayerTurn.X, game.CurrentTurn);
         }
 
@@ -68,7 +68,7 @@ namespace TicTacToe.Tests
             var result = game.MakeMove(move);
 
             // Assert
-            Assert.False(result);
+            Assert.False(result.IsSuccess);
             Assert.Equal(PlayerTurn.X, game.CurrentTurn);
         }
 
@@ -152,7 +152,7 @@ namespace TicTacToe.Tests
             Assert.Equal(GameState.Draw, game.State);
 
             var moveAfterDraw = game.MakeMove(new MoveParameters(0, 0, PlayerTurn.О));
-            Assert.False(moveAfterDraw);
+            Assert.False(moveAfterDraw.IsSuccess);
         }
 
         [Fact]
@@ -176,7 +176,7 @@ namespace TicTacToe.Tests
             // Assert
             Assert.Equal(GameState.Draw, game.State);
             var moveAfterBoardIsFull = game.MakeMove(new MoveParameters(2, 2, PlayerTurn.О));
-            Assert.False(moveAfterBoardIsFull);
+            Assert.False(moveAfterBoardIsFull.IsSuccess);
         }
 
         [Fact]

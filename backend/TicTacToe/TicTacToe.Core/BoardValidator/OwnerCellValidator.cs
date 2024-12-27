@@ -5,9 +5,11 @@ namespace TicTacToe.Core.BoardValidator
 {
     public class OwnerCellValidator : IValidator
     {
-        public bool Validate(MoveParameters moveParameters, Board board)
+        public OperationResult Validate(MoveParameters moveParameters, Board board)
         {
-            return board.Grid[moveParameters.Row, moveParameters.Col] == Board.EmptyCell;
+            if (board.Grid[moveParameters.Row, moveParameters.Col] == Board.EmptyCell) return OperationResult.Success();
+
+            return OperationResult.Failure("The selected cell is already occupied. Please choose another cell.");
         }
     }
 }

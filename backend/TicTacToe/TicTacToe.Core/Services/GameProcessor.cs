@@ -10,22 +10,22 @@ namespace TicTacToe.Core.Services
         public PlayerTurn CurrentTurn { get; private set; }
 
 
-        public bool MakeMove(MoveParameters moveParameters)
+        public OperationResult MakeMove(MoveParameters moveParameters)
         {
             if (State != GameState.Ongoing || CurrentTurn != moveParameters.PlayerTurn)
-                return false;
+                return OperationResult.Failure("Invalid game state or player turn.");
 
-            if (!GameBoard.CanMakeMove(moveParameters))
-                return false;
+            var canMakeMoveResult = GameBoard.CanMakeMove(moveParameters);
+            if (!canMakeMoveResult.IsSuccess)
+                return canMakeMoveResult;
 
             GameBoard.MakeMove(moveParameters);
-
             State = GameBoard.GetGameStatus();
 
             if (State == GameState.Ongoing)
                 SwitchTurn();
 
-            return true;
+            return OperationResult.Success();
         }
 
         public void InitializeGame()
