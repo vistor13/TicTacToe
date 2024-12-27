@@ -1,4 +1,5 @@
-﻿using TicTacToe.Core.Interfaces;
+﻿using TicTacToe.Core.CoreMessages;
+using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
 namespace TicTacToe.Core.BoardValidator
@@ -7,9 +8,9 @@ namespace TicTacToe.Core.BoardValidator
     {
         public OperationResult Validate(MoveParameters moveParameters, Board board)
         {
-            if (board.Grid[moveParameters.Row, moveParameters.Col] == Board.EmptyCell) return OperationResult.Success();
-
-            return OperationResult.Failure("The selected cell is already occupied. Please choose another cell.");
+            return board.Grid[moveParameters.Row, moveParameters.Col] == Board.EmptyCell
+                ? OperationResult.Success()
+                : OperationResult.Failure(Messages.Error.CellOccupied);
         }
     }
 }

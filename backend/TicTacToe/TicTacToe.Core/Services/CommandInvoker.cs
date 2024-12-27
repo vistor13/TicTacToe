@@ -1,4 +1,5 @@
 using TicTacToe.Core.Commands;
+using TicTacToe.Core.CoreMessages;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
@@ -22,7 +23,7 @@ public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
             _commonCommands.Contains(commandType))
             return command.Execute();
 
-        return OperationResult.Failure("An error occurred during execution");
+        return OperationResult.Failure(Messages.Error.CommandNotAllowed);
     }
 
     private static List<Type> InitializeCommonCommands()

@@ -1,3 +1,4 @@
+using TicTacToe.Core.CoreMessages;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
@@ -8,7 +9,7 @@ public class StartCommand(IGameProcessor gameProcessor, IUiRender consoleRendere
     public OperationResult Execute()
     {
         gameProcessor.InitializeGame();
-        consoleRenderer.RenderMessage($"The game is started, the player {gameProcessor.CurrentTurn} makes a move.");
+        consoleRenderer.RenderMessage(string.Format(Messages.GameProcess.StartNotification, gameProcessor.CurrentTurn));
         return OperationResult.Success();
     }
 }

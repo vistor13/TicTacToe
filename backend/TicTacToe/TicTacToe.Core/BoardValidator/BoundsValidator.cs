@@ -1,4 +1,5 @@
-﻿using TicTacToe.Core.Interfaces;
+﻿using TicTacToe.Core.CoreMessages;
+using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
 namespace TicTacToe.Core.BoardValidator
@@ -13,7 +14,7 @@ namespace TicTacToe.Core.BoardValidator
                 moveParameters.Col >= LowerBound && moveParameters.Col < Board.BoardSize)
                 return OperationResult.Success();
 
-            return OperationResult.Failure("The move is out of bounds. Please enter values within the board's range.");
+            return OperationResult.Failure(Messages.Error.OutOfBoundsErrorMessage);
         }
     }
 }

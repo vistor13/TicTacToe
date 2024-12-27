@@ -1,4 +1,5 @@
-﻿using TicTacToe.Core.Interfaces;
+﻿using TicTacToe.Core.CoreMessages;
+using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
 namespace TicTacToe.Core.Services
@@ -12,8 +13,11 @@ namespace TicTacToe.Core.Services
 
         public OperationResult MakeMove(MoveParameters moveParameters)
         {
-            if (State != GameState.Ongoing || CurrentTurn != moveParameters.PlayerTurn)
-                return OperationResult.Failure("Invalid game state or player turn.");
+            if (State != GameState.Ongoing)
+                return OperationResult.Failure(Messages.Error.InvalidGameState);
+
+            if (CurrentTurn != moveParameters.PlayerTurn)
+                return OperationResult.Failure(Messages.Error.InvalidCurrentPlayer);
 
             var canMakeMoveResult = GameBoard.CanMakeMove(moveParameters);
             if (!canMakeMoveResult.IsSuccess)

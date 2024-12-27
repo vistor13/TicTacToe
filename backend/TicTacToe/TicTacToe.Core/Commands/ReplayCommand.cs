@@ -1,3 +1,4 @@
+using TicTacToe.Core.CoreMessages;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
@@ -8,7 +9,8 @@ public class ReplayCommand(IGameProcessor gameProcessor, IUiRender consoleRender
     public OperationResult Execute()
     {
         gameProcessor.InitializeGame();
-        consoleRenderer.RenderMessage($"Game restarted!!!! The player {gameProcessor.CurrentTurn} makes a move. ");
+        consoleRenderer.RenderMessage(
+            string.Format(Messages.GameProcess.RestartNotification, gameProcessor.CurrentTurn));
         return OperationResult.Success();
     }
 }
