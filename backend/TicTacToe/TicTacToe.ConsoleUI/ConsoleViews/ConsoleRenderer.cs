@@ -27,29 +27,29 @@ public class ConsoleRenderer : IUiRender
 
     public void RenderProposeRestoreGame()
     {
-        RenderMessage(ConsoleMessages.EndGamePrompt);
+        RenderMessage(ConsoleMessages.GameMessages.EndGamePrompt);
     }
 
     public void RenderDraw()
     {
         Console.Clear();
-        RenderMessage(ConsoleMessages.DrawMessage);
+        RenderMessage(ConsoleMessages.GameMessages.DrawMessage);
     }
 
     public void RenderWin(PlayerTurn playerTurn)
     {
         Console.Clear();
-        RenderMessage(string.Format(ConsoleMessages.WinnerMessage, playerTurn));
+        RenderMessage(string.Format(ConsoleMessages.GameMessages.WinnerMessage, playerTurn));
     }
 
     public void RenderWelcome()
     {
-        PrintColoredText(ConsoleMessages.WelcomeMessage, MessagesColor, true);
+        PrintColoredText(ConsoleMessages.GameMessages.WelcomeMessage, MessagesColor, true);
     }
 
     public void RenderInstruction()
     {
-        PrintColoredText(ConsoleMessages.Instruction, HelpColor, true);
+        PrintColoredText(ConsoleMessages.GameMessages.Instruction, HelpColor, true);
     }
 
     public void RenderPrompt(string text)

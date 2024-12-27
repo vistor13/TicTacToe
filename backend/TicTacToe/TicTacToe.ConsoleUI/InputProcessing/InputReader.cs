@@ -1,3 +1,4 @@
+using TicTacToe.ConsoleUI.ConsoleViews;
 using TicTacToe.Core.Interfaces;
 
 namespace TicTacToe.ConsoleUI.InputProcessing;
@@ -9,11 +10,11 @@ public class InputReader(IUiRender render) : IInputReader
         string? commandInput;
         do
         {
-            render.RenderPrompt("Write your command: ");
+            render.RenderPrompt(ConsoleMessages.GameMessages.CommandPrompt);
             commandInput = Console.ReadLine();
 
             if (string.IsNullOrEmpty(commandInput))
-                render.RenderError("Please, write a valid command (cannot be empty or just spaces)");
+                render.RenderError(ConsoleMessages.Error.InvalidInput);
         } while (string.IsNullOrEmpty(commandInput));
 
         return commandInput;

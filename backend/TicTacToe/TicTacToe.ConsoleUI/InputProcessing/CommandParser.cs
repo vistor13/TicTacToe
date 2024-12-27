@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using TicTacToe.ConsoleUI.ConsoleViews;
 using TicTacToe.Core.Commands;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
@@ -19,7 +20,7 @@ public class CommandParser(IGameProcessor gameProcessor, IUiRender consoleRender
 
         if (!Enum.TryParse(input, true, out Command command))
         {
-            consoleRenderer.RenderError("Please, write a valid command");
+            consoleRenderer.RenderError(ConsoleMessages.Error.InvalidCommand);
             return null;
         }
 

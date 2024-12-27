@@ -1,3 +1,4 @@
+using TicTacToe.ConsoleUI.ConsoleViews;
 using TicTacToe.Core.Commands;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
@@ -19,7 +20,7 @@ public class GameController(
             var command = GetCommand();
             if (!commandInvoker.Execute(command))
             {
-                consoleRenderer.RenderError("An error occurred during execution");
+                consoleRenderer.RenderError(ConsoleMessages.Error.ExecutionError);
                 continue;
             }
 
