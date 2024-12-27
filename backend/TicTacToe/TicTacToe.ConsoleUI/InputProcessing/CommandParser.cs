@@ -37,10 +37,9 @@ public class CommandParser(IGameProcessor gameProcessor, IUiRender consoleRender
     private ICommand? ParseMoveCommand(string input)
     {
         var moveData = input.Substring(4).Trim();
-        if (TryParseMove(moveData, out var moveParameters))
-            return new MoveCommand(gameProcessor, moveParameters);
-
-        return null;
+        return TryParseMove(moveData, out var moveParameters)
+            ? new MoveCommand(gameProcessor, moveParameters)
+            : null;
     }
 
     private bool TryParseMove(string input, out MoveParameters moveParameters)
