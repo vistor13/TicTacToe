@@ -28,7 +28,6 @@ public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
             "ExecuteCommand",
             Messages.Error.CommandNotAllowed
         );
-        ;
     }
 
     private static List<Type> InitializeCommonCommands()
