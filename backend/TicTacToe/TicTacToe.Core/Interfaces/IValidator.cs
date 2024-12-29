@@ -1,9 +1,10 @@
-﻿using TicTacToe.Core.Models;
+﻿using ErrorOr;
+using TicTacToe.Core.Models;
 
 namespace TicTacToe.Core.Interfaces
 {
     public interface IValidator
     {
-        OperationResult Validate(MoveParameters moveParameters, Board board);
+        ErrorOr<Success> Validate(MoveParameters moveParameters, Board board);
     }
 }

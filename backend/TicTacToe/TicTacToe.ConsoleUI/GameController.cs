@@ -18,9 +18,9 @@ public class GameController(
         {
             var command = GetCommand();
             var executionResult = commandInvoker.Execute(command);
-            if (!executionResult.IsSuccess)
+            if (executionResult.IsError)
             {
-                consoleRenderer.RenderError(executionResult.ErrorMessage);
+                consoleRenderer.RenderError(executionResult.Errors.First().Description);
                 continue;
             }
 

@@ -1,3 +1,4 @@
+using ErrorOr;
 using TicTacToe.Core.Commands;
 using TicTacToe.Core.CoreMessages;
 using TicTacToe.Core.Interfaces;
@@ -9,7 +10,7 @@ public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
 {
     private readonly List<Type> _commonCommands = InitializeCommonCommands();
 
-    public OperationResult Execute(ICommand command)
+    public ErrorOr<Success> Execute(ICommand command)
     {
         var commandType = command.GetType();
 
@@ -23,7 +24,11 @@ public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
             _commonCommands.Contains(commandType))
             return command.Execute();
 
-        return OperationResult.Failure(Messages.Error.CommandNotAllowed);
+        return Error.Validation(
+            "ExecuteCommand",
+            Messages.Error.CommandNotAllowed
+        );
+        ;
     }
 
     private static List<Type> InitializeCommonCommands()

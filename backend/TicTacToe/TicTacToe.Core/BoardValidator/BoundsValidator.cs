@@ -1,4 +1,5 @@
-﻿using TicTacToe.Core.CoreMessages;
+﻿using ErrorOr;
+using TicTacToe.Core.CoreMessages;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
@@ -8,12 +9,15 @@ namespace TicTacToe.Core.BoardValidator
     {
         private const int LowerBound = 0;
 
-        public OperationResult Validate(MoveParameters moveParameters, Board board)
+        public ErrorOr<Success> Validate(MoveParameters moveParameters, Board board)
         {
             return moveParameters.Row >= LowerBound && moveParameters.Row < Board.BoardSize &&
                    moveParameters.Col >= LowerBound && moveParameters.Col < Board.BoardSize
-                ? OperationResult.Success()
-                : OperationResult.Failure(Messages.Error.OutOfBoundsErrorMessage);
+                ? Result.Success
+                : Error.Validation(
+                    "OutOfBounds",
+                    Messages.Error.OutOfBoundsErrorMessage
+                );
         }
     }
 }

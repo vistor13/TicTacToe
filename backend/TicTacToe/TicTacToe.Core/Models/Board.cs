@@ -1,4 +1,5 @@
-﻿using TicTacToe.Core.BoardValidator;
+﻿using ErrorOr;
+using TicTacToe.Core.BoardValidator;
 using TicTacToe.Core.Interfaces;
 
 namespace TicTacToe.Core.Models
@@ -17,13 +18,13 @@ namespace TicTacToe.Core.Models
             return Grid[row, col];
         }
 
-        public OperationResult CanMakeMove(MoveParameters moveParameters)
+        public ErrorOr<Success> CanMakeMove(MoveParameters moveParameters)
         {
-            var failedResult = _validators
-                .Select(validator => validator.Validate(moveParameters, this))
-                .FirstOrDefault(result => !result.IsSuccess);
+            foreach (var validationResult in _validators.Select(validator => validator.Validate(moveParameters, this))
+                         .Where(validationResult => validationResult.IsError))
+                return validationResult.Errors;
 
-            return failedResult ?? OperationResult.Success();
+            return Result.Success;
         }
 
         public void MakeMove(MoveParameters moveParameters)

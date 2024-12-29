@@ -1,8 +1,8 @@
-using TicTacToe.Core.Models;
+using ErrorOr;
 
 namespace TicTacToe.Core.Interfaces;
 
 public interface ICommand
 {
-    OperationResult Execute();
+    ErrorOr<Success> Execute();
 }

@@ -1,4 +1,5 @@
-﻿using TicTacToe.Core.CoreMessages;
+﻿using ErrorOr;
+using TicTacToe.Core.CoreMessages;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
@@ -10,26 +11,30 @@ namespace TicTacToe.Core.Services
         public GameState State { get; private set; } = GameState.NotStarted;
         public PlayerTurn CurrentTurn { get; private set; }
 
-
-        public OperationResult MakeMove(MoveParameters moveParameters)
+        public ErrorOr<Success> MakeMove(MoveParameters moveParameters)
         {
             if (State != GameState.Ongoing)
-                return OperationResult.Failure(Messages.Error.InvalidGameState);
+                return Error.Validation(
+                    "InvalidGameState",
+                    Messages.Error.InvalidGameState
+                );
 
             if (CurrentTurn != moveParameters.PlayerTurn)
-                return OperationResult.Failure(Messages.Error.InvalidCurrentPlayer);
+                return Error.Validation(
+                    "InvalidCurrentPlayer",
+                    Messages.Error.InvalidCurrentPlayer
+                );
 
             var canMakeMoveResult = GameBoard.CanMakeMove(moveParameters);
-            if (!canMakeMoveResult.IsSuccess)
-                return canMakeMoveResult;
+            if (canMakeMoveResult.IsError)
+                return canMakeMoveResult.Errors;
 
             GameBoard.MakeMove(moveParameters);
             State = GameBoard.GetGameStatus();
 
-            if (State == GameState.Ongoing)
-                SwitchTurn();
+            if (State == GameState.Ongoing) SwitchTurn();
 
-            return OperationResult.Success();
+            return Result.Success;
         }
 
         public void InitializeGame()
