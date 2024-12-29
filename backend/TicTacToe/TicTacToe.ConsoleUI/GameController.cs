@@ -9,7 +9,7 @@ public class GameController(
     IGameProcessor gameProcessor,
     IUiRender consoleRenderer,
     ICommandInvoker commandInvoker,
-    IInputReader reader)
+    IInputProvider reader)
 {
     public void Execute()
     {
@@ -48,7 +48,7 @@ public class GameController(
         ICommand? command = null;
         while (command is null)
         {
-            var commandInput = reader.GetValidCommandInput();
+            var commandInput = reader.GetCommandInput();
             command = parserCommandParser.CommandParse(commandInput);
         }
 

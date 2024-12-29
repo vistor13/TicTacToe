@@ -1,6 +1,6 @@
 namespace TicTacToe.Core.Interfaces;
 
-public interface IInputReader
+public interface IInputProvider
 {
-    string GetValidCommandInput();
+    string GetCommandInput();
 }

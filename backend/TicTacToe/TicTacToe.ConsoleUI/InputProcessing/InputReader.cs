@@ -3,9 +3,9 @@ using TicTacToe.Core.Interfaces;
 
 namespace TicTacToe.ConsoleUI.InputProcessing;
 
-public class InputReader(IUiRender render) : IInputReader
+public class InputReader(IUiRender render) : IInputProvider
 {
-    public string GetValidCommandInput()
+    public string GetCommandInput()
     {
         string? commandInput;
         do

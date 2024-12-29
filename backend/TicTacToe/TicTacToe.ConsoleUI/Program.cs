@@ -18,7 +18,7 @@ services.AddScoped<IGameProcessor, GameProcessor>();
 services.AddScoped<IUiRender, ConsoleRenderer>();
 services.AddScoped<ICommandInvoker, CommandInvoker>();
 services.AddScoped<ICommandParser, CommandParser>();
-services.AddScoped<IInputReader, InputReader>();
+services.AddScoped<IInputProvider, InputReader>();
 services.AddScoped<GameController>();
 
 var serviceProvider = services.BuildServiceProvider();
