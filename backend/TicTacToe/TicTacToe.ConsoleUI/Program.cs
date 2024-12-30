@@ -9,12 +9,12 @@ using TicTacToe.Core.Services;
 var services = new ServiceCollection();
 
 //Commands
-services.AddScoped<StartCommand>();
 services.AddScoped<AiGameCommand>();
 services.AddScoped<PlayerGameCommand>();
 services.AddScoped<InstructionCommand>();
 services.AddScoped<ReplayCommand>();
 services.AddScoped<ExitCommand>();
+services.AddScoped<EndGameCommand>();
 
 services.AddScoped<IGameProcessor, GameProcessor>();
 services.AddScoped<IUiRender, ConsoleRenderer>();

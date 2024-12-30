@@ -1,5 +1,6 @@
 using ErrorOr;
 using TicTacToe.Core.Models;
+using TicTacToe.Core.Services;
 
 namespace TicTacToe.Core.Interfaces;
 
@@ -12,4 +13,5 @@ public interface IGameProcessor
     void InitializeGame(bool isGameWithPlayer = true);
     Board GetBoard();
     GameProcessor Clone();
+    void Reset();
 }

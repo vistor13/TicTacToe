@@ -6,5 +6,6 @@ public enum Command
     GameAi,
     Help,
     Exit,
-    Replay
+    Replay,
+    End
 }

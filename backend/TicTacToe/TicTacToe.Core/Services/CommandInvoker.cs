@@ -21,6 +21,9 @@ public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
         if (gameProcessor.State != GameState.NotStarted && commandType == typeof(ReplayCommand))
             return command.Execute();
 
+        if (gameProcessor.GameModes != GameModes.NotDefined && commandType == typeof(ExitCommand))
+            return command.Execute();
+
         if ((gameProcessor.State == GameState.Ongoing && commandType == typeof(MoveCommand)) ||
             _commonCommands.Contains(commandType))
             return command.Execute();
@@ -45,7 +48,7 @@ public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
         return
         [
             typeof(InstructionCommand),
-            typeof(ExitCommand)
+            typeof(EndGameCommand)
         ];
     }
 }

@@ -29,12 +29,12 @@ public class CommandParser(IGameProcessor gameProcessor, IUiRender consoleRender
 
         return command switch
         {
-            Command.Start => serviceProvider.GetRequiredService<StartCommand>(),
             Command.GamePlayer => serviceProvider.GetRequiredService<PlayerGameCommand>(),
             Command.GameAi => serviceProvider.GetRequiredService<AiGameCommand>(),
             Command.Help => serviceProvider.GetRequiredService<InstructionCommand>(),
             Command.Replay => serviceProvider.GetRequiredService<ReplayCommand>(),
             Command.Exit => serviceProvider.GetRequiredService<ExitCommand>(),
+            Command.End => serviceProvider.GetRequiredService<EndGameCommand>(),
             _ => null
         };
     }
