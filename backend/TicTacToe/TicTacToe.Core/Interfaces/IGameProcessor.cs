@@ -10,4 +10,5 @@ public interface IGameProcessor
     ErrorOr<Success> MakeMove(MoveParameters moveParameters);
     void InitializeGame();
     Board GetBoard();
+    GameProcessor Clone();
 }

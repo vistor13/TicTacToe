@@ -19,6 +19,7 @@ services.AddScoped<IUiRender, ConsoleRenderer>();
 services.AddScoped<ICommandInvoker, CommandInvoker>();
 services.AddScoped<ICommandParser, CommandParser>();
 services.AddScoped<IInputProvider, InputReader>();
+services.AddScoped<IMiniMaxAi, MiniMaxAi>();
 services.AddScoped<GameController>();
 
 var serviceProvider = services.BuildServiceProvider();

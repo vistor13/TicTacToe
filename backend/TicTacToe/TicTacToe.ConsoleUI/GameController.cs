@@ -9,7 +9,8 @@ public class GameController(
     IGameProcessor gameProcessor,
     IUiRender consoleRenderer,
     ICommandInvoker commandInvoker,
-    IInputProvider reader)
+    IInputProvider reader,
+    IMiniMaxAi aiBot)
 {
     public void Execute()
     {

@@ -39,6 +39,25 @@ namespace TicTacToe.Core.Models
             return CheckWin() ? GameState.Win : CheckDraw() ? GameState.Draw : GameState.Ongoing;
         }
 
+        public List<(int, int)> GetAvailableCells()
+        {
+            return Enumerable.Range(0, BoardSize)
+                .SelectMany(i => Enumerable.Range(0, BoardSize)
+                    .Where(j => Grid[i, j] == EmptyCell)
+                    .Select(j => (i, j)))
+                .ToList();
+        }
+
+        public Board Clone()
+        {
+            var board = new Board();
+            for (var i = 0; i < BoardSize; i++)
+            for (var j = 0; j < BoardSize; j++)
+                board.Grid[i, j] = Grid[i, j];
+
+            return board;
+        }
+
         private bool IsBoardFull()
         {
             for (var i = 0; i < BoardSize; i++)

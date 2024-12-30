@@ -37,7 +37,26 @@ namespace TicTacToe.Core.Services
             return Result.Success;
         }
 
-        public void InitializeGame()
+        public void Reset()
+        {
+            GameBoard = new Board();
+            State = GameState.NotStarted;
+            CurrentTurn = PlayerTurn.X;
+            GameModes = GameModes.NotDefined;
+        }
+
+        public GameProcessor Clone()
+        {
+            var clonedProcessor = new GameProcessor
+            {
+                GameBoard = GameBoard.Clone(),
+                State = State,
+                CurrentTurn = CurrentTurn
+            };
+            return clonedProcessor;
+        }
+
+        public void InitializeGame(bool isGameWithPlayer = true)
         {
             GameBoard = new Board();
             State = GameState.Ongoing;
