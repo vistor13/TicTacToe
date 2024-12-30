@@ -30,7 +30,7 @@ namespace TicTacToe.Core.Models
         public void MakeMove(MoveParameters moveParameters)
         {
             var (row, col, playerTurn) = moveParameters;
-            var currentPlayer = playerTurn is PlayerTurn.X ? 'X' : 'Y';
+            var currentPlayer = playerTurn is PlayerTurn.X ? 'X' : 'O';
             Grid[row, col] = currentPlayer;
         }
 
