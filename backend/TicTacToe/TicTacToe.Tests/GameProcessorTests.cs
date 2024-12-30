@@ -192,5 +192,24 @@ namespace TicTacToe.Tests
             // Assert
             Assert.Equal(GameState.Ongoing, gameStatus);
         }
+
+        [Fact]
+        public void GetBoard_ShouldReturnCurrentBoard()
+        {
+            // Arrange
+            var game = new GameProcessor();
+            game.InitializeGame();
+
+            // Act
+            var board = game.GetBoard();
+
+            // Assert
+            Assert.NotNull(board);
+            Assert.Equal(Board.BoardSize, board.Grid.GetLength(0));
+            Assert.Equal(Board.BoardSize, board.Grid.GetLength(1));
+            for (var i = 0; i < Board.BoardSize; i++)
+            for (var j = 0; j < Board.BoardSize; j++)
+                Assert.Equal(Board.EmptyCell, board.Grid[i, j]);
+        }
     }
 }
