@@ -10,6 +10,8 @@ var services = new ServiceCollection();
 
 //Commands
 services.AddScoped<StartCommand>();
+services.AddScoped<AiGameCommand>();
+services.AddScoped<PlayerGameCommand>();
 services.AddScoped<InstructionCommand>();
 services.AddScoped<ReplayCommand>();
 services.AddScoped<ExitCommand>();

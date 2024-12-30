@@ -18,6 +18,9 @@ public class CommandParser(IGameProcessor gameProcessor, IUiRender consoleRender
                 return moveCommand;
         }
 
+        if (input.StartsWith("game", StringComparison.OrdinalIgnoreCase))
+            input = string.Concat(input.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+
         if (!Enum.TryParse(input, true, out Command command))
         {
             consoleRenderer.RenderError(ConsoleMessages.Error.InvalidCommand);
@@ -27,6 +30,8 @@ public class CommandParser(IGameProcessor gameProcessor, IUiRender consoleRender
         return command switch
         {
             Command.Start => serviceProvider.GetRequiredService<StartCommand>(),
+            Command.GamePlayer => serviceProvider.GetRequiredService<PlayerGameCommand>(),
+            Command.GameAi => serviceProvider.GetRequiredService<AiGameCommand>(),
             Command.Help => serviceProvider.GetRequiredService<InstructionCommand>(),
             Command.Replay => serviceProvider.GetRequiredService<ReplayCommand>(),
             Command.Exit => serviceProvider.GetRequiredService<ExitCommand>(),

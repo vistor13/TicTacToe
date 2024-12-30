@@ -10,6 +10,7 @@ namespace TicTacToe.Core.Services
         public Board GameBoard { get; private set; } = null!;
         public GameState State { get; private set; } = GameState.NotStarted;
         public PlayerTurn CurrentTurn { get; private set; }
+        public GameModes GameModes { get; private set; }
 
         public ErrorOr<Success> MakeMove(MoveParameters moveParameters)
         {
@@ -61,6 +62,7 @@ namespace TicTacToe.Core.Services
             GameBoard = new Board();
             State = GameState.Ongoing;
             CurrentTurn = PlayerTurn.X;
+            GameModes = isGameWithPlayer ? GameModes.GameWithPlayer : GameModes.GameWithAi;
         }
 
         public Board GetBoard()

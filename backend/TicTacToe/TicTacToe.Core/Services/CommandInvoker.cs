@@ -9,12 +9,13 @@ namespace TicTacToe.Core.Services;
 public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
 {
     private readonly List<Type> _commonCommands = InitializeCommonCommands();
+    private readonly List<Type> _modesCommands = InitializeModesCommands();
 
     public ErrorOr<Success> Execute(ICommand command)
     {
         var commandType = command.GetType();
 
-        if (gameProcessor.State == GameState.NotStarted && commandType == typeof(StartCommand))
+        if (gameProcessor.GameModes == GameModes.NotDefined && _modesCommands.Contains(commandType))
             return command.Execute();
 
         if (gameProcessor.State != GameState.NotStarted && commandType == typeof(ReplayCommand))
@@ -28,6 +29,15 @@ public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
             "ExecuteCommand",
             Messages.Error.CommandNotAllowed
         );
+    }
+
+    private static List<Type> InitializeModesCommands()
+    {
+        return
+        [
+            typeof(AiGameCommand),
+            typeof(PlayerGameCommand)
+        ];
     }
 
     private static List<Type> InitializeCommonCommands()
