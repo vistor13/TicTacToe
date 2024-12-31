@@ -1,4 +1,5 @@
-﻿using TicTacToe.Core.BoardValidator;
+﻿using ErrorOr;
+using TicTacToe.Core.BoardValidator;
 using TicTacToe.Core.Interfaces;
 
 namespace TicTacToe.Core.Models
@@ -12,9 +13,18 @@ namespace TicTacToe.Core.Models
         private readonly List<IValidator> _validators = InitializeValidators();
         public char[,] Grid { get; } = InitializeBoard();
 
-        public bool CanMakeMove(MoveParameters moveParameters)
+        public char GetCell(int row, int col)
         {
-            return _validators.All(validator => validator.Validate(moveParameters, this));
+            return Grid[row, col];
+        }
+
+        public ErrorOr<Success> CanMakeMove(MoveParameters moveParameters)
+        {
+            foreach (var validationResult in _validators.Select(validator => validator.Validate(moveParameters, this))
+                         .Where(validationResult => validationResult.IsError))
+                return validationResult.Errors;
+
+            return Result.Success;
         }
 
         public void MakeMove(MoveParameters moveParameters)
