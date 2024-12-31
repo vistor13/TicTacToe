@@ -20,7 +20,7 @@ services.AddScoped<IGameProcessor, GameProcessor>();
 services.AddScoped<IUiRender, ConsoleRenderer>();
 services.AddScoped<ICommandInvoker, CommandInvoker>();
 services.AddScoped<ICommandParser, CommandParser>();
-services.AddScoped<IInputProvider, InputReader>();
+services.AddScoped<IInputProvider, InputProvider>();
 services.AddScoped<IMiniMaxAi, MiniMaxAi>();
 services.AddScoped<GameController>();
 

@@ -26,9 +26,10 @@ public class GameController(
                 continue;
             }
 
-            if (gameProcessor.GameModes == GameModes.GameWithAi)
+            if (gameProcessor.GameMode == GameModes.GameWithAi)
                 PlayWithAi();
-            else if (gameProcessor.GameModes == GameModes.GameWithPlayer) PlayTwoPlayers();
+            else if (gameProcessor.GameMode == GameModes.GameWithPlayer)
+                PlayTwoPlayers();
         }
     }
 
@@ -55,7 +56,7 @@ public class GameController(
 
     private void PlayGameLoop(Action aiMoveAction)
     {
-        while (gameProcessor.GameModes != GameModes.NotDefined)
+        while (gameProcessor.GameMode != GameModes.NotDefined)
         {
             var command = GetCommand();
             var executionResult = commandInvoker.Execute(command);

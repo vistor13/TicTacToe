@@ -10,7 +10,7 @@ namespace TicTacToe.Core.Services
         public Board GameBoard { get; private set; } = null!;
         public GameState State { get; private set; } = GameState.NotStarted;
         public PlayerTurn CurrentTurn { get; private set; }
-        public GameModes GameModes { get; private set; }
+        public GameModes GameMode { get; private set; }
 
         public ErrorOr<Success> MakeMove(MoveParameters moveParameters)
         {
@@ -43,7 +43,7 @@ namespace TicTacToe.Core.Services
             GameBoard = new Board();
             State = GameState.NotStarted;
             CurrentTurn = PlayerTurn.X;
-            GameModes = GameModes.NotDefined;
+            GameMode = GameModes.NotDefined;
         }
 
         public GameProcessor Clone()
@@ -57,12 +57,12 @@ namespace TicTacToe.Core.Services
             return clonedProcessor;
         }
 
-        public void InitializeGame(bool isGameWithPlayer = true)
+        public void InitializeGame(bool twoPlayerGame = true)
         {
             GameBoard = new Board();
             State = GameState.Ongoing;
             CurrentTurn = PlayerTurn.X;
-            GameModes = isGameWithPlayer ? GameModes.GameWithPlayer : GameModes.GameWithAi;
+            GameMode = twoPlayerGame ? GameModes.GameWithPlayer : GameModes.GameWithAi;
         }
 
         public Board GetBoard()

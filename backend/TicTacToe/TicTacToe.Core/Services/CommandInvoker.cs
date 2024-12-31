@@ -15,13 +15,13 @@ public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
     {
         var commandType = command.GetType();
 
-        if (gameProcessor.GameModes == GameModes.NotDefined && _modesCommands.Contains(commandType))
+        if (gameProcessor.GameMode == GameModes.NotDefined && _modesCommands.Contains(commandType))
             return command.Execute();
 
         if (gameProcessor.State != GameState.NotStarted && commandType == typeof(ReplayCommand))
             return command.Execute();
 
-        if (gameProcessor.GameModes != GameModes.NotDefined && commandType == typeof(ExitCommand))
+        if (gameProcessor.GameMode != GameModes.NotDefined && commandType == typeof(ExitCommand))
             return command.Execute();
 
         if ((gameProcessor.State == GameState.Ongoing && commandType == typeof(MoveCommand)) ||

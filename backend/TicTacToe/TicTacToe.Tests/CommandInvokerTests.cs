@@ -23,7 +23,7 @@ public class CommandInvokerTests
     public void Execute_ShouldReturnSuccess_WhenPlayerGameCommandExecutedAndModeNotDefined()
     {
         // Arrange
-        _gameProcessorMock.Setup(g => g.GameModes).Returns(GameModes.NotDefined);
+        _gameProcessorMock.Setup(g => g.GameMode).Returns(GameModes.NotDefined);
         var command = new PlayerGameCommand(_gameProcessorMock.Object, _consoleRendererMock.Object);
 
         // Act
@@ -39,7 +39,7 @@ public class CommandInvokerTests
     public void Execute_ShouldReturnSuccess_WhenAiGameCommandExecutedAndModeNotDefined()
     {
         // Arrange
-        _gameProcessorMock.Setup(g => g.GameModes).Returns(GameModes.NotDefined);
+        _gameProcessorMock.Setup(g => g.GameMode).Returns(GameModes.NotDefined);
         var command = new AiGameCommand(_gameProcessorMock.Object, _consoleRendererMock.Object);
 
         // Act
@@ -55,7 +55,7 @@ public class CommandInvokerTests
     public void Execute_ShouldReturnError_WhenPlayerGameCommandNotExecutedAndModeGameAi()
     {
         // Arrange
-        _gameProcessorMock.Setup(g => g.GameModes).Returns(GameModes.GameWithAi);
+        _gameProcessorMock.Setup(g => g.GameMode).Returns(GameModes.GameWithAi);
         var command = new PlayerGameCommand(_gameProcessorMock.Object, _consoleRendererMock.Object);
 
         // Act
@@ -113,7 +113,7 @@ public class CommandInvokerTests
     public void Execute_ShouldReturnSuccess_WhenExitIsExecuted()
     {
         // Arrange
-        _gameProcessorMock.Setup(g => g.GameModes).Returns(GameModes.GameWithAi);
+        _gameProcessorMock.Setup(g => g.GameMode).Returns(GameModes.GameWithAi);
         var command = new ExitCommand(_gameProcessorMock.Object, _consoleRendererMock.Object);
 
         // Act
@@ -143,7 +143,7 @@ public class CommandInvokerTests
     public void Execute_ShouldReturnError_WhenCommandIsNotAllowedInCurrentState()
     {
         // Arrange
-        _gameProcessorMock.Setup(g => g.GameModes).Returns(GameModes.GameWithAi);
+        _gameProcessorMock.Setup(g => g.GameMode).Returns(GameModes.GameWithAi);
         var command = new PlayerGameCommand(_gameProcessorMock.Object, _consoleRendererMock.Object);
 
         // Act

@@ -9,7 +9,7 @@ public class ReplayCommand(IGameProcessor gameProcessor, IUiRender consoleRender
 {
     public ErrorOr<Success> Execute()
     {
-        gameProcessor.InitializeGame(gameProcessor.GameModes != GameModes.GameWithAi);
+        gameProcessor.InitializeGame(gameProcessor.GameMode != GameModes.GameWithAi);
         consoleRenderer.RenderMessage(
             string.Format(Messages.GameProcess.RestartNotification, gameProcessor.CurrentTurn));
         return Result.Success;

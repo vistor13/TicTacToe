@@ -8,9 +8,9 @@ public interface IGameProcessor
 {
     GameState State { get; }
     PlayerTurn CurrentTurn { get; }
-    GameModes GameModes { get; }
+    GameModes GameMode { get; }
     ErrorOr<Success> MakeMove(MoveParameters moveParameters);
-    void InitializeGame(bool isGameWithPlayer = true);
+    void InitializeGame(bool twoPlayerGame = true);
     Board GetBoard();
     GameProcessor Clone();
     void Reset();
