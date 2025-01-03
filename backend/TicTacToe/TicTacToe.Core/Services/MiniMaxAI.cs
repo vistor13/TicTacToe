@@ -3,14 +3,14 @@ using TicTacToe.Core.Models;
 
 namespace TicTacToe.Core.Services;
 
-public class MiniMaxAi(IGameProcessor gameProcessor) : IMiniMaxAi
+public class MiniMaxAi(IGameProcessor gameProcessor, IGameStateService gameStateService) : IMiniMaxAi
 {
     private const int WinScore = 10;
     private const int DrawScore = 0;
 
     public MoveParameters FindBestMove()
     {
-        var player = gameProcessor.CurrentTurn;
+        var player = gameStateService.CurrentTurn;
         var opponent = player == PlayerTurn.X ? PlayerTurn.О : PlayerTurn.X;
         var bestScore = int.MinValue;
         (int row, int col) bestMove = (-1, -1);

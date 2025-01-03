@@ -6,12 +6,10 @@ namespace TicTacToe.Core.Interfaces;
 
 public interface IGameProcessor
 {
-    GameState State { get; }
-    PlayerTurn CurrentTurn { get; }
-    GameModes GameMode { get; }
     ErrorOr<Success> MakeMove(MoveParameters moveParameters);
     void InitializeGame(bool twoPlayerGame = true);
     Board GetBoard();
     GameProcessor Clone();
+    ErrorOr<Success> AiMakeMove(out MoveParameters moveParameters);
     void Reset();
 }

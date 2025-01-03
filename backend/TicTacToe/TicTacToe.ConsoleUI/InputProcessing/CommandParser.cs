@@ -6,7 +6,11 @@ using TicTacToe.Core.Models;
 
 namespace TicTacToe.ConsoleUI.InputProcessing;
 
-public class CommandParser(IGameProcessor gameProcessor, IUiRender consoleRenderer, IServiceProvider serviceProvider)
+public class CommandParser(
+    IGameProcessor gameProcessor,
+    IUiRender consoleRenderer,
+    IServiceProvider serviceProvider,
+    IGameStateService gameStateService)
     : ICommandParser
 {
     public ICommand? CommandParse(string? input)
@@ -59,7 +63,7 @@ public class CommandParser(IGameProcessor gameProcessor, IUiRender consoleRender
             return false;
         }
 
-        moveParameters = new MoveParameters(row - 1, col - 1, gameProcessor.CurrentTurn);
+        moveParameters = new MoveParameters(row - 1, col - 1, gameStateService.CurrentTurn);
         return true;
     }
 }

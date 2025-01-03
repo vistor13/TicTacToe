@@ -5,22 +5,25 @@ using TicTacToe.Core.Models;
 
 namespace TicTacToe.Core.Services
 {
-    public class GameProcessor : IGameProcessor
+    public class GameProcessor(IMiniMaxAi aiBot, IGameStateService gameStateService) : IGameProcessor
     {
-        public Board GameBoard { get; private set; } = null!;
-        public GameState State { get; private set; } = GameState.NotStarted;
-        public PlayerTurn CurrentTurn { get; private set; }
-        public GameModes GameMode { get; private set; }
+        private Board GameBoard { get; set; } = null!;
+
+        public ErrorOr<Success> AiMakeMove(out MoveParameters moveParameters)
+        {
+            moveParameters = aiBot.FindBestMove();
+            return MakeMove(moveParameters);
+        }
 
         public ErrorOr<Success> MakeMove(MoveParameters moveParameters)
         {
-            if (State != GameState.Ongoing)
+            if (gameStateService.State != GameState.Ongoing)
                 return Error.Validation(
                     "InvalidGameState",
                     Messages.Error.InvalidGameState
                 );
 
-            if (CurrentTurn != moveParameters.PlayerTurn)
+            if (gameStateService.CurrentTurn != moveParameters.PlayerTurn)
                 return Error.Validation(
                     "InvalidCurrentPlayer",
                     Messages.Error.InvalidCurrentPlayer
@@ -31,9 +34,9 @@ namespace TicTacToe.Core.Services
                 return canMakeMoveResult.Errors;
 
             GameBoard.MakeMove(moveParameters);
-            State = GameBoard.GetGameStatus();
+            gameStateService.SetState(GameBoard.GetGameStatus());
 
-            if (State == GameState.Ongoing) SwitchTurn();
+            if (gameStateService.State == GameState.Ongoing) SwitchTurn();
 
             return Result.Success;
         }
@@ -41,18 +44,14 @@ namespace TicTacToe.Core.Services
         public void Reset()
         {
             GameBoard = new Board();
-            State = GameState.NotStarted;
-            CurrentTurn = PlayerTurn.X;
-            GameMode = GameModes.NotDefined;
+            gameStateService.Reset();
         }
 
         public GameProcessor Clone()
         {
-            var clonedProcessor = new GameProcessor
+            var clonedProcessor = new GameProcessor(aiBot, gameStateService)
             {
-                GameBoard = GameBoard.Clone(),
-                State = State,
-                CurrentTurn = CurrentTurn
+                GameBoard = GameBoard.Clone()
             };
             return clonedProcessor;
         }
@@ -60,9 +59,9 @@ namespace TicTacToe.Core.Services
         public void InitializeGame(bool twoPlayerGame = true)
         {
             GameBoard = new Board();
-            State = GameState.Ongoing;
-            CurrentTurn = PlayerTurn.X;
-            GameMode = twoPlayerGame ? GameModes.GameWithPlayer : GameModes.GameWithAi;
+            gameStateService.SetState(GameState.Ongoing);
+            gameStateService.SetCurrentTurn(PlayerTurn.X);
+            gameStateService.SetGameMode(twoPlayerGame ? GameModes.GameWithPlayer : GameModes.GameWithAi);
         }
 
         public Board GetBoard()
@@ -72,7 +71,8 @@ namespace TicTacToe.Core.Services
 
         private void SwitchTurn()
         {
-            CurrentTurn = CurrentTurn is PlayerTurn.X ? PlayerTurn.О : PlayerTurn.X;
+            var nextTurn = gameStateService.CurrentTurn == PlayerTurn.X ? PlayerTurn.О : PlayerTurn.X;
+            gameStateService.SetCurrentTurn(nextTurn);
         }
     }
 }

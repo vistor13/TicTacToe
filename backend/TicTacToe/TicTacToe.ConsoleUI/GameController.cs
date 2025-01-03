@@ -11,7 +11,7 @@ public class GameController(
     IUiRender consoleRenderer,
     ICommandInvoker commandInvoker,
     IInputProvider reader,
-    IMiniMaxAi aiBot)
+    IGameStateService gameStateService)
 {
     public void Execute()
     {
@@ -26,37 +26,14 @@ public class GameController(
                 continue;
             }
 
-            if (gameProcessor.GameMode == GameModes.GameWithAi)
-                PlayWithAi();
-            else if (gameProcessor.GameMode == GameModes.GameWithPlayer)
-                PlayTwoPlayers();
+            if (gameStateService.GameMode != GameModes.GameWithAi)
+                PlayGameLoop();
         }
     }
 
-    private void PlayWithAi()
+    private void PlayGameLoop()
     {
-        PlayGameLoop(
-            () =>
-            {
-                var aiMove = aiBot.FindBestMove();
-                var aiMoveCommand = new MoveCommand(gameProcessor, aiMove);
-                consoleRenderer.RenderMessage(
-                    string.Format(Messages.GameProcess.AiMove, aiMove.Row + 1, aiMove.Col + 1));
-                commandInvoker.Execute(aiMoveCommand);
-                var showAiCommand = new ShowBoardCommand(gameProcessor, consoleRenderer);
-                showAiCommand.Execute();
-            }
-        );
-    }
-
-    private void PlayTwoPlayers()
-    {
-        PlayGameLoop(() => { });
-    }
-
-    private void PlayGameLoop(Action aiMoveAction)
-    {
-        while (gameProcessor.GameMode != GameModes.NotDefined)
+        while (gameStateService.GameMode != GameModes.NotDefined)
         {
             var command = GetCommand();
             var executionResult = commandInvoker.Execute(command);
@@ -67,30 +44,32 @@ public class GameController(
                 continue;
             }
 
-            if (command is MoveCommand)
-            {
-                var showCommand = new ShowBoardCommand(gameProcessor, consoleRenderer);
-                showCommand.Execute();
+            if (command is not MoveCommand) continue;
+            var showCommand = new ShowBoardCommand(gameProcessor, consoleRenderer);
+            showCommand.Execute();
 
-                if (HandleGameEndState()) break;
+            if (HandleGameEndState()) break;
 
-                aiMoveAction.Invoke();
-
-                if (HandleGameEndState()) break;
-            }
+            if (gameStateService.GameMode != GameModes.GameWithAi) continue;
+            gameProcessor.AiMakeMove(out var aiMove);
+            consoleRenderer.RenderMessage(
+                string.Format(Messages.GameProcess.AiMove, aiMove.Row + 1, aiMove.Col + 1));
+            var showAiCommand = new ShowBoardCommand(gameProcessor, consoleRenderer);
+            showAiCommand.Execute();
+            if (HandleGameEndState()) break;
         }
     }
 
     private bool HandleGameEndState()
     {
-        if (gameProcessor.State == GameState.Win)
+        if (gameStateService.State == GameState.Win)
         {
-            consoleRenderer.RenderWin(gameProcessor.CurrentTurn);
+            consoleRenderer.RenderWin(gameStateService.CurrentTurn);
             consoleRenderer.RenderProposeRestoreGame();
             return true;
         }
 
-        if (gameProcessor.State == GameState.Draw)
+        if (gameStateService.State == GameState.Draw)
         {
             consoleRenderer.RenderDraw();
             consoleRenderer.RenderProposeRestoreGame();
