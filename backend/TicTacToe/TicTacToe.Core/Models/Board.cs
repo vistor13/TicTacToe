@@ -100,6 +100,11 @@ namespace TicTacToe.Core.Models
         {
             if (IsBoardFull())
                 return true;
+            var getOpponentSymbol = CurrentTurn == PlayerTurn.X ? 'O' : 'X';
+            if (GetAvailableCells().Count is 1)
+                return !CheckLines(uniqueCells =>
+                    uniqueCells.Count == 2 &&
+                    uniqueCells.Contains(getOpponentSymbol) && uniqueCells.Contains(EmptyCell));
 
             return !CheckLines(uniqueCells => uniqueCells.Count == 2 && uniqueCells.Contains(EmptyCell));
         }
@@ -107,7 +112,6 @@ namespace TicTacToe.Core.Models
         private bool CheckLines(Predicate<HashSet<char>> condition)
         {
             var lines = GetAllLines();
-
             return lines.Select(line => new HashSet<char>(line)).Any(uniqueCells => condition(uniqueCells));
         }
 
