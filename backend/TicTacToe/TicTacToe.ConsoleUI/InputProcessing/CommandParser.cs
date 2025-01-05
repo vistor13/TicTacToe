@@ -24,27 +24,24 @@ public class CommandParser(
         if (input.StartsWith("game", StringComparison.OrdinalIgnoreCase))
             input = string.Concat(input.Split(' ', StringSplitOptions.RemoveEmptyEntries));
 
-        if (!Enum.TryParse(input, true, out Command command))
-        {
-            consoleRenderer.RenderError(ConsoleMessages.Error.InvalidCommand);
-            return null;
-        }
-
-        return command switch
-        {
-            Command.GamePlayer => serviceProvider.GetRequiredService<PlayerGameCommand>(),
-            Command.GameAi => serviceProvider.GetRequiredService<AiGameCommand>(),
-            Command.Help => serviceProvider.GetRequiredService<InstructionCommand>(),
-            Command.Replay => serviceProvider.GetRequiredService<ReplayCommand>(),
-            Command.Exit => serviceProvider.GetRequiredService<ExitCommand>(),
-            Command.End => serviceProvider.GetRequiredService<EndGameCommand>(),
-            _ => null
-        };
+        if (Enum.TryParse(input, true, out Command command))
+            return command switch
+            {
+                Command.GamePlayer => serviceProvider.GetRequiredService<PlayerGameCommand>(),
+                Command.GameAi => serviceProvider.GetRequiredService<AiGameCommand>(),
+                Command.Help => serviceProvider.GetRequiredService<InstructionCommand>(),
+                Command.Replay => serviceProvider.GetRequiredService<ReplayCommand>(),
+                Command.Exit => serviceProvider.GetRequiredService<ExitCommand>(),
+                Command.End => serviceProvider.GetRequiredService<EndGameCommand>(),
+                _ => null
+            };
+        consoleRenderer.RenderError(ConsoleMessages.Error.InvalidCommand);
+        return null;
     }
 
     private ICommand? ParseMoveCommand(string input)
     {
-        var moveData = input.Substring(4).Trim();
+        var moveData = input[4..].Trim();
         return TryParseMove(moveData, out var moveParameters)
             ? new MoveCommand(gameProcessor, moveParameters)
             : null;
