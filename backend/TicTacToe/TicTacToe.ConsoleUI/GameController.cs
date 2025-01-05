@@ -15,7 +15,8 @@ public class GameController(
     public void Execute()
     {
         consoleRenderer.RenderWelcome();
-        while (true)
+        var isEnded = true;
+        while (isEnded)
         {
             var command = GetCommand();
             var executionResult = commandInvoker.Execute(command);
@@ -25,14 +26,15 @@ public class GameController(
                 continue;
             }
 
-            if (gameStateService.GameMode != GameModes.GameWithAi)
+            if (gameProcessor.GameMode != GameModes.NotDefined)
                 PlayGameLoop();
+            if (!gameProcessor.IsRunning) isEnded = false;
         }
     }
 
     private void PlayGameLoop()
     {
-        while (gameStateService.GameMode != GameModes.NotDefined)
+        while (gameProcessor.IsRunning)
         {
             var command = GetCommand();
             var executionResult = commandInvoker.Execute(command);

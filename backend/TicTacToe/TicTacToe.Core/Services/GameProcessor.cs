@@ -7,7 +7,11 @@ namespace TicTacToe.Core.Services
 {
     public class GameProcessor(IMiniMaxAi aiBot) : IGameProcessor
     {
-        private Board GameBoard { get; set; } = null!;
+        private Board GameBoard { get; set; } = new();
+
+        public bool IsRunning { get; set; } = true;
+
+        public GameModes GameMode { get; private set; } = GameModes.NotDefined;
 
         public ErrorOr<Success> AiMakeMove(out MoveParameters moveParameters)
         {

@@ -3,11 +3,11 @@ using TicTacToe.Core.Interfaces;
 
 namespace TicTacToe.Core.Commands;
 
-public class EndGameCommand : ICommand
+public class EndGameCommand(IGameProcessor gameProcessor) : ICommand
 {
     public ErrorOr<Success> Execute()
     {
-        Environment.Exit(0);
+        gameProcessor.IsRunning = false;
         return Result.Success;
     }
 }
