@@ -11,6 +11,10 @@ namespace TicTacToe.Core.Models
         public const char EmptyCell = ' ';
 
         private readonly List<IValidator> _validators = InitializeValidators();
+
+        public GameState State { get; private set; } = GameState.NotStarted;
+
+        public PlayerTurn CurrentTurn { get; private set; }
         public char[,] Grid { get; } = InitializeBoard();
 
         public char GetCell(int row, int col)
@@ -18,25 +22,25 @@ namespace TicTacToe.Core.Models
             return Grid[row, col];
         }
 
-        public ErrorOr<Success> CanMakeMove(MoveParameters moveParameters)
+        public void InitializeGameState()
         {
-            foreach (var validationResult in _validators.Select(validator => validator.Validate(moveParameters, this))
-                         .Where(validationResult => validationResult.IsError))
-                return validationResult.Errors;
-
-            return Result.Success;
+            State = GameState.Ongoing;
         }
 
-        public void MakeMove(MoveParameters moveParameters)
+        public ErrorOr<Success> MakeMove(MoveParameters moveParameters)
         {
+            var canMakeMoveResult = CanMakeMove(moveParameters);
+            if (canMakeMoveResult.IsError)
+                return canMakeMoveResult.Errors;
+
             var (row, col, playerTurn) = moveParameters;
             var currentPlayer = playerTurn is PlayerTurn.X ? 'X' : 'O';
             Grid[row, col] = currentPlayer;
-        }
+            State = GetGameStatus();
 
-        public GameState GetGameStatus()
-        {
-            return CheckWin() ? GameState.Win : CheckDraw() ? GameState.Draw : GameState.Ongoing;
+            if (State == GameState.Ongoing) SwitchTurn();
+
+            return Result.Success;
         }
 
         public List<(int, int)> GetAvailableCells()
@@ -48,14 +52,13 @@ namespace TicTacToe.Core.Models
                 .ToList();
         }
 
-        public Board Clone()
+        private ErrorOr<Success> CanMakeMove(MoveParameters moveParameters)
         {
-            var board = new Board();
-            for (var i = 0; i < BoardSize; i++)
-            for (var j = 0; j < BoardSize; j++)
-                board.Grid[i, j] = Grid[i, j];
+            foreach (var validationResult in _validators.Select(validator => validator.Validate(moveParameters, this))
+                         .Where(validationResult => validationResult.IsError))
+                return validationResult.Errors;
 
-            return board;
+            return Result.Success;
         }
 
         private bool IsBoardFull()
@@ -81,6 +84,11 @@ namespace TicTacToe.Core.Models
             lines.Add(Enumerable.Range(0, BoardSize).Select(i => Grid[i, BoardSize - i - 1]).ToList());
 
             return lines;
+        }
+
+        public GameState GetGameStatus()
+        {
+            return CheckWin() ? GameState.Win : CheckDraw() ? GameState.Draw : GameState.Ongoing;
         }
 
         private bool CheckWin()
@@ -120,6 +128,11 @@ namespace TicTacToe.Core.Models
                 new BoundsValidator(),
                 new OwnerCellValidator()
             ];
+        }
+
+        private void SwitchTurn()
+        {
+            CurrentTurn = CurrentTurn is PlayerTurn.X ? PlayerTurn.О : PlayerTurn.X;
         }
     }
 }

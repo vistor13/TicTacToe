@@ -22,7 +22,6 @@ services.AddScoped<ICommandInvoker, CommandInvoker>();
 services.AddScoped<ICommandParser, CommandParser>();
 services.AddScoped<IInputProvider, InputProvider>();
 services.AddScoped<IMiniMaxAi, MiniMaxAi>();
-services.AddScoped<IGameStateService, GameStateService>();
 services.AddScoped<GameController>();
 
 var serviceProvider = services.BuildServiceProvider();

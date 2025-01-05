@@ -7,14 +7,13 @@ namespace TicTacToe.Core.Commands;
 
 public class ReplayCommand(
     IGameProcessor gameProcessor,
-    IUiRender consoleRenderer,
-    IGameStateService gameStateService) : ICommand
+    IUiRender consoleRenderer) : ICommand
 {
     public ErrorOr<Success> Execute()
     {
-        gameProcessor.InitializeGame(gameStateService.GameMode != GameModes.GameWithAi);
+        gameProcessor.InitializeGame(gameProcessor.GameMode != GameModes.GameWithAi);
         consoleRenderer.RenderMessage(
-            string.Format(Messages.GameProcess.RestartNotification, gameStateService.CurrentTurn));
+            string.Format(Messages.GameProcess.RestartNotification, gameProcessor.GetBoard().CurrentTurn));
         return Result.Success;
     }
 }

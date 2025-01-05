@@ -9,8 +9,7 @@ namespace TicTacToe.ConsoleUI.InputProcessing;
 public class CommandParser(
     IGameProcessor gameProcessor,
     IUiRender consoleRenderer,
-    IServiceProvider serviceProvider,
-    IGameStateService gameStateService)
+    IServiceProvider serviceProvider)
     : ICommandParser
 {
     public ICommand? CommandParse(string? input)
@@ -63,7 +62,7 @@ public class CommandParser(
             return false;
         }
 
-        moveParameters = new MoveParameters(row - 1, col - 1, gameStateService.CurrentTurn);
+        moveParameters = new MoveParameters(row - 1, col - 1, gameProcessor.GetBoard().CurrentTurn);
         return true;
     }
 }

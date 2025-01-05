@@ -6,7 +6,7 @@ using TicTacToe.Core.Models;
 
 namespace TicTacToe.Core.Services;
 
-public class CommandInvoker(IGameProcessor gameProcessor, IGameStateService gameStateService) : ICommandInvoker
+public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
 {
     private readonly List<Type> _commonCommands = InitializeCommonCommands();
     private readonly List<Type> _modesCommands = InitializeModesCommands();
@@ -15,16 +15,16 @@ public class CommandInvoker(IGameProcessor gameProcessor, IGameStateService game
     {
         var commandType = command.GetType();
 
-        if (gameStateService.GameMode == GameModes.NotDefined && _modesCommands.Contains(commandType))
+        if (gameProcessor.GameMode == GameModes.NotDefined && _modesCommands.Contains(commandType))
             return command.Execute();
 
-        if (gameStateService.State != GameState.NotStarted && commandType == typeof(ReplayCommand))
+        if (gameProcessor.GameMode != GameModes.NotDefined && commandType == typeof(ExitCommand))
             return command.Execute();
 
-        if (gameStateService.GameMode != GameModes.NotDefined && commandType == typeof(ExitCommand))
+        if (gameProcessor.GetBoard().State != GameState.NotStarted && commandType == typeof(ReplayCommand))
             return command.Execute();
 
-        if ((gameStateService.State == GameState.Ongoing && commandType == typeof(MoveCommand)) ||
+        if ((gameProcessor.GetBoard().State == GameState.Ongoing && commandType == typeof(MoveCommand)) ||
             _commonCommands.Contains(commandType))
             return command.Execute();
 

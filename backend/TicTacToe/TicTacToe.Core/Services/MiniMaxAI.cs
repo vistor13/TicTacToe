@@ -1,39 +1,38 @@
+using Force.DeepCloner;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
 namespace TicTacToe.Core.Services;
 
-public class MiniMaxAi(IGameProcessor gameProcessor, IGameStateService gameStateService) : IMiniMaxAi
+public class MiniMaxAi : IMiniMaxAi
 {
     private const int WinScore = 10;
     private const int DrawScore = 0;
 
-    public MoveParameters FindBestMove()
+    public MoveParameters FindBestMove(Board board)
     {
-        var player = gameStateService.CurrentTurn;
+        var player = board.CurrentTurn;
         var opponent = player == PlayerTurn.X ? PlayerTurn.О : PlayerTurn.X;
         var bestScore = int.MinValue;
         (int row, int col) bestMove = (-1, -1);
 
-        var availableCells = gameProcessor.GetBoard().GetAvailableCells();
+        var availableCells = board.GetAvailableCells();
 
         foreach (var (row, col) in availableCells)
         {
-            var clonedProcessor = gameProcessor.Clone();
+            var clonedBoard = board.DeepClone();
 
             var moveParameters = new MoveParameters(row, col, player);
 
-            var result = clonedProcessor.MakeMove(moveParameters);
+            var result = clonedBoard.MakeMove(moveParameters);
 
             if (result.IsError) continue;
 
-            var moveScore = MiniMax(clonedProcessor.GetBoard(), false, player, opponent);
+            var moveScore = MiniMax(clonedBoard, false, player, opponent);
 
-            if (moveScore > bestScore)
-            {
-                bestScore = moveScore;
-                bestMove = (row, col);
-            }
+            if (moveScore <= bestScore) continue;
+            bestScore = moveScore;
+            bestMove = (row, col);
         }
 
         return new MoveParameters(bestMove.row, bestMove.col, player);
@@ -54,7 +53,7 @@ public class MiniMaxAi(IGameProcessor gameProcessor, IGameStateService gameState
 
         foreach (var (row, col) in availableCells)
         {
-            var clonedBoard = board.Clone();
+            var clonedBoard = board.DeepClone();
             clonedBoard.MakeMove(new MoveParameters(row, col, isMaximizing ? player : opponent));
 
             var currentScore = MiniMax(clonedBoard, !isMaximizing, player, opponent);

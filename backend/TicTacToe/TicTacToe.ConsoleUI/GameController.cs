@@ -10,8 +10,7 @@ public class GameController(
     IGameProcessor gameProcessor,
     IUiRender consoleRenderer,
     ICommandInvoker commandInvoker,
-    IInputProvider reader,
-    IGameStateService gameStateService)
+    IInputProvider reader)
 {
     public void Execute()
     {
@@ -50,7 +49,7 @@ public class GameController(
 
             if (HandleGameEndState()) break;
 
-            if (gameStateService.GameMode != GameModes.GameWithAi) continue;
+            if (gameProcessor.GameMode != GameModes.GameWithAi) continue;
             gameProcessor.AiMakeMove(out var aiMove);
             consoleRenderer.RenderMessage(
                 string.Format(Messages.GameProcess.AiMove, aiMove.Row + 1, aiMove.Col + 1));
@@ -62,14 +61,14 @@ public class GameController(
 
     private bool HandleGameEndState()
     {
-        if (gameStateService.State == GameState.Win)
+        if (gameProcessor.GetBoard().State == GameState.Win)
         {
-            consoleRenderer.RenderWin(gameStateService.CurrentTurn);
+            consoleRenderer.RenderWin(gameProcessor.GetBoard().CurrentTurn);
             consoleRenderer.RenderProposeRestoreGame();
             return true;
         }
 
-        if (gameStateService.State == GameState.Draw)
+        if (gameProcessor.GetBoard().State == GameState.Draw)
         {
             consoleRenderer.RenderDraw();
             consoleRenderer.RenderProposeRestoreGame();

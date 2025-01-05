@@ -5,38 +5,33 @@ using TicTacToe.Core.Models;
 
 namespace TicTacToe.Core.Services
 {
-    public class GameProcessor(IMiniMaxAi aiBot, IGameStateService gameStateService) : IGameProcessor
+    public class GameProcessor(IMiniMaxAi aiBot) : IGameProcessor
     {
         private Board GameBoard { get; set; } = null!;
 
         public ErrorOr<Success> AiMakeMove(out MoveParameters moveParameters)
         {
-            moveParameters = aiBot.FindBestMove();
+            moveParameters = aiBot.FindBestMove(GameBoard);
             return MakeMove(moveParameters);
         }
 
         public ErrorOr<Success> MakeMove(MoveParameters moveParameters)
         {
-            if (gameStateService.State != GameState.Ongoing)
+            if (GameBoard.State != GameState.Ongoing)
                 return Error.Validation(
                     "InvalidGameState",
                     Messages.Error.InvalidGameState
                 );
 
-            if (gameStateService.CurrentTurn != moveParameters.PlayerTurn)
+            if (GameBoard.CurrentTurn != moveParameters.PlayerTurn)
                 return Error.Validation(
                     "InvalidCurrentPlayer",
                     Messages.Error.InvalidCurrentPlayer
                 );
 
-            var canMakeMoveResult = GameBoard.CanMakeMove(moveParameters);
-            if (canMakeMoveResult.IsError)
-                return canMakeMoveResult.Errors;
-
-            GameBoard.MakeMove(moveParameters);
-            gameStateService.SetState(GameBoard.GetGameStatus());
-
-            if (gameStateService.State == GameState.Ongoing) SwitchTurn();
+            var makeMove = GameBoard.MakeMove(moveParameters);
+            if (makeMove.IsError)
+                return makeMove.Errors;
 
             return Result.Success;
         }
@@ -44,35 +39,19 @@ namespace TicTacToe.Core.Services
         public void Reset()
         {
             GameBoard = new Board();
-            gameStateService.Reset();
-        }
-
-        public GameProcessor Clone()
-        {
-            var clonedProcessor = new GameProcessor(aiBot, gameStateService)
-            {
-                GameBoard = GameBoard.Clone()
-            };
-            return clonedProcessor;
+            GameMode = GameModes.NotDefined;
         }
 
         public void InitializeGame(bool twoPlayerGame = true)
         {
             GameBoard = new Board();
-            gameStateService.SetState(GameState.Ongoing);
-            gameStateService.SetCurrentTurn(PlayerTurn.X);
-            gameStateService.SetGameMode(twoPlayerGame ? GameModes.GameWithPlayer : GameModes.GameWithAi);
+            GameMode = twoPlayerGame ? GameModes.GameWithPlayer : GameModes.GameWithAi;
+            GameBoard.InitializeGameState();
         }
 
         public Board GetBoard()
         {
             return GameBoard;
-        }
-
-        private void SwitchTurn()
-        {
-            var nextTurn = gameStateService.CurrentTurn == PlayerTurn.X ? PlayerTurn.О : PlayerTurn.X;
-            gameStateService.SetCurrentTurn(nextTurn);
         }
     }
 }

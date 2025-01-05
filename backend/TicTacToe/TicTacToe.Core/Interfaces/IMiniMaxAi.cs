@@ -4,5 +4,5 @@ namespace TicTacToe.Core.Interfaces;
 
 public interface IMiniMaxAi
 {
-    MoveParameters FindBestMove();
+    MoveParameters FindBestMove(Board board);
 }
