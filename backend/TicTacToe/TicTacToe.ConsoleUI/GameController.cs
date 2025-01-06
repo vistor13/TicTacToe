@@ -15,20 +15,21 @@ public class GameController(
     public void Execute()
     {
         consoleRenderer.RenderWelcome();
-        var isEnded = true;
-        while (isEnded)
+        var isEnded = false;
+        while (!isEnded)
         {
             var command = GetCommand();
             var executionResult = commandInvoker.Execute(command);
             if (executionResult.IsError)
             {
                 consoleRenderer.RenderError(executionResult.Errors.First().Description);
-                continue;
             }
 
             if (gameProcessor.GameMode != GameModes.NotDefined)
                 PlayGameLoop();
-            if (!gameProcessor.IsRunning) isEnded = false;
+
+            if (!gameProcessor.IsRunning)
+                isEnded = true;
         }
     }
 
