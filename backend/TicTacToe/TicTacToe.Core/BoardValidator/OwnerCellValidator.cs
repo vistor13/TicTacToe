@@ -12,7 +12,7 @@ namespace TicTacToe.Core.BoardValidator
             return board.Grid[moveParameters.Row, moveParameters.Col] == Board.EmptyCell
                 ? Result.Success
                 : Error.Validation(
-                    "OutOfBounds",
+                    "CellOccupied",
                     Messages.Error.CellOccupied);
         }
     }
