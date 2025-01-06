@@ -22,6 +22,11 @@ namespace TicTacToe.Core.Models
             return Grid[row, col];
         }
 
+        public void SetGameState(GameState gameState)
+        {
+            State = gameState;
+        }
+
         public void InitializeGameState()
         {
             State = GameState.Ongoing;
