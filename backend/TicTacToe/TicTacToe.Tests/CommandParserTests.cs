@@ -74,7 +74,9 @@ public class CommandParserTests
     public void CommandParse_ShouldReturnMoveCommand_WhenInputIsValidMove()
     {
         // Arrange
-        _gameProcessorMock.Setup(g => g.CurrentTurn).Returns(PlayerTurn.X);
+        var board = new Board();
+        _gameProcessorMock.Setup(g => g.GetBoard()).Returns(board);
+
         var moveInput = "move 1 2";
 
         // Act
@@ -83,6 +85,9 @@ public class CommandParserTests
         // Assert
         Assert.NotNull(result);
         Assert.IsType<MoveCommand>(result);
+
+        var moveCommand = result as MoveCommand;
+        Assert.NotNull(moveCommand);
     }
 
     [Fact]
