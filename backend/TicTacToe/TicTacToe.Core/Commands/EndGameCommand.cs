@@ -7,7 +7,7 @@ public class EndGameCommand(IGameProcessor gameProcessor) : ICommand
 {
     public ErrorOr<Success> Execute()
     {
-        gameProcessor.IsRunning = false;
+        gameProcessor.Reset();
         return Result.Success;
     }
 }
