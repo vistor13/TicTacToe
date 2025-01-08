@@ -47,8 +47,8 @@ public class GameController(
             }
 
             if (command is not MoveCommand) continue;
-            var showCommand = new ShowBoardCommand(gameProcessor, consoleRenderer);
-            showCommand.Execute();
+
+            PrintBoard();
 
             if (IsGameInTerminateState()) break;
 
@@ -60,7 +60,21 @@ public class GameController(
         }
     }
 
-    private bool HandleGameEndState()
+    private void DoAiMove()
+    {
+        if (gameProcessor.GameMode == GameModes.GameWithAi)
+        {
+            gameProcessor.AiMakeMove(out var aiMove);
+            consoleRenderer.RenderMessage(string.Format(Messages.GameProcess.AiMove, aiMove.Row + 1, aiMove.Col + 1));
+        }
+    }
+
+    private void PrintBoard()
+    {
+        var showCommand = new ShowBoardCommand(gameProcessor, consoleRenderer);
+        showCommand.Execute();
+    }
+
     private bool IsGameInTerminateState()
     {
         if (gameProcessor.GetBoard().State == GameState.Win)
