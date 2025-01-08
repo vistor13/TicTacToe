@@ -12,14 +12,16 @@ public class GameController(
     ICommandInvoker commandInvoker,
     IInputProvider reader)
 {
+    private ICommand _currentCommand = null!;
+
     public void Execute()
     {
         consoleRenderer.RenderWelcome();
-        var isEnded = false;
-        while (!isEnded)
+
+        do
         {
-            var command = GetCommand();
-            var executionResult = commandInvoker.Execute(command);
+            _currentCommand = GetCommand();
+            var executionResult = commandInvoker.Execute(_currentCommand);
             if (executionResult.IsError)
             {
                 consoleRenderer.RenderError(executionResult.Errors.First().Description);
@@ -27,10 +29,7 @@ public class GameController(
 
             if (gameProcessor.GameMode != GameModes.NotDefined)
                 PlayGameLoop();
-
-            if (!gameProcessor.IsRunning)
-                isEnded = true;
-        }
+        } while (_currentCommand is not EndGameCommand);
     }
 
     private ICommand GetCommand()
@@ -49,8 +48,8 @@ public class GameController(
     {
         while (gameProcessor.IsRunning)
         {
-            var command = GetCommand();
-            var executionResult = commandInvoker.Execute(command);
+            _currentCommand = GetCommand();
+            var executionResult = commandInvoker.Execute(_currentCommand);
 
             if (executionResult.IsError)
             {
@@ -58,7 +57,7 @@ public class GameController(
                 continue;
             }
 
-            if (command is not MoveCommand) continue;
+            if (_currentCommand is not MoveCommand) continue;
 
             PrintBoard();
 
