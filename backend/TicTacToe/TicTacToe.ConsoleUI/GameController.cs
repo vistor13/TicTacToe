@@ -33,6 +33,18 @@ public class GameController(
         }
     }
 
+    private ICommand GetCommand()
+    {
+        ICommand? command = null;
+        while (command is null)
+        {
+            var commandInput = reader.GetCommandInput();
+            command = parserCommandParser.CommandParse(commandInput);
+        }
+
+        return command;
+    }
+
     private void PlayGameLoop()
     {
         while (gameProcessor.IsRunning)
@@ -60,6 +72,12 @@ public class GameController(
         }
     }
 
+    private void PrintBoard()
+    {
+        var showCommand = new ShowBoardCommand(gameProcessor, consoleRenderer);
+        showCommand.Execute();
+    }
+
     private void DoAiMove()
     {
         if (gameProcessor.GameMode == GameModes.GameWithAi)
@@ -67,12 +85,6 @@ public class GameController(
             gameProcessor.AiMakeMove(out var aiMove);
             consoleRenderer.RenderMessage(string.Format(Messages.GameProcess.AiMove, aiMove.Row + 1, aiMove.Col + 1));
         }
-    }
-
-    private void PrintBoard()
-    {
-        var showCommand = new ShowBoardCommand(gameProcessor, consoleRenderer);
-        showCommand.Execute();
     }
 
     private bool IsGameInTerminateState()
@@ -92,17 +104,5 @@ public class GameController(
         }
 
         return false;
-    }
-
-    private ICommand GetCommand()
-    {
-        ICommand? command = null;
-        while (command is null)
-        {
-            var commandInput = reader.GetCommandInput();
-            command = parserCommandParser.CommandParse(commandInput);
-        }
-
-        return command;
     }
 }
