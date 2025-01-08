@@ -9,7 +9,7 @@ namespace TicTacToe.Core.Services
     {
         private Board GameBoard { get; set; } = new();
 
-        public bool IsRunning { get; set; } = true;
+        public bool IsRunning => GameBoard.State is GameState.Ongoing;
 
         public GameModes GameMode { get; private set; } = GameModes.NotDefined;
 

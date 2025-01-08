@@ -7,7 +7,7 @@ public interface IGameProcessor
 {
     GameModes GameMode { get; }
 
-    bool IsRunning { get; set; }
+    bool IsRunning { get; }
     ErrorOr<Success> MakeMove(MoveParameters moveParameters);
     void InitializeGame(bool twoPlayerGame = true);
     Board GetBoard();
