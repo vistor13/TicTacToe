@@ -50,19 +50,18 @@ public class GameController(
             var showCommand = new ShowBoardCommand(gameProcessor, consoleRenderer);
             showCommand.Execute();
 
-            if (HandleGameEndState()) break;
+            if (IsGameInTerminateState()) break;
 
-            if (gameProcessor.GameMode != GameModes.GameWithAi) continue;
-            gameProcessor.AiMakeMove(out var aiMove);
-            consoleRenderer.RenderMessage(
-                string.Format(Messages.GameProcess.AiMove, aiMove.Row + 1, aiMove.Col + 1));
-            var showAiCommand = new ShowBoardCommand(gameProcessor, consoleRenderer);
-            showAiCommand.Execute();
-            if (HandleGameEndState()) break;
+            DoAiMove();
+
+            PrintBoard();
+
+            if (IsGameInTerminateState()) break;
         }
     }
 
     private bool HandleGameEndState()
+    private bool IsGameInTerminateState()
     {
         if (gameProcessor.GetBoard().State == GameState.Win)
         {
