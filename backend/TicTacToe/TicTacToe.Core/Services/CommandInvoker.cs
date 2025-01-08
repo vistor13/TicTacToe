@@ -8,30 +8,49 @@ namespace TicTacToe.Core.Services;
 
 public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
 {
-    private readonly List<Type> _commonCommands = InitializeCommonCommands();
-    private readonly List<Type> _modesCommands = InitializeModesCommands();
+    private readonly Dictionary<GameState, List<Type>> _commandsByState = InitializeCommandsByState();
 
     public ErrorOr<Success> Execute(ICommand command)
     {
         var commandType = command.GetType();
+        var currentState = gameProcessor.GetBoard().State;
 
-        if (gameProcessor.GameMode == GameModes.NotDefined && _modesCommands.Contains(commandType))
-            return command.Execute();
-
-        if (gameProcessor.GameMode != GameModes.NotDefined && commandType == typeof(ExitCommand))
-            return command.Execute();
-
-        if (gameProcessor.GetBoard().State != GameState.NotStarted && commandType == typeof(ReplayCommand))
-            return command.Execute();
-
-        if ((gameProcessor.GetBoard().State == GameState.Ongoing && commandType == typeof(MoveCommand)) ||
-            _commonCommands.Contains(commandType))
+        if (_commandsByState.ContainsKey(currentState) &&
+            _commandsByState[currentState].Contains(commandType))
             return command.Execute();
 
         return Error.Validation(
             "ExecuteCommand",
             Messages.Error.CommandNotAllowed
         );
+    }
+
+    private static Dictionary<GameState, List<Type>> InitializeCommandsByState()
+    {
+        return new Dictionary<GameState, List<Type>>
+        {
+            {
+                GameState.NotStarted, InitializeModesCommands()
+                    .Concat(InitializeCommonCommands())
+                    .ToList()
+            },
+            {
+                GameState.Ongoing, InitializeGameCycleCommands()
+                    .Concat(InitializeRestrictedCommands())
+                    .Concat(InitializeCommonCommands())
+                    .ToList()
+            },
+            {
+                GameState.Draw, InitializeRestrictedCommands()
+                    .Concat(InitializeCommonCommands())
+                    .ToList()
+            },
+            {
+                GameState.Win, InitializeRestrictedCommands()
+                    .Concat(InitializeCommonCommands())
+                    .ToList()
+            }
+        };
     }
 
     private static List<Type> InitializeModesCommands()
@@ -49,6 +68,24 @@ public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
         [
             typeof(InstructionCommand),
             typeof(EndGameCommand)
+        ];
+    }
+
+    private static List<Type> InitializeGameCycleCommands()
+    {
+        return
+        [
+            typeof(MoveCommand),
+            typeof(ShowBoardCommand)
+        ];
+    }
+
+    private static List<Type> InitializeRestrictedCommands()
+    {
+        return
+        [
+            typeof(ReplayCommand),
+            typeof(ExitCommand)
         ];
     }
 }
