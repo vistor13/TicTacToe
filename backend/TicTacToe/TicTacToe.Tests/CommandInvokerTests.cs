@@ -23,6 +23,8 @@ public class CommandInvokerTests
     public void Execute_ShouldReturnSuccess_WhenPlayerGameCommandExecutedAndModeNotDefined()
     {
         // Arrange
+        _gameProcessorMock.Setup(g => g.GetBoard())
+            .Returns(new Board());
         _gameProcessorMock.Setup(g => g.GameMode).Returns(GameModes.NotDefined);
         var command = new PlayerGameCommand(_gameProcessorMock.Object, _consoleRendererMock.Object);
 
@@ -39,6 +41,8 @@ public class CommandInvokerTests
     public void Execute_ShouldReturnSuccess_WhenAiGameCommandExecutedAndModeNotDefined()
     {
         // Arrange
+        _gameProcessorMock.Setup(g => g.GetBoard())
+            .Returns(new Board());
         _gameProcessorMock.Setup(g => g.GameMode).Returns(GameModes.NotDefined);
         var command = new AiGameCommand(_gameProcessorMock.Object, _consoleRendererMock.Object);
 
@@ -130,6 +134,9 @@ public class CommandInvokerTests
     public void Execute_ShouldReturnSuccess_WhenExitIsExecuted()
     {
         // Arrange
+        _gameProcessorMock.Setup(g => g.GetBoard())
+            .Returns(new Board());
+        _gameProcessorMock.Object.GetBoard().SetGameState(GameState.Ongoing);
         _gameProcessorMock.Setup(g => g.GameMode).Returns(GameModes.GameWithAi);
         var command = new ExitCommand(_gameProcessorMock.Object, _consoleRendererMock.Object);
 
