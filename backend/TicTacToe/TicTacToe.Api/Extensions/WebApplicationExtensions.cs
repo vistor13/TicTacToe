@@ -24,6 +24,11 @@ public static class WebApplicationExtensions
         }
 
         app.UseHttpsRedirection();
-        app.MapControllers();
+        app.UseGameEndpoints();
+    }
+
+    private static void UseGameEndpoints(this IEndpointRouteBuilder app)
+    {
+        app.AddGameEndpoints();
     }
 }
