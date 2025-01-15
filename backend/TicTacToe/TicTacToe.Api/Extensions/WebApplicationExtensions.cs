@@ -1,3 +1,5 @@
+using TicTacToe.Api.Game;
+
 namespace TicTacToe.Api.Extensions;
 
 public static class WebApplicationExtensions
@@ -8,6 +10,7 @@ public static class WebApplicationExtensions
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
+        services.AddCore();
         services.AddSwaggerGen();
     }
 
