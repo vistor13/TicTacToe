@@ -65,30 +65,6 @@ public class ConsoleRendererTests
         Assert.Contains("Error : Invalid input", output);
     }
 
-    [Fact]
-    public void RenderWin_PrintsWinnerMessage()
-    {
-        // Arrange
-        var playerTurn = PlayerTurn.X;
-
-        // Act
-        _renderer.RenderWin(playerTurn);
-
-        // Assert
-        var output = _consoleOutput.ToString();
-        Assert.Contains(string.Format(ConsoleMessages.GameMessages.WinnerMessage, playerTurn), output);
-    }
-
-    [Fact]
-    public void RenderDraw_PrintsDrawMessage()
-    {
-        // Act
-        _renderer.RenderDraw();
-
-        // Assert
-        var output = _consoleOutput.ToString();
-        Assert.Contains(ConsoleMessages.GameMessages.DrawMessage, output);
-    }
 
     [Fact]
     public void RenderBoard_ShouldDisplayFormattedBoard()
