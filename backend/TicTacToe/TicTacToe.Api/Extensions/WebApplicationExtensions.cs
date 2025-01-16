@@ -8,7 +8,6 @@ public static class WebApplicationExtensions
     {
         var services = builder.Services;
 
-        services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddCore();
         services.AddSwaggerGen();
