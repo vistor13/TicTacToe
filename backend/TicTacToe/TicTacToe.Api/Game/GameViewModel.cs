@@ -4,7 +4,6 @@ namespace TicTacToe.Api.Game;
 
 public class GameViewModel
 {
-    public bool IsRunning { get; set; }
-
+    public Guid Id { get; set; }
     public GameModes GameMode { get; set; }
 }

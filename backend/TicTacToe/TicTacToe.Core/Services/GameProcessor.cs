@@ -11,7 +11,6 @@ namespace TicTacToe.Core.Services
         private Board GameBoard { get; set; } = new();
 
         public bool IsRunning => GameBoard.State is GameState.Ongoing;
-
         public GameModes GameMode { get; private set; } = GameModes.NotDefined;
 
         public ErrorOr<Success> AiMakeMove(out MoveParameters moveParameters)
@@ -29,6 +28,12 @@ namespace TicTacToe.Core.Services
                 GameMode = GameMode,
                 PlayerTurn = GameBoard.CurrentTurn
             };
+        }
+
+        public void LoadGameState(GameStateDto state)
+        {
+            GameMode = state.GameMode;
+            GameBoard.LoadState(state);
         }
 
         public ErrorOr<Success> MakeMove(MoveParameters moveParameters)
