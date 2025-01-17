@@ -1,6 +1,6 @@
 using TicTacToe.Core.Models;
 
-namespace TicTacToe.Api.Game;
+namespace TicTacToe.Api.GameModels;
 
 public class StateViewModel
 {
