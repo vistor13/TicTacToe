@@ -1,5 +1,6 @@
 ﻿using ErrorOr;
 using TicTacToe.Core.CoreMessages;
+using TicTacToe.Core.Dto;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
@@ -17,6 +18,17 @@ namespace TicTacToe.Core.Services
         {
             moveParameters = aiBot.FindBestMove(GameBoard);
             return MakeMove(moveParameters);
+        }
+
+        public GameStateDto GetGameState()
+        {
+            return new GameStateDto
+            {
+                Grid = GameBoard.Grid,
+                State = GameBoard.State,
+                GameMode = GameMode,
+                PlayerTurn = GameBoard.CurrentTurn
+            };
         }
 
         public ErrorOr<Success> MakeMove(MoveParameters moveParameters)
