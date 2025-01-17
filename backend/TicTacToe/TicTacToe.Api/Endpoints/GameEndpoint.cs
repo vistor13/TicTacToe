@@ -1,5 +1,5 @@
 using TicTacToe.Api.Extensions;
-using TicTacToe.Api.Game;
+using TicTacToe.Api.GameModels;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 using TicTacToe.Core.Services;
@@ -10,69 +10,68 @@ public static class GameEndpoint
 {
     public static void AddGameEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/game/start", (GameService gameService, IGameProcessor gameProcessor) =>
-            {
-                gameProcessor.InitializeGame();
+        var endPoints =
+            app.MapGroup("/api/game/")
+                .WithTags("Game");
 
-                var gameState = gameProcessor.GetGameState();
+        endPoints.MapPost(
+            "start",
+            (GameService gameService, IGameProcessor gameProcessor)
+                => StartGame(gameProcessor, gameService));
 
-                var gameId = Guid.NewGuid();
-                gameService.SaveGame(gameId, gameState);
+        endPoints.MapPost(
+            "move",
+            (Guid gameId, GameService gameService, int row, int col, IGameProcessor gameProcessor)
+                => MakeMove(gameService, gameId, gameProcessor, row, col));
 
-                var gameViewModel = new GameViewModel
-                {
-                    Id = gameId,
-                    GameMode = gameState.GameMode
-                };
+        endPoints.MapGet(
+            "state",
+            (Guid gameId, GameService gameService) => GetGameState(gameService, gameId));
+    }
 
-                return Results.Created("/api/game/start", gameViewModel);
-            })
-            .WithTags("Game");
+    private static IResult GetGameState(GameService gameService, Guid gameId)
+    {
+        var gameState = gameService.GetGame(gameId);
+        if (gameState == null) return Results.BadRequest("Game not found.");
 
-        app.MapPost("/api/game/move",
-                (Guid gameId, GameService gameService, int row, int col, IGameProcessor gameProcessor) =>
-                {
-                    var gameState = gameService.GetGame(gameId);
-                    if (gameState == null) return Results.BadRequest("Game not found.");
+        var resultState = StateViewModel.ToViewModel(gameState);
 
-                    gameProcessor.LoadGameState(gameState);
+        return Results.Ok(resultState);
+    }
 
-                    var currentPlayer = gameProcessor.GetBoard().CurrentTurn;
+    private static IResult MakeMove(GameService gameService, Guid gameId, IGameProcessor gameProcessor, int row,
+        int col)
+    {
+        var gameState = gameService.GetGame(gameId);
+        if (gameState == null) return Results.BadRequest("Game not found.");
 
-                    var move = new MoveParameters(row - 1, col - 1, currentPlayer);
+        gameProcessor.LoadGameState(gameState);
 
-                    var result = gameProcessor.MakeMove(move);
+        var currentPlayer = gameProcessor.GetBoard().CurrentTurn;
 
-                    gameService.SaveGame(gameId, gameProcessor.GetGameState());
-                    return result.ToResult();
-                })
-            .WithTags("Game");
+        var move = new MoveParameters(row - 1, col - 1, currentPlayer);
 
-        app.MapGet("/api/game/state", (Guid gameId, GameService gameService, IGameProcessor gameProcessor) =>
-            {
-                var game = gameService.GetGame(gameId);
-                if (game == null) return Results.BadRequest("Game not found.");
+        var result = gameProcessor.MakeMove(move);
 
-                gameProcessor.LoadGameState(game);
+        gameService.SaveGame(gameId, gameProcessor.GetGameState());
+        return result.ToResult();
+    }
 
-                var gameState = gameProcessor.GetGameState();
+    private static IResult StartGame(IGameProcessor gameProcessor, GameService gameService)
+    {
+        gameProcessor.InitializeGame();
 
-                var gridList = Enumerable.Range(0, Board.BoardSize)
-                    .Select(i => Enumerable.Range(0, Board.BoardSize)
-                        .Select(j => gameState.Grid[i, j])
-                        .ToList())
-                    .ToList();
+        var gameState = gameProcessor.GetGameState();
 
-                var resultState = new StateViewModel
-                {
-                    State = gameState.State,
-                    GameMode = gameState.GameMode,
-                    Grid = gridList,
-                    PlayerTurn = gameState.PlayerTurn
-                };
+        var gameId = Guid.NewGuid();
+        gameService.SaveGame(gameId, gameState);
 
-                return Results.Ok(resultState);
-            })
-            .WithTags("Game");
+        var gameViewModel = new GameViewModel
+        {
+            Id = gameId,
+            GameMode = gameState.GameMode
+        };
+
+        return Results.Created("/api/game/start", gameViewModel);
     }
 }
