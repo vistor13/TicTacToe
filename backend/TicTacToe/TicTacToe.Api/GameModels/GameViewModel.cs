@@ -2,8 +2,8 @@ using TicTacToe.Core.Models;
 
 namespace TicTacToe.Api.GameModels;
 
-public class GameViewModel
+public record GameViewModel
 {
-    public Guid Id { get; set; }
-    public GameModes GameMode { get; set; }
+    public Guid Id { get; init; }
+    public GameModes GameMode { get; init; }
 }
