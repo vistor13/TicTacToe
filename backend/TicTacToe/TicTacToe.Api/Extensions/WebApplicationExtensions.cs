@@ -1,4 +1,4 @@
-using TicTacToe.Api.Game;
+using TicTacToe.Api.Endpoints;
 
 namespace TicTacToe.Api.Extensions;
 
@@ -22,7 +22,6 @@ public static class WebApplicationExtensions
             app.UseSwaggerUI();
         }
 
-        app.UseHttpsRedirection();
         app.UseGameEndpoints();
     }
 
