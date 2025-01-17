@@ -1,11 +1,12 @@
 using TicTacToe.Api.Extensions;
+using TicTacToe.Api.Game;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 using TicTacToe.Core.Services;
 
-namespace TicTacToe.Api.Game;
+namespace TicTacToe.Api.Endpoints;
 
-public static class GameModule
+public static class GameEndpoint
 {
     public static void AddGameEndpoints(this IEndpointRouteBuilder app)
     {
