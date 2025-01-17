@@ -27,18 +27,18 @@ public class CommandParserTests
     }
 
     [Fact]
-    public void CommandParse_ShouldReturnStartCommand_WhenInputIsStart()
+    public void CommandParse_ShouldReturnPlayerGameCommand_WhenInputIsStart()
     {
         // Arrange
-        _serviceProviderMock.Setup(s => s.GetService(typeof(StartCommand)))
-            .Returns(new StartCommand(_gameProcessorMock.Object, _consoleRendererMock.Object));
+        _serviceProviderMock.Setup(s => s.GetService(typeof(PlayerGameCommand)))
+            .Returns(new PlayerGameCommand(_gameProcessorMock.Object, _consoleRendererMock.Object));
 
         // Act
-        var result = _commandParser.CommandParse("start");
+        var result = _commandParser.CommandParse("game player");
 
         // Assert
         Assert.NotNull(result);
-        Assert.IsType<StartCommand>(result);
+        Assert.IsType<PlayerGameCommand>(result);
     }
 
     [Fact]
@@ -74,7 +74,9 @@ public class CommandParserTests
     public void CommandParse_ShouldReturnMoveCommand_WhenInputIsValidMove()
     {
         // Arrange
-        _gameProcessorMock.Setup(g => g.CurrentTurn).Returns(PlayerTurn.X);
+        var board = new Board();
+        _gameProcessorMock.Setup(g => g.GetBoard()).Returns(board);
+
         var moveInput = "move 1 2";
 
         // Act
@@ -83,6 +85,9 @@ public class CommandParserTests
         // Assert
         Assert.NotNull(result);
         Assert.IsType<MoveCommand>(result);
+
+        var moveCommand = result as MoveCommand;
+        Assert.NotNull(moveCommand);
     }
 
     [Fact]
@@ -102,9 +107,8 @@ public class CommandParserTests
     public void CommandParse_ShouldReturnExitCommand_WhenInputIsExit()
     {
         // Arrange
-        var exitCommand = new ExitCommand();
         _serviceProviderMock.Setup(s => s.GetService(typeof(ExitCommand)))
-            .Returns(exitCommand);
+            .Returns(new ExitCommand(_gameProcessorMock.Object, _consoleRendererMock.Object));
 
         // Act
         var result = _commandParser.CommandParse("exit");

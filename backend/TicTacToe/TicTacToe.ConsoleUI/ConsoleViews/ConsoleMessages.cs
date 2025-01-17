@@ -28,9 +28,14 @@ public static class ConsoleMessages
             4. The goal is to place three of your symbols ('X' or 'O') in a row, column, or diagonal.
             5. The game ends when one player wins or all cells are filled.
 
+            Game Modes:
+            - **Player vs Player**: Two players compete against each other by taking turns.
+            - **Player vs AI**: A single player competes against the computer with AI making moves for Player 2 ('O').
+
             Commands:
             - 'Move row column': Makes a move at the specified cell (e.g., 'Move 2 3').
-            - 'Start': Displays the current game board.
+            - 'Game player': Start Game **Player vs Player**.
+            - 'Game Ai': Start Game **Player vs AI**.
             - 'Help': Shows these instructions.
             - 'Exit': Ends the game.
             - 'Replay': Replay the game.
@@ -49,13 +54,15 @@ public static class ConsoleMessages
             Important Notes:
             - If a player chooses a cell that is already occupied, they will be asked to try again.
             - If all cells are filled without a winner, the game is declared a draw.
+            - Before starting the game, players can choose a mode: **Player vs Player** or **Player vs AI**.
             """;
 
         public const string WelcomeMessage =
             """
             Welcome to Tic-Tac-Toe!
             Prepare for a battle of wits. Will you claim victory or face defeat?
-            Type 'Help' to see the game instructions or 'Start' to begin the game. Good luck!
+            Type 'Help' to see the game instructions or choose a game mode to begin:
+            Good luck
             """;
 
         public const string WinnerMessage =
@@ -69,18 +76,18 @@ public static class ConsoleMessages
 
         public const string DrawMessage =
             """
-                ================================
-                          GAME OVER
-                ================================
-                         It's a draw!
-                ================================
+            ================================
+                       GAME OVER
+            ================================
+                     It's a draw!
+            ================================
             """;
 
         public const string EndGamePrompt =
             """
-                Would you like to play again?
-                Type 'replay' to start a new game.
-                Type 'exit' to quit the game.
+            Would you like to play again?
+            Command 'replay' to start a new game.
+            Command 'exit' to quit the game.*
             """;
 
         public const string CommandPrompt =

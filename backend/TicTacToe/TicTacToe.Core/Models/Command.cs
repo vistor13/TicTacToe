@@ -2,8 +2,10 @@ namespace TicTacToe.Core.Models;
 
 public enum Command
 {
-    Start,
+    GamePlayer,
+    GameAi,
     Help,
     Exit,
-    Replay
+    Replay,
+    End
 }

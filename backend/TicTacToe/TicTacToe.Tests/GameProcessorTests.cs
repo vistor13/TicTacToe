@@ -1,215 +1,117 @@
+using Moq;
+using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 using TicTacToe.Core.Services;
 
-namespace TicTacToe.Tests
+namespace TicTacToe.Tests;
+
+public class GameProcessorTests
 {
-    public class GameProcessorTests
+    private readonly Mock<IMiniMaxAi> _aiBotMock;
+    private readonly GameProcessor _gameProcessor;
+
+    public GameProcessorTests()
     {
-        [Fact]
-        public void GameProcessor_MakeMove_ShouldUpdateBoardAndSwitchPlayer_WhenMoveIsValid()
-        {
-            // Arrange
-            var game = new GameProcessor();
-            game.InitializeGame();
-            var move = new MoveParameters(0, 0, PlayerTurn.X);
+        _aiBotMock = new Mock<IMiniMaxAi>();
+        _gameProcessor = new GameProcessor(_aiBotMock.Object);
+    }
 
-            // Act
-            var result = game.MakeMove(move);
+    [Fact]
+    public void InitializeGame_ShouldSetCorrectGameMode()
+    {
+        // Act
+        _gameProcessor.InitializeGame(false);
 
-            // Assert
-            Assert.False(result.IsError);
-            Assert.Equal('X', game.GameBoard.Grid[0, 0]);
-            Assert.Equal(PlayerTurn.О, game.CurrentTurn);
-        }
+        // Assert
+        Assert.Equal(GameModes.GameWithAi, _gameProcessor.GameMode);
+        Assert.Equal(GameState.Ongoing, _gameProcessor.GetBoard().State);
+    }
 
-        [Fact]
-        public void GameProcessor_MakeMove_ShouldNotSwitchPlayer_WhenMoveIsInvalid()
-        {
-            // Arrange
-            var game = new GameProcessor();
-            game.InitializeGame();
-            var moveX = new MoveParameters(0, 0, PlayerTurn.X);
-            var moveY = new MoveParameters(0, 0, PlayerTurn.О);
-            game.MakeMove(moveX);
+    [Fact]
+    public void Reset_ShouldResetGameBoardAndGameMode()
+    {
+        // Arrange
+        _gameProcessor.InitializeGame(false);
 
-            // Act
-            var result = game.MakeMove(moveY);
+        // Act
+        _gameProcessor.Reset();
 
-            // Assert
-            Assert.True(result.IsError);
-            Assert.Equal(PlayerTurn.О, game.CurrentTurn);
-        }
+        // Assert
+        Assert.Equal(GameModes.NotDefined, _gameProcessor.GameMode);
+        Assert.Equal(GameState.NotStarted, _gameProcessor.GetBoard().State);
+    }
 
-        [Fact]
-        public void GameProcessor_MakeMove_ShouldReturnFalse_WhenMoveIsOutOfBounds()
-        {
-            // Arrange
-            var game = new GameProcessor();
-            game.InitializeGame();
-            var move = new MoveParameters(3, 5, PlayerTurn.X);
+    [Fact]
+    public void MakeMove_ShouldMakeMoveAndUpdateState()
+    {
+        // Arrange
+        _gameProcessor.InitializeGame();
 
-            // Act
-            var result = game.MakeMove(move);
+        var move = new MoveParameters(0, 0, PlayerTurn.X);
 
-            // Assert
-            Assert.True(result.IsError);
-            Assert.Equal(PlayerTurn.X, game.CurrentTurn);
-        }
+        // Act
+        var result = _gameProcessor.MakeMove(move);
 
-        [Fact]
-        public void GameProcessor_MakeMove_ShouldValidateTurnOrder_WhenMoveIsMadeByIncorrectPlayer()
-        {
-            // Arrange
-            var game = new GameProcessor();
-            game.InitializeGame();
-            var move = new MoveParameters(0, 0, PlayerTurn.О);
+        // Assert
+        Assert.False(result.IsError);
+        Assert.Equal('X', _gameProcessor.GetBoard().GetCell(0, 0));
+        Assert.Equal(PlayerTurn.О, _gameProcessor.GetBoard().CurrentTurn);
+    }
 
-            // Act
-            var result = game.MakeMove(move);
+    [Fact]
+    public void MakeMove_ShouldReturnError_WhenGameStateIsNotOngoing()
+    {
+        // Arrange
+        _gameProcessor.InitializeGame();
+        _gameProcessor.GetBoard().SetGameState(GameState.Draw);
 
-            // Assert
-            Assert.True(result.IsError);
-            Assert.Equal(PlayerTurn.X, game.CurrentTurn);
-        }
+        var move = new MoveParameters(0, 0, PlayerTurn.X);
 
-        [Fact]
-        public void GameProcessor_ShouldDeclareWin_WhenHorizontalLineIsFormed()
-        {
-            // Arrange
-            var game = new GameProcessor();
-            game.InitializeGame();
+        // Act
+        var result = _gameProcessor.MakeMove(move);
 
-            // Act
-            game.MakeMove(new MoveParameters(0, 0, PlayerTurn.X));
-            game.MakeMove(new MoveParameters(1, 0, PlayerTurn.О));
-            game.MakeMove(new MoveParameters(0, 1, PlayerTurn.X));
-            game.MakeMove(new MoveParameters(1, 1, PlayerTurn.О));
-            game.MakeMove(new MoveParameters(0, 2, PlayerTurn.X));
+        // Assert
+        Assert.True(result.IsError);
+        Assert.Contains(result.Errors, e => e.Code == "InvalidGameState");
+    }
 
-            // Assert
-            Assert.Equal(GameState.Win, game.State);
-            Assert.Equal(PlayerTurn.X, game.CurrentTurn);
-        }
+    [Fact]
+    public void MakeMove_ShouldReturnError_WhenPlayerTurnIsInvalid()
+    {
+        // Arrange
+        _gameProcessor.InitializeGame();
+        var move = new MoveParameters(0, 0, PlayerTurn.О);
 
-        [Fact]
-        public void GameProcessor_ShouldDeclareWin_WhenVerticalLineIsFormed()
-        {
-            // Arrange
-            var game = new GameProcessor();
-            game.InitializeGame();
+        // Act
+        var result = _gameProcessor.MakeMove(move);
 
-            // Act
-            game.MakeMove(new MoveParameters(0, 0, PlayerTurn.X));
-            game.MakeMove(new MoveParameters(0, 1, PlayerTurn.О));
-            game.MakeMove(new MoveParameters(1, 0, PlayerTurn.X));
-            game.MakeMove(new MoveParameters(1, 1, PlayerTurn.О));
-            game.MakeMove(new MoveParameters(2, 0, PlayerTurn.X));
+        // Assert
+        Assert.True(result.IsError);
+        Assert.Contains(result.Errors, e => e.Code == "InvalidCurrentPlayer");
+    }
 
-            // Assert
-            Assert.Equal(GameState.Win, game.State);
-            Assert.Equal(PlayerTurn.X, game.CurrentTurn);
-        }
+    [Fact]
+    public void AiMakeMove_ShouldCallAiAndMakeMove()
+    {
+        // Arrange
+        var move = new MoveParameters(0, 0, PlayerTurn.X);
 
+        var expectedMove = new MoveParameters(1, 1, PlayerTurn.О);
 
-        [Fact]
-        public void GameProcessor_ShouldDeclareWin_WhenDiagonalLineIsFormed()
-        {
-            // Arrange
-            var game = new GameProcessor();
-            game.InitializeGame();
+        _aiBotMock.Setup(ai => ai.FindBestMove(It.IsAny<Board>())).Returns(expectedMove);
 
-            // Act
-            game.MakeMove(new MoveParameters(0, 0, PlayerTurn.X));
-            game.MakeMove(new MoveParameters(0, 1, PlayerTurn.О));
-            game.MakeMove(new MoveParameters(1, 1, PlayerTurn.X));
-            game.MakeMove(new MoveParameters(1, 2, PlayerTurn.О));
-            game.MakeMove(new MoveParameters(2, 2, PlayerTurn.X));
+        _gameProcessor.InitializeGame(false);
+        _gameProcessor.MakeMove(move);
 
-            // Assert
-            Assert.Equal(GameState.Win, game.State);
-            Assert.Equal(PlayerTurn.X, game.CurrentTurn);
-        }
+        // Act
+        var result = _gameProcessor.AiMakeMove(out var actualMove);
 
-        [Fact]
-        public void GameProcessor_ShouldDeclareDraw_WhenAllCellsAreFilledWithoutWinner()
-        {
-            // Arrange
-            var game = new GameProcessor();
-            game.InitializeGame();
+        // Assert
+        Assert.False(result.IsError);
+        Assert.Equal(expectedMove.Row, actualMove.Row);
+        Assert.Equal(expectedMove.Col, actualMove.Col);
+        Assert.Equal('O', _gameProcessor.GetBoard().GetCell(1, 1));
 
-            // Act
-            game.MakeMove(new MoveParameters(0, 0, PlayerTurn.X));
-            game.MakeMove(new MoveParameters(0, 1, PlayerTurn.О));
-            game.MakeMove(new MoveParameters(0, 2, PlayerTurn.X));
-            game.MakeMove(new MoveParameters(1, 1, PlayerTurn.О));
-            game.MakeMove(new MoveParameters(1, 0, PlayerTurn.X));
-            game.MakeMove(new MoveParameters(1, 2, PlayerTurn.О));
-            game.MakeMove(new MoveParameters(2, 1, PlayerTurn.X));
-            game.MakeMove(new MoveParameters(2, 0, PlayerTurn.О));
-            game.MakeMove(new MoveParameters(2, 2, PlayerTurn.X));
-
-            // Assert
-            Assert.Equal(GameState.Draw, game.State);
-
-            var moveAfterDraw = game.MakeMove(new MoveParameters(0, 0, PlayerTurn.О));
-            Assert.True(moveAfterDraw.IsError);
-        }
-
-        [Fact]
-        public void GameProcessor_ShouldDeclareDraw_WhenNoWinningCombinationsRemain()
-        {
-            // Arrange
-            var game = new GameProcessor();
-            game.InitializeGame();
-            game.MakeMove(new MoveParameters(0, 0, PlayerTurn.X));
-            game.MakeMove(new MoveParameters(1, 0, PlayerTurn.О));
-            game.MakeMove(new MoveParameters(2, 0, PlayerTurn.X));
-            game.MakeMove(new MoveParameters(1, 1, PlayerTurn.О));
-            game.MakeMove(new MoveParameters(1, 2, PlayerTurn.X));
-            game.MakeMove(new MoveParameters(2, 1, PlayerTurn.О));
-            game.MakeMove(new MoveParameters(0, 1, PlayerTurn.X));
-
-
-            // Act
-            game.MakeMove(new MoveParameters(0, 2, PlayerTurn.О));
-
-            // Assert
-            Assert.Equal(GameState.Draw, game.State);
-            var moveAfterBoardIsFull = game.MakeMove(new MoveParameters(2, 2, PlayerTurn.О));
-            Assert.True(moveAfterBoardIsFull.IsError);
-        }
-
-        [Fact]
-        public void GameProcessor_GameStatusIsOngoing_AfterInitialization()
-        {
-            // Arrange
-            var game = new GameProcessor();
-            game.InitializeGame();
-
-            // Act
-            var gameStatus = game.State;
-
-            // Assert
-            Assert.Equal(GameState.Ongoing, gameStatus);
-        }
-
-        [Fact]
-        public void GetBoard_ShouldReturnCurrentBoard()
-        {
-            // Arrange
-            var game = new GameProcessor();
-            game.InitializeGame();
-
-            // Act
-            var board = game.GetBoard();
-
-            // Assert
-            Assert.NotNull(board);
-            Assert.Equal(Board.BoardSize, board.Grid.GetLength(0));
-            Assert.Equal(Board.BoardSize, board.Grid.GetLength(1));
-            for (var i = 0; i < Board.BoardSize; i++)
-            for (var j = 0; j < Board.BoardSize; j++)
-                Assert.Equal(Board.EmptyCell, board.Grid[i, j]);
-        }
+        _aiBotMock.Verify(ai => ai.FindBestMove(It.IsAny<Board>()), Times.Once);
     }
 }

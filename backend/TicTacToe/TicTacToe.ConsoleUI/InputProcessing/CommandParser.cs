@@ -6,7 +6,10 @@ using TicTacToe.Core.Models;
 
 namespace TicTacToe.ConsoleUI.InputProcessing;
 
-public class CommandParser(IGameProcessor gameProcessor, IUiRender consoleRenderer, IServiceProvider serviceProvider)
+public class CommandParser(
+    IGameProcessor gameProcessor,
+    IUiRender consoleRenderer,
+    IServiceProvider serviceProvider)
     : ICommandParser
 {
     public ICommand? CommandParse(string? input)
@@ -18,25 +21,27 @@ public class CommandParser(IGameProcessor gameProcessor, IUiRender consoleRender
                 return moveCommand;
         }
 
-        if (!Enum.TryParse(input, true, out Command command))
-        {
-            consoleRenderer.RenderError(ConsoleMessages.Error.InvalidCommand);
-            return null;
-        }
+        if (input.StartsWith("game", StringComparison.OrdinalIgnoreCase))
+            input = string.Concat(input.Split(' ', StringSplitOptions.RemoveEmptyEntries));
 
-        return command switch
-        {
-            Command.Start => serviceProvider.GetRequiredService<StartCommand>(),
-            Command.Help => serviceProvider.GetRequiredService<InstructionCommand>(),
-            Command.Replay => serviceProvider.GetRequiredService<ReplayCommand>(),
-            Command.Exit => serviceProvider.GetRequiredService<ExitCommand>(),
-            _ => null
-        };
+        if (Enum.TryParse(input, true, out Command command))
+            return command switch
+            {
+                Command.GamePlayer => serviceProvider.GetRequiredService<PlayerGameCommand>(),
+                Command.GameAi => serviceProvider.GetRequiredService<AiGameCommand>(),
+                Command.Help => serviceProvider.GetRequiredService<InstructionCommand>(),
+                Command.Replay => serviceProvider.GetRequiredService<ReplayCommand>(),
+                Command.Exit => serviceProvider.GetRequiredService<ExitCommand>(),
+                Command.End => serviceProvider.GetRequiredService<EndGameCommand>(),
+                _ => null
+            };
+        consoleRenderer.RenderError(ConsoleMessages.Error.InvalidCommand);
+        return null;
     }
 
     private ICommand? ParseMoveCommand(string input)
     {
-        var moveData = input.Substring(4).Trim();
+        var moveData = input[4..].Trim();
         return TryParseMove(moveData, out var moveParameters)
             ? new MoveCommand(gameProcessor, moveParameters)
             : null;
@@ -54,7 +59,7 @@ public class CommandParser(IGameProcessor gameProcessor, IUiRender consoleRender
             return false;
         }
 
-        moveParameters = new MoveParameters(row - 1, col - 1, gameProcessor.CurrentTurn);
+        moveParameters = new MoveParameters(row - 1, col - 1, gameProcessor.GetBoard().CurrentTurn);
         return true;
     }
 }

@@ -1,4 +1,5 @@
 using TicTacToe.Core.Commands;
+using TicTacToe.Core.CoreMessages;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
@@ -11,36 +12,24 @@ public class GameController(
     ICommandInvoker commandInvoker,
     IInputProvider reader)
 {
+    private ICommand _currentCommand = null!;
+
     public void Execute()
     {
         consoleRenderer.RenderWelcome();
-        while (true)
+
+        do
         {
-            var command = GetCommand();
-            var executionResult = commandInvoker.Execute(command);
+            _currentCommand = GetCommand();
+            var executionResult = commandInvoker.Execute(_currentCommand);
             if (executionResult.IsError)
             {
                 consoleRenderer.RenderError(executionResult.Errors.First().Description);
-                continue;
             }
 
-            if (command is MoveCommand)
-            {
-                var showCommand = new ShowBoardCommand(gameProcessor, consoleRenderer);
-                showCommand.Execute();
-            }
-
-            if (gameProcessor.State is GameState.Win)
-            {
-                consoleRenderer.RenderWin(gameProcessor.CurrentTurn);
-                consoleRenderer.RenderProposeRestoreGame();
-            }
-            else if (gameProcessor.State is GameState.Draw)
-            {
-                consoleRenderer.RenderDraw();
-                consoleRenderer.RenderProposeRestoreGame();
-            }
-        }
+            if (gameProcessor.GameMode != GameModes.NotDefined)
+                PlayGameLoop();
+        } while (_currentCommand is not EndGameCommand);
     }
 
     private ICommand GetCommand()
@@ -53,5 +42,66 @@ public class GameController(
         }
 
         return command;
+    }
+
+    private void PlayGameLoop()
+    {
+        while (gameProcessor.IsRunning)
+        {
+            _currentCommand = GetCommand();
+            var executionResult = commandInvoker.Execute(_currentCommand);
+
+            if (executionResult.IsError)
+            {
+                consoleRenderer.RenderError(executionResult.Errors.First().Description);
+                continue;
+            }
+
+            if (_currentCommand is not MoveCommand) continue;
+
+            PrintBoard();
+
+            if (IsGameInTerminateState()) break;
+
+            DoAiMove();
+
+            PrintBoard();
+
+            if (IsGameInTerminateState()) break;
+        }
+    }
+
+    private void PrintBoard()
+    {
+        var showCommand = new ShowBoardCommand(gameProcessor, consoleRenderer);
+        showCommand.Execute();
+    }
+
+    private void DoAiMove()
+    {
+        if (gameProcessor.GameMode == GameModes.GameWithAi)
+        {
+            gameProcessor.AiMakeMove(out var aiMove);
+            consoleRenderer.RenderMessage(string.Format(Messages.GameProcess.AiMove, aiMove.Row + 1, aiMove.Col + 1));
+        }
+    }
+
+    private bool IsGameInTerminateState()
+    {
+        if (gameProcessor.GetBoard().State == GameState.Win)
+        {
+            consoleRenderer.RenderWin(gameProcessor.GetBoard().CurrentTurn);
+            consoleRenderer.RenderProposeRestoreGame();
+            return true;
+        }
+
+        if (gameProcessor.GetBoard().State == GameState.Draw)
+        {
+            consoleRenderer.RenderDraw();
+            consoleRenderer.RenderProposeRestoreGame();
+            return true;
+        }
+
+        return false;
     }
 }

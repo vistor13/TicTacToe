@@ -5,53 +5,57 @@ using TicTacToe.Core.Models;
 
 namespace TicTacToe.Core.Services
 {
-    public class GameProcessor : IGameProcessor
+    public class GameProcessor(IMiniMaxAi aiBot) : IGameProcessor
     {
-        public Board GameBoard { get; private set; } = null!;
-        public GameState State { get; private set; } = GameState.NotStarted;
-        public PlayerTurn CurrentTurn { get; private set; }
+        private Board GameBoard { get; set; } = new();
+
+        public bool IsRunning => GameBoard.State is GameState.Ongoing;
+
+        public GameModes GameMode { get; private set; } = GameModes.NotDefined;
+
+        public ErrorOr<Success> AiMakeMove(out MoveParameters moveParameters)
+        {
+            moveParameters = aiBot.FindBestMove(GameBoard);
+            return MakeMove(moveParameters);
+        }
 
         public ErrorOr<Success> MakeMove(MoveParameters moveParameters)
         {
-            if (State != GameState.Ongoing)
+            if (GameBoard.State != GameState.Ongoing)
                 return Error.Validation(
                     "InvalidGameState",
                     Messages.Error.InvalidGameState
                 );
 
-            if (CurrentTurn != moveParameters.PlayerTurn)
+            if (GameBoard.CurrentTurn != moveParameters.PlayerTurn)
                 return Error.Validation(
                     "InvalidCurrentPlayer",
                     Messages.Error.InvalidCurrentPlayer
                 );
 
-            var canMakeMoveResult = GameBoard.CanMakeMove(moveParameters);
-            if (canMakeMoveResult.IsError)
-                return canMakeMoveResult.Errors;
-
-            GameBoard.MakeMove(moveParameters);
-            State = GameBoard.GetGameStatus();
-
-            if (State == GameState.Ongoing) SwitchTurn();
+            var makeMove = GameBoard.MakeMove(moveParameters);
+            if (makeMove.IsError)
+                return makeMove.Errors;
 
             return Result.Success;
         }
 
-        public void InitializeGame()
+        public void Reset()
         {
             GameBoard = new Board();
-            State = GameState.Ongoing;
-            CurrentTurn = PlayerTurn.X;
+            GameMode = GameModes.NotDefined;
+        }
+
+        public void InitializeGame(bool twoPlayerGame = true)
+        {
+            GameBoard = new Board();
+            GameMode = twoPlayerGame ? GameModes.GameWithPlayer : GameModes.GameWithAi;
+            GameBoard.InitializeGameState();
         }
 
         public Board GetBoard()
         {
             return GameBoard;
-        }
-
-        private void SwitchTurn()
-        {
-            CurrentTurn = CurrentTurn is PlayerTurn.X ? PlayerTurn.О : PlayerTurn.X;
         }
     }
 }

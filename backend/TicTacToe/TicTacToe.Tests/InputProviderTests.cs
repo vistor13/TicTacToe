@@ -5,7 +5,7 @@ using TicTacToe.Core.Interfaces;
 
 namespace TicTacToe.Tests;
 
-public class InputReaderTests
+public class InputProviderTests
 {
     private readonly Mock<IUiRender> _mockRender = new();
 
@@ -15,7 +15,7 @@ public class InputReaderTests
         // Arrange
         var inputs = new Queue<string>(new[] { "", string.Empty, "ValidCommand" });
         Console.SetIn(new StringReader(string.Join(Environment.NewLine, inputs)));
-        var inputReader = new InputReader(_mockRender.Object);
+        var inputReader = new InputProvider(_mockRender.Object);
 
         // Act
         var result = inputReader.GetCommandInput();
@@ -31,7 +31,7 @@ public class InputReaderTests
     {
         // Arrange
         Console.SetIn(new StringReader("ValidInput"));
-        var inputReader = new InputReader(_mockRender.Object);
+        var inputReader = new InputProvider(_mockRender.Object);
 
         // Act
         var result = inputReader.GetCommandInput();
