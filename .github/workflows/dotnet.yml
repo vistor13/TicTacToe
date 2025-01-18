@@ -70,6 +70,9 @@ jobs:
           mkdir -p ~/.sonar/scanner
           dotnet tool update dotnet-sonarscanner --tool-path ~/.sonar/scanner
 
+      - name: Install JetBrains dotCover
+        run: dotnet tool install --global JetBrains.dotCover.CommandLineTools --version 2023.3.0
+
       - name: Build and Analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
