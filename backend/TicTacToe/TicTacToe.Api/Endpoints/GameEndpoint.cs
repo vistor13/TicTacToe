@@ -16,8 +16,8 @@ public static class GameEndpoint
 
         endPoints.MapPost(
             "start",
-            (GameService gameService, IGameProcessor gameProcessor)
-                => StartGame(gameProcessor, gameService));
+            (GameService gameService, IGameProcessor gameProcessor, bool isSinglePlayerMode)
+                => StartGame(gameProcessor, gameService, isSinglePlayerMode));
 
         endPoints.MapPost(
             "move",
@@ -26,17 +26,27 @@ public static class GameEndpoint
 
         endPoints.MapGet(
             "state",
-            (Guid gameId, GameService gameService) => GetGameState(gameService, gameId));
+            (Guid gameId, GameService gameService)
+                => GetGameState(gameService, gameId));
     }
 
-    private static IResult GetGameState(GameService gameService, Guid gameId)
+    private static IResult StartGame(IGameProcessor gameProcessor, GameService gameService,
+        bool isSinglePlayerMode)
     {
-        var gameState = gameService.GetGame(gameId);
-        if (gameState == null) return Results.BadRequest("Game not found.");
+        gameProcessor.InitializeGame(isSinglePlayerMode);
 
-        var resultState = StateViewModel.ToViewModel(gameState);
+        var gameState = gameProcessor.GetGameState();
 
-        return Results.Ok(resultState);
+        var gameId = Guid.NewGuid();
+        gameService.SaveGame(gameId, gameState);
+
+        var gameViewModel = new GameViewModel
+        {
+            Id = gameId,
+            GameMode = gameState.GameMode
+        };
+
+        return Results.Created("/api/game/start", gameViewModel);
     }
 
     private static IResult MakeMove(GameService gameService, Guid gameId, IGameProcessor gameProcessor, int row,
@@ -53,25 +63,20 @@ public static class GameEndpoint
 
         var result = gameProcessor.MakeMove(move);
 
+        if (!result.IsError && gameState is { GameMode: GameModes.GameWithAi, State: GameState.Ongoing })
+            gameProcessor.AiMakeMove(out _);
+
         gameService.SaveGame(gameId, gameProcessor.GetGameState());
         return result.ToResult();
     }
 
-    private static IResult StartGame(IGameProcessor gameProcessor, GameService gameService)
+    private static IResult GetGameState(GameService gameService, Guid gameId)
     {
-        gameProcessor.InitializeGame();
+        var gameState = gameService.GetGame(gameId);
+        if (gameState == null) return Results.BadRequest("Game not found.");
 
-        var gameState = gameProcessor.GetGameState();
+        var resultState = StateViewModel.ToViewModel(gameState);
 
-        var gameId = Guid.NewGuid();
-        gameService.SaveGame(gameId, gameState);
-
-        var gameViewModel = new GameViewModel
-        {
-            Id = gameId,
-            GameMode = gameState.GameMode
-        };
-
-        return Results.Created("/api/game/start", gameViewModel);
+        return Results.Ok(resultState);
     }
 }
