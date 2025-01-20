@@ -6,8 +6,14 @@ using TicTacToe.Core.Services;
 
 namespace TicTacToe.Api.Endpoints;
 
+/// <summary>
+///     Represent game endpoints.
+/// </summary>
 public static class GameEndpoint
 {
+    /// <summary>
+    /// </summary>
+    /// <param name="app"></param>
     public static void AddGameEndpoints(this IEndpointRouteBuilder app)
     {
         var endPoints =

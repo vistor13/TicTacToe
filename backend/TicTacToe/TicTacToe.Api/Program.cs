@@ -2,6 +2,9 @@ using TicTacToe.Api.Extensions;
 
 namespace TicTacToe.Api;
 
+/// <summary>
+///     The entry point of the application
+/// </summary>
 public static class Program
 {
     internal static void Main(string[] args)
