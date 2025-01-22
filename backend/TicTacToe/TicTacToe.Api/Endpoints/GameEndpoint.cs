@@ -22,8 +22,8 @@ public static class GameEndpoint
 
         endPoints.MapPost(
             "start",
-            (GameService gameService, IGameProcessor gameProcessor, bool isSinglePlayerMode)
-                => StartGame(gameProcessor, gameService, isSinglePlayerMode));
+            (GameService gameService, IGameProcessor gameProcessor, bool isTwoPlayersGame)
+                => StartGame(gameProcessor, gameService, isTwoPlayersGame));
 
         endPoints.MapPost(
             "move",
@@ -37,9 +37,9 @@ public static class GameEndpoint
     }
 
     private static IResult StartGame(IGameProcessor gameProcessor, GameService gameService,
-        bool isSinglePlayerMode)
+        bool isTwoPlayersGame)
     {
-        gameProcessor.InitializeGame(isSinglePlayerMode);
+        gameProcessor.InitializeGame(isTwoPlayersGame);
 
         var gameState = gameProcessor.GetGameState();
 
