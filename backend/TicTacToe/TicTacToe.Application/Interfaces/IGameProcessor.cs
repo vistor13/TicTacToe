@@ -1,5 +1,5 @@
 using ErrorOr;
-using TicTacToe.Core.Dto;
+using TicTacToe.Application.Dto;
 using TicTacToe.Core.Models;
 
 namespace TicTacToe.Application.Interfaces;
@@ -14,5 +14,5 @@ public interface IGameProcessor
     ErrorOr<Success> AiMakeMove(out MoveParameters moveParameters);
     void Reset();
     GameStateDto GetGameState();
-    void LoadGameState(GameStateDto state);
+    void LoadGameState(GameStateParameters state);
 }

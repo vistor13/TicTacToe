@@ -1,7 +1,7 @@
 ﻿using ErrorOr;
 using TicTacToe.Application.ApplicationMessages;
+using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
-using TicTacToe.Core.Dto;
 using TicTacToe.Core.Models;
 
 namespace TicTacToe.Application.Services;
@@ -21,16 +21,10 @@ public class GameProcessor(IMiniMaxAi aiBot) : IGameProcessor
 
     public GameStateDto GetGameState()
     {
-        return new GameStateDto
-        {
-            Grid = GameBoard.Grid,
-            State = GameBoard.State,
-            GameMode = GameMode,
-            PlayerTurn = GameBoard.CurrentTurn
-        };
+        return new GameStateDto(GameMode, GameBoard.CurrentTurn, GameBoard.State, GameBoard.Grid);
     }
 
-    public void LoadGameState(GameStateDto state)
+    public void LoadGameState(GameStateParameters state)
     {
         GameMode = state.GameMode;
         GameBoard.LoadState(state);

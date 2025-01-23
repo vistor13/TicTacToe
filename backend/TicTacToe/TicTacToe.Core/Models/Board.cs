@@ -1,6 +1,5 @@
 ﻿using ErrorOr;
 using TicTacToe.Core.BoardValidator;
-using TicTacToe.Core.Dto;
 using TicTacToe.Core.Interfaces;
 
 namespace TicTacToe.Core.Models
@@ -18,12 +17,11 @@ namespace TicTacToe.Core.Models
         public PlayerTurn CurrentTurn { get; private set; }
         public char[,] Grid { get; private set; } = InitializeBoard();
 
-        public Board LoadState(GameStateDto state)
+        public void LoadState(GameStateParameters state)
         {
             Grid = state.Grid;
             CurrentTurn = state.PlayerTurn;
             State = state.State;
-            return this;
         }
 
         public char GetCell(int row, int col)

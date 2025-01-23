@@ -1,0 +1,22 @@
+using MediatR;
+using TicTacToe.Application.Dto;
+using TicTacToe.Application.Interfaces;
+
+namespace TicTacToe.Application.Commands.WebApi.StartGameCommand;
+
+public class StartGameHandler(IGameProcessor gameProcessor, IGameStateManager gameStateManager)
+    : IRequestHandler<StartGameCommand, GameInitializationDto>
+{
+    public Task<GameInitializationDto> Handle(StartGameCommand request, CancellationToken cancellationToken)
+    {
+        gameProcessor.InitializeGame(request.IsTwoPlayerMode);
+
+        var gameState = gameProcessor.GetGameState();
+
+        var gameId = new Guid();
+
+        gameStateManager.SaveGame(gameId, gameState);
+
+        return Task.FromResult(new GameInitializationDto(Guid.NewGuid(), gameState.GameModes));
+    }
+}

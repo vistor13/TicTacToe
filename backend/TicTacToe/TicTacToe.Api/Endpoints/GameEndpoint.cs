@@ -1,6 +1,8 @@
+using MediatR;
 using TicTacToe.Api.Contracts.Requests;
 using TicTacToe.Api.Contracts.Responses;
 using TicTacToe.Api.Extensions;
+using TicTacToe.Application.Commands.WebApi.StartGameCommand;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.Application.Services;
 using TicTacToe.Core.Models;
@@ -23,39 +25,33 @@ public static class GameEndpoint
 
         endPoints.MapPost(
             "start",
-            (GameService gameService,
-                    IGameProcessor gameProcessor,
-                    bool isTwoPlayersGame)
-                => StartGame(gameProcessor, gameService, isTwoPlayersGame));
+            (IMediator mediator,
+                    StartGameCommand startGameCommand)
+                => StartGame(mediator, startGameCommand));
 
         endPoints.MapPost(
             "move",
             (MoveRequest moveRequest,
                     IGameProcessor gameProcessor,
-                    GameService gameService)
+                    GameStateManager gameService)
                 => MakeMove(gameService, gameProcessor, moveRequest));
 
         endPoints.MapGet(
             "state",
             (Guid gameId,
-                    GameService gameService)
+                    GameStateManager gameService)
                 => GetGameState(gameService, gameId));
     }
 
-    private static IResult StartGame(IGameProcessor gameProcessor, GameService gameService,
-        bool isTwoPlayersGame)
+    private static async Task<IResult> StartGame(IMediator mediator,
+        StartGameCommand startGameCommand)
     {
-        gameProcessor.InitializeGame(isTwoPlayersGame);
-
-        var gameState = gameProcessor.GetGameState();
-
-        var gameId = Guid.NewGuid();
-        gameService.SaveGame(gameId, gameState);
+        var game = await mediator.Send(startGameCommand);
 
         var gameResponse = new GameResponse
         {
-            Id = gameId,
-            GameMode = gameState.GameMode.ToString()
+            Id = game.Id,
+            GameMode = game.Modes.ToString()
         };
 
         return Results.Created("/api/game/start", gameResponse);
