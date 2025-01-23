@@ -1,4 +1,4 @@
-namespace TicTacToe.Core.Interfaces;
+namespace TicTacToe.ConsoleUI.Interfaces;
 
 public interface IInputProvider
 {

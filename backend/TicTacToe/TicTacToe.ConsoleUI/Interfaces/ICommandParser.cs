@@ -1,4 +1,6 @@
-namespace TicTacToe.Core.Interfaces;
+using TicTacToe.Core.Interfaces;
+
+namespace TicTacToe.ConsoleUI.Interfaces;
 
 public interface ICommandParser
 {
