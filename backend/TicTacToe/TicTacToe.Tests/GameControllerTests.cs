@@ -4,9 +4,9 @@ using TicTacToe.Application.Commands;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.ConsoleUI;
 using TicTacToe.ConsoleUI.Interfaces;
-using TicTacToe.Core.CoreMessages;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
+using Messages = TicTacToe.Application.ApplicationMessages.Messages;
 
 namespace TicTacToe.Tests;
 
@@ -191,7 +191,7 @@ public class GameControllerTests
         board.SetGameState(GameState.Ongoing);
         var executionResultWithError = Error.Validation(
             "OutOfBounds",
-            Messages.Error.OutOfBoundsErrorMessage
+            Core.CoreMessages.Messages.Error.OutOfBoundsErrorMessage
         );
         var move = new MoveParameters(5, 1, PlayerTurn.X);
         _mockReader.SetupSequence(r => r.GetCommandInput())

@@ -1,8 +1,8 @@
 using ErrorOr;
+using TicTacToe.Application.ApplicationMessages;
 using TicTacToe.Application.Commands;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.Core.Commands;
-using TicTacToe.Core.CoreMessages;
 using TicTacToe.Core.Models;
 
 namespace TicTacToe.Application.Services;

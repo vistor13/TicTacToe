@@ -1,7 +1,7 @@
+using TicTacToe.Application.ApplicationMessages;
 using TicTacToe.Application.Commands;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.ConsoleUI.Interfaces;
-using TicTacToe.Core.CoreMessages;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
