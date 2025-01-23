@@ -1,5 +1,3 @@
-using TicTacToe.Core.Models;
-
 namespace TicTacToe.Api.Contracts.Responses;
 
 /// <summary>
@@ -15,5 +13,5 @@ public record GameResponse
     /// <summary>
     ///     The game mode.
     /// </summary>
-    public GameModes GameMode { get; init; }
+    public required string GameMode { get; init; }
 }

@@ -11,23 +11,23 @@ public record GameStateResponse
     /// <summary>
     ///     The current game mode.
     /// </summary>
-    public GameModes GameMode { get; init; }
+    public required string GameMode { get; init; }
 
     /// <summary>
     ///     The current state of the game (draw, ongoing, win).
     /// </summary>
-    public GameState State { get; init; }
+    public required string State { get; init; }
 
     /// <summary>
     ///     The game grid, represented as a list of lists of characters.
     ///     It contains the positions of the game pieces.
     /// </summary>
-    public List<List<char>>? Grid { get; init; }
+    public required List<List<char>> Grid { get; init; }
 
     /// <summary>
     ///     The current player's turn .
     /// </summary>
-    public PlayerTurn PlayerTurn { get; init; }
+    public required string PlayerTurn { get; init; }
 
     #region Mapping
 
@@ -46,10 +46,10 @@ public record GameStateResponse
 
         return new GameStateResponse
         {
-            State = gameState.State,
-            GameMode = gameState.GameMode,
+            State = gameState.State.ToString(),
+            GameMode = gameState.GameMode.ToString(),
             Grid = gridList,
-            PlayerTurn = gameState.PlayerTurn
+            PlayerTurn = gameState.PlayerTurn.ToString()
         };
     }
 

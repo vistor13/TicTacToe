@@ -52,13 +52,13 @@ public static class GameEndpoint
         var gameId = Guid.NewGuid();
         gameService.SaveGame(gameId, gameState);
 
-        var gameViewModel = new GameResponse
+        var gameResponse = new GameResponse
         {
             Id = gameId,
-            GameMode = gameState.GameMode
+            GameMode = gameState.GameMode.ToString()
         };
 
-        return Results.Created("/api/game/start", gameViewModel);
+        return Results.Created("/api/game/start", gameResponse);
     }
 
     private static IResult MakeMove(
