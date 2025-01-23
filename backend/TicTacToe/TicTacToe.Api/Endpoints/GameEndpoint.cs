@@ -1,9 +1,9 @@
 using TicTacToe.Api.Contracts.Requests;
 using TicTacToe.Api.Contracts.Responses;
 using TicTacToe.Api.Extensions;
-using TicTacToe.Core.Interfaces;
+using TicTacToe.Application.Interfaces;
+using TicTacToe.Application.Services;
 using TicTacToe.Core.Models;
-using TicTacToe.Core.Services;
 
 namespace TicTacToe.Api.Endpoints;
 

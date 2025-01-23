@@ -1,6 +1,6 @@
 using TicTacToe.Core.Dto;
 
-namespace TicTacToe.Core.Services;
+namespace TicTacToe.Application.Services;
 
 public class GameService
 {

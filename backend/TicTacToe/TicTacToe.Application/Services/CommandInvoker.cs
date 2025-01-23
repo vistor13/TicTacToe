@@ -1,10 +1,11 @@
 using ErrorOr;
+using TicTacToe.Application.Commands;
+using TicTacToe.Application.Interfaces;
 using TicTacToe.Core.Commands;
 using TicTacToe.Core.CoreMessages;
-using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
-namespace TicTacToe.Core.Services;
+namespace TicTacToe.Application.Services;
 
 public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
 {

@@ -1,5 +1,5 @@
-using TicTacToe.Core.Interfaces;
-using TicTacToe.Core.Services;
+using TicTacToe.Application.Interfaces;
+using TicTacToe.Application.Services;
 
 namespace TicTacToe.Api.Extensions;
 
@@ -12,7 +12,7 @@ public static class DependencyInjectionExtension
     ///     Registers core services.
     /// </summary>
     /// <param name="services"></param>
-    public static void AddCore(this IServiceCollection services)
+    public static void AddApplication(this IServiceCollection services)
     {
         services.AddScoped<IGameProcessor, GameProcessor>();
         services.AddScoped<ICommandInvoker, CommandInvoker>();

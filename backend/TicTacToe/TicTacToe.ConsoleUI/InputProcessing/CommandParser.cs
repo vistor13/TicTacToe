@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using TicTacToe.Application.Commands;
+using TicTacToe.Application.Interfaces;
 using TicTacToe.ConsoleUI.ConsoleViews;
 using TicTacToe.ConsoleUI.Interfaces;
 using TicTacToe.Core.Commands;

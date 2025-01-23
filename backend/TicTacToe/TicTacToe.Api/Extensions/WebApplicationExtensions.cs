@@ -17,7 +17,7 @@ public static class WebApplicationExtensions
         var services = builder.Services;
 
         services.AddEndpointsApiExplorer();
-        services.AddCore();
+        services.AddApplication();
         services.AddSwaggerGenTicTacToe();
     }
 

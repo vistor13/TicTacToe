@@ -2,12 +2,11 @@ using ErrorOr;
 using TicTacToe.Core.Dto;
 using TicTacToe.Core.Models;
 
-namespace TicTacToe.Core.Interfaces;
+namespace TicTacToe.Application.Interfaces;
 
 public interface IGameProcessor
 {
     GameModes GameMode { get; }
-
     bool IsRunning { get; }
     ErrorOr<Success> MakeMove(MoveParameters moveParameters);
     void InitializeGame(bool twoPlayerGame = true);

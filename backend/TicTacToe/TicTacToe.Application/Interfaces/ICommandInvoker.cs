@@ -1,6 +1,6 @@
 using ErrorOr;
 
-namespace TicTacToe.Core.Interfaces;
+namespace TicTacToe.Application.Interfaces;
 
 public interface ICommandInvoker
 {

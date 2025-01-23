@@ -1,8 +1,8 @@
 using ErrorOr;
-using TicTacToe.Core.Interfaces;
+using TicTacToe.Application.Interfaces;
 using TicTacToe.Core.Models;
 
-namespace TicTacToe.Core.Commands;
+namespace TicTacToe.Application.Commands;
 
 public class MoveCommand(IGameProcessor gameProcessor, MoveParameters moveParameters) : ICommand
 {

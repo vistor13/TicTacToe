@@ -1,4 +1,6 @@
 using Moq;
+using TicTacToe.Application.Commands;
+using TicTacToe.Application.Interfaces;
 using TicTacToe.ConsoleUI.InputProcessing;
 using TicTacToe.Core.Commands;
 using TicTacToe.Core.Interfaces;

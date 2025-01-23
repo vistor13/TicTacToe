@@ -16,6 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\TicTacToe.Application\TicTacToe.Application.csproj"/>
         <ProjectReference Include="..\TicTacToe.Core\TicTacToe.Core.csproj"/>
     </ItemGroup>
 </Project>

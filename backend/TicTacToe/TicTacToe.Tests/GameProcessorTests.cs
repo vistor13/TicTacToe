@@ -1,7 +1,7 @@
 using Moq;
-using TicTacToe.Core.Interfaces;
+using TicTacToe.Application.Interfaces;
+using TicTacToe.Application.Services;
 using TicTacToe.Core.Models;
-using TicTacToe.Core.Services;
 
 namespace TicTacToe.Tests;
 

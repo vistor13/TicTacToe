@@ -1,8 +1,8 @@
 using Force.DeepCloner;
-using TicTacToe.Core.Interfaces;
+using TicTacToe.Application.Interfaces;
 using TicTacToe.Core.Models;
 
-namespace TicTacToe.Core.Services;
+namespace TicTacToe.Application.Services;
 
 public class MiniMaxAi : IMiniMaxAi
 {
