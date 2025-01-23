@@ -2,7 +2,7 @@ using ErrorOr;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.Core.Interfaces;
 
-namespace TicTacToe.Application.Commands;
+namespace TicTacToe.Application.Commands.ConsoleUI;
 
 public class ShowBoardCommand(IGameProcessor gameProcessor, IUiRender renderer) : ICommand
 {

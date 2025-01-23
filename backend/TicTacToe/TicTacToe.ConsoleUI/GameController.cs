@@ -1,5 +1,5 @@
 using TicTacToe.Application.ApplicationMessages;
-using TicTacToe.Application.Commands;
+using TicTacToe.Application.Commands.ConsoleUI;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.ConsoleUI.Interfaces;
 using TicTacToe.Core.Interfaces;

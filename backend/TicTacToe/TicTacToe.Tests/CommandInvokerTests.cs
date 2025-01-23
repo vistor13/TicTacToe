@@ -1,8 +1,7 @@
 using Moq;
-using TicTacToe.Application.Commands;
+using TicTacToe.Application.Commands.ConsoleUI;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.Application.Services;
-using TicTacToe.Core.Commands;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 

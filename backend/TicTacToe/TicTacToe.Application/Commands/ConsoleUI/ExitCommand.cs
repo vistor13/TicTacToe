@@ -3,7 +3,7 @@ using TicTacToe.Application.ApplicationMessages;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.Core.Interfaces;
 
-namespace TicTacToe.Application.Commands;
+namespace TicTacToe.Application.Commands.ConsoleUI;
 
 public class ExitCommand(IGameProcessor gameProcessor, IUiRender renderer) : ICommand
 {

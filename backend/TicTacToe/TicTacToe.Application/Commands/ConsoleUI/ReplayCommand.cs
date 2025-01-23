@@ -4,7 +4,7 @@ using TicTacToe.Application.Interfaces;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
-namespace TicTacToe.Application.Commands;
+namespace TicTacToe.Application.Commands.ConsoleUI;
 
 public class ReplayCommand(
     IGameProcessor gameProcessor,

@@ -2,7 +2,7 @@ using ErrorOr;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.Core.Interfaces;
 
-namespace TicTacToe.Core.Commands;
+namespace TicTacToe.Application.Commands.ConsoleUI;
 
 public class InstructionCommand(IUiRender renderer) : ICommand
 {

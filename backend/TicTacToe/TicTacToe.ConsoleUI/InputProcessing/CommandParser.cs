@@ -1,9 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
-using TicTacToe.Application.Commands;
+using TicTacToe.Application.Commands.ConsoleUI;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.ConsoleUI.ConsoleViews;
 using TicTacToe.ConsoleUI.Interfaces;
-using TicTacToe.Core.Commands;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
