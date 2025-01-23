@@ -1,5 +1,6 @@
+using TicTacToe.Api.Contracts.Requests;
+using TicTacToe.Api.Contracts.Responses;
 using TicTacToe.Api.Extensions;
-using TicTacToe.Api.GameModels;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 using TicTacToe.Core.Services;
@@ -22,17 +23,22 @@ public static class GameEndpoint
 
         endPoints.MapPost(
             "start",
-            (GameService gameService, IGameProcessor gameProcessor, bool isTwoPlayersGame)
+            (GameService gameService,
+                    IGameProcessor gameProcessor,
+                    bool isTwoPlayersGame)
                 => StartGame(gameProcessor, gameService, isTwoPlayersGame));
 
         endPoints.MapPost(
             "move",
-            (Guid gameId, GameService gameService, int row, int col, IGameProcessor gameProcessor)
-                => MakeMove(gameService, gameId, gameProcessor, row, col));
+            (MoveRequest moveRequest,
+                    IGameProcessor gameProcessor,
+                    GameService gameService)
+                => MakeMove(gameService, gameProcessor, moveRequest));
 
         endPoints.MapGet(
             "state",
-            (Guid gameId, GameService gameService)
+            (Guid gameId,
+                    GameService gameService)
                 => GetGameState(gameService, gameId));
     }
 
@@ -46,7 +52,7 @@ public static class GameEndpoint
         var gameId = Guid.NewGuid();
         gameService.SaveGame(gameId, gameState);
 
-        var gameViewModel = new GameViewModel
+        var gameViewModel = new GameResponse
         {
             Id = gameId,
             GameMode = gameState.GameMode
@@ -55,24 +61,26 @@ public static class GameEndpoint
         return Results.Created("/api/game/start", gameViewModel);
     }
 
-    private static IResult MakeMove(GameService gameService, Guid gameId, IGameProcessor gameProcessor, int row,
-        int col)
+    private static IResult MakeMove(
+        GameService gameService,
+        IGameProcessor gameProcessor,
+        MoveRequest moveRequest)
     {
-        var gameState = gameService.GetGame(gameId);
+        var gameState = gameService.GetGame(moveRequest.GameId);
         if (gameState == null) return Results.BadRequest("Game not found.");
 
         gameProcessor.LoadGameState(gameState);
 
         var currentPlayer = gameProcessor.GetBoard().CurrentTurn;
 
-        var move = new MoveParameters(row - 1, col - 1, currentPlayer);
+        var move = new MoveParameters(moveRequest.Row - 1, moveRequest.Col - 1, currentPlayer);
 
         var result = gameProcessor.MakeMove(move);
 
         if (!result.IsError && gameState is { GameMode: GameModes.GameWithAi, State: GameState.Ongoing })
             gameProcessor.AiMakeMove(out _);
 
-        gameService.SaveGame(gameId, gameProcessor.GetGameState());
+        gameService.SaveGame(moveRequest.GameId, gameProcessor.GetGameState());
         return result.ToResult();
     }
 
@@ -81,7 +89,7 @@ public static class GameEndpoint
         var gameState = gameService.GetGame(gameId);
         if (gameState == null) return Results.BadRequest("Game not found.");
 
-        var resultState = StateViewModel.ToViewModel(gameState);
+        var resultState = GameStateResponse.ToViewModel(gameState);
 
         return Results.Ok(resultState);
     }

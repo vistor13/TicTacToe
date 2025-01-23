@@ -1,11 +1,11 @@
 using TicTacToe.Core.Models;
 
-namespace TicTacToe.Api.GameModels;
+namespace TicTacToe.Api.Contracts.Responses;
 
 /// <summary>
 ///     Represents a view model for the game.
 /// </summary>
-public record GameViewModel
+public record GameResponse
 {
     /// <summary>
     ///     A unique identifier for the game instance.
