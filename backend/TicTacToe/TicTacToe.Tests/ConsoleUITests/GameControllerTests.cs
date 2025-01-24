@@ -8,7 +8,7 @@ using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 using Messages = TicTacToe.Application.ApplicationMessages.Messages;
 
-namespace TicTacToe.Tests;
+namespace TicTacToe.Tests.ConsoleUITests;
 
 public class GameControllerTests
 {

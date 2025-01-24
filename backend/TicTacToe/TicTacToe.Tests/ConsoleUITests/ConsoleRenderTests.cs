@@ -1,7 +1,7 @@
 using TicTacToe.ConsoleUI.ConsoleViews;
 using TicTacToe.Core.Models;
 
-namespace TicTacToe.Tests;
+namespace TicTacToe.Tests.ConsoleUITests;
 
 public class ConsoleRendererTests
 {

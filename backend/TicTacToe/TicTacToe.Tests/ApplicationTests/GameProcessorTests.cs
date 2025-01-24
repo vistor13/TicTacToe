@@ -3,7 +3,7 @@ using TicTacToe.Application.Interfaces;
 using TicTacToe.Application.Services;
 using TicTacToe.Core.Models;
 
-namespace TicTacToe.Tests;
+namespace TicTacToe.Tests.ApplicationTests;
 
 public class GameProcessorTests
 {

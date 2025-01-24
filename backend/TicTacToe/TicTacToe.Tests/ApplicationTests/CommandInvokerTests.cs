@@ -5,7 +5,7 @@ using TicTacToe.Application.Services;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
-namespace TicTacToe.Tests;
+namespace TicTacToe.Tests.ApplicationTests;
 
 public class CommandInvokerTests
 {

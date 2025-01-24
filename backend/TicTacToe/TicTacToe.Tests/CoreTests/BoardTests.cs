@@ -1,6 +1,6 @@
 using TicTacToe.Core.Models;
 
-namespace TicTacToe.Tests;
+namespace TicTacToe.Tests.CoreTests;
 
 public class BoardTests
 {

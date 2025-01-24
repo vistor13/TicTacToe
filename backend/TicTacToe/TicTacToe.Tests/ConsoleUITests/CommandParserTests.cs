@@ -5,7 +5,7 @@ using TicTacToe.ConsoleUI.InputProcessing;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Models;
 
-namespace TicTacToe.Tests;
+namespace TicTacToe.Tests.ConsoleUITests;
 
 public class CommandParserTests
 {

@@ -3,7 +3,7 @@ using TicTacToe.ConsoleUI.ConsoleViews;
 using TicTacToe.ConsoleUI.InputProcessing;
 using TicTacToe.Core.Interfaces;
 
-namespace TicTacToe.Tests;
+namespace TicTacToe.Tests.ConsoleUITests;
 
 public class InputProviderTests
 {
