@@ -14,5 +14,5 @@ public interface IGameProcessor
     ErrorOr<Success> AiMakeMove(out MoveParameters moveParameters);
     void Reset();
     GameStateDto GetGameState();
-    void LoadGameState(GameStateParameters state);
+    void LoadGameState(GameStateDto state);
 }

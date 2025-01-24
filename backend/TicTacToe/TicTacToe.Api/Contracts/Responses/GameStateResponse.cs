@@ -1,3 +1,4 @@
+using TicTacToe.Application.Dto;
 using TicTacToe.Core.Models;
 
 namespace TicTacToe.Api.Contracts.Responses;
@@ -35,7 +36,7 @@ public record GameStateResponse
     /// </summary>
     /// <param name="gameState">The GameStateDto to convert.</param>
     /// <returns> <see cref="GameStateResponse" /> containing the relevant data from the GameStateDto.</returns>
-    public static GameStateResponse ToViewModel(GameStateParameters gameState)
+    public static GameStateResponse ToViewModel(GameStateDto gameState)
     {
         var gridList = Enumerable.Range(0, Board.BoardSize)
             .Select(i => Enumerable.Range(0, Board.BoardSize)
@@ -46,9 +47,9 @@ public record GameStateResponse
         return new GameStateResponse
         {
             State = gameState.State.ToString(),
-            GameMode = gameState.GameMode.ToString(),
             Grid = gridList,
-            PlayerTurn = gameState.PlayerTurn.ToString()
+            GameMode = gameState.GameModes.ToString(),
+            PlayerTurn = gameState.CurrentPlayer.ToString()
         };
     }
 

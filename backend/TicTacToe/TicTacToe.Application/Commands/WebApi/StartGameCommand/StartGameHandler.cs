@@ -1,10 +1,11 @@
 using MediatR;
 using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
+using TicTacToe.Application.Services;
 
 namespace TicTacToe.Application.Commands.WebApi.StartGameCommand;
 
-public class StartGameHandler(IGameProcessor gameProcessor, IGameStateManager gameStateManager)
+public class StartGameHandler(IGameProcessor gameProcessor, GameStateManager gameStateManager)
     : IRequestHandler<StartGameCommand, GameInitializationDto>
 {
     public Task<GameInitializationDto> Handle(StartGameCommand request, CancellationToken cancellationToken)
@@ -13,10 +14,10 @@ public class StartGameHandler(IGameProcessor gameProcessor, IGameStateManager ga
 
         var gameState = gameProcessor.GetGameState();
 
-        var gameId = new Guid();
+        var gameId = Guid.NewGuid();
 
         gameStateManager.SaveGame(gameId, gameState);
 
-        return Task.FromResult(new GameInitializationDto(Guid.NewGuid(), gameState.GameModes));
+        return Task.FromResult(new GameInitializationDto(gameId, gameState.GameModes));
     }
 }

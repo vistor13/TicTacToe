@@ -15,9 +15,4 @@
     <ProjectReference Include="..\TicTacToe.Core\TicTacToe.Core.csproj"/>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Commands\WebApi\MoveCommand\"/>
-    <Folder Include="Queries\"/>
-  </ItemGroup>
-
 </Project>

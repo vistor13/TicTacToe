@@ -2,10 +2,9 @@ using MediatR;
 using TicTacToe.Api.Contracts.Requests;
 using TicTacToe.Api.Contracts.Responses;
 using TicTacToe.Api.Extensions;
+using TicTacToe.Application.Commands.WebApi.MoveCommand;
 using TicTacToe.Application.Commands.WebApi.StartGameCommand;
-using TicTacToe.Application.Interfaces;
-using TicTacToe.Application.Services;
-using TicTacToe.Core.Models;
+using TicTacToe.Application.Queries;
 
 namespace TicTacToe.Api.Endpoints;
 
@@ -25,28 +24,22 @@ public static class GameEndpoint
 
         endPoints.MapPost(
             "start",
-            (IMediator mediator,
-                    StartGameCommand startGameCommand)
-                => StartGame(mediator, startGameCommand));
+            StartGame);
 
         endPoints.MapPost(
             "move",
-            (MoveRequest moveRequest,
-                    IGameProcessor gameProcessor,
-                    GameStateManager gameService)
-                => MakeMove(gameService, gameProcessor, moveRequest));
+            MakeMove);
 
         endPoints.MapGet(
             "state",
-            (Guid gameId,
-                    GameStateManager gameService)
-                => GetGameState(gameService, gameId));
+            GetGameState);
     }
 
     private static async Task<IResult> StartGame(IMediator mediator,
-        StartGameCommand startGameCommand)
+        bool isTwoPlayerMode)
     {
-        var game = await mediator.Send(startGameCommand);
+        var game = await mediator.Send
+            (new StartGameCommand(isTwoPlayerMode));
 
         var gameResponse = new GameResponse
         {
@@ -57,33 +50,19 @@ public static class GameEndpoint
         return Results.Created("/api/game/start", gameResponse);
     }
 
-    private static IResult MakeMove(
-        GameService gameService,
-        IGameProcessor gameProcessor,
-        MoveRequest moveRequest)
+    private static async Task<IResult> MakeMove(
+        MoveRequest moveRequest, IMediator mediator)
     {
-        var gameState = gameService.GetGame(moveRequest.GameId);
-        if (gameState == null) return Results.BadRequest("Game not found.");
+        var result = await mediator.Send
+            (new MoveCommand(moveRequest.GameId, moveRequest.Row, moveRequest.Col));
 
-        gameProcessor.LoadGameState(gameState);
-
-        var currentPlayer = gameProcessor.GetBoard().CurrentTurn;
-
-        var move = new MoveParameters(moveRequest.Row - 1, moveRequest.Col - 1, currentPlayer);
-
-        var result = gameProcessor.MakeMove(move);
-
-        if (!result.IsError && gameState is { GameMode: GameModes.GameWithAi, State: GameState.Ongoing })
-            gameProcessor.AiMakeMove(out _);
-
-        gameService.SaveGame(moveRequest.GameId, gameProcessor.GetGameState());
         return result.ToResult();
     }
 
-    private static IResult GetGameState(GameService gameService, Guid gameId)
+    private static async Task<IResult> GetGameState(Guid gameId, IMediator mediator)
     {
-        var gameState = gameService.GetGame(gameId);
-        if (gameState == null) return Results.BadRequest("Game not found.");
+        var gameState = await mediator.Send
+            (new GetStateByIdQuery(gameId));
 
         var resultState = GameStateResponse.ToViewModel(gameState);
 

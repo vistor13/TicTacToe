@@ -1,9 +1,8 @@
 using TicTacToe.Application.Dto;
-using TicTacToe.Application.Interfaces;
 
 namespace TicTacToe.Application.Services;
 
-public class GameStateManager : IGameStateManager
+public class GameStateManager
 {
     private readonly Dictionary<Guid, GameStateDto> _games = new();
 

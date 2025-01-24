@@ -17,7 +17,6 @@ public static class DependencyInjectionExtension
         services.AddScoped<IGameProcessor, GameProcessor>();
         services.AddScoped<ICommandInvoker, CommandInvoker>();
         services.AddScoped<IMiniMaxAi, MiniMaxAi>();
-        services.AddScoped<IGameStateManager, GameStateManager>();
         services.AddSingleton<GameStateManager>();
     }
 }
