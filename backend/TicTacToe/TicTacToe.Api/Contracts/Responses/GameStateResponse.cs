@@ -1,5 +1,4 @@
 using TicTacToe.Application.Dto;
-using TicTacToe.Core.Models;
 
 namespace TicTacToe.Api.Contracts.Responses;
 
@@ -38,8 +37,8 @@ public record GameStateResponse
     /// <returns> <see cref="GameStateResponse" /> containing the relevant data from the GameStateDto.</returns>
     public static GameStateResponse ToViewModel(GameStateDto gameState)
     {
-        var gridList = Enumerable.Range(0, Board.BoardSize)
-            .Select(i => Enumerable.Range(0, Board.BoardSize)
+        var gridList = Enumerable.Range(0, gameState.Grid.GetLength(0))
+            .Select(i => Enumerable.Range(0, gameState.Grid.GetLength(1))
                 .Select(j => gameState.Grid[i, j])
                 .ToList())
             .ToList();

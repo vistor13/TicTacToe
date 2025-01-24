@@ -59,12 +59,16 @@ public static class GameEndpoint
         return result.ToResult();
     }
 
-    private static async Task<IResult> GetGameState(Guid gameId, IMediator mediator)
+    private static async Task<IResult> GetGameState(Guid gameId,
+        IMediator mediator)
     {
         var gameState = await mediator.Send
             (new GetStateByIdQuery(gameId));
 
-        var resultState = GameStateResponse.ToViewModel(gameState);
+        if (gameState.IsError)
+            return Results.BadRequest(gameState.Errors);
+
+        var resultState = GameStateResponse.ToViewModel(gameState.Value);
 
         return Results.Ok(resultState);
     }
