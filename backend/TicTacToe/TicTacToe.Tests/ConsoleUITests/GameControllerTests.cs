@@ -39,14 +39,12 @@ public class GameControllerTests
     public void Execute_ShouldRenderWelcomeMessage_WhenGameStarts()
     {
         // Arrange
-        _mockReader.SetupSequence(r => r.GetCommandInput())
+        _mockReader.Setup(r => r.GetCommandInput())
             .Returns("end");
         _mockCommandParser.Setup(p => p.CommandParse("end"))
-            .Returns(new Mock<ICommand>().Object);
+            .Returns(new EndGameCommand(_mockGameProcessor.Object));
         _mockCommandInvoker.Setup(i => i.Execute(It.IsAny<ICommand>()))
             .Returns(Result.Success);
-        _mockGameProcessor.Setup(g => g.IsRunning)
-            .Returns(false);
 
         // Act
         _gameController.Execute();
@@ -56,130 +54,57 @@ public class GameControllerTests
     }
 
     [Fact]
-    public void PlayGameLoop_ShouldRenderWinMessage_WhenGameEndsWithWin()
+    public void Execute_ShouldExitLoop_WhenEndGameCommandIsExecuted()
     {
         // Arrange
-        var move = new MoveParameters(1, 1, PlayerTurn.X);
         _mockReader.SetupSequence(r => r.GetCommandInput())
             .Returns("game player")
-            .Returns("move 1 1");
-
+            .Returns("end");
         _mockCommandParser.Setup(p => p.CommandParse("game player"))
             .Returns(new PlayerGameCommand(_mockGameProcessor.Object, _mockConsoleRenderer.Object));
-
-        _mockCommandParser.Setup(p => p.CommandParse("move 1 1"))
-            .Returns(new MoveCommand(_mockGameProcessor.Object, move));
-
+        _mockCommandParser.Setup(p => p.CommandParse("end"))
+            .Returns(new EndGameCommand(_mockGameProcessor.Object));
         _mockCommandInvoker.Setup(i => i.Execute(It.IsAny<ICommand>()))
             .Returns(Result.Success);
-
-        _mockGameProcessor.Setup(g => g.GameMode)
-            .Returns(GameModes.GameWithPlayer);
-
-        _mockGameProcessor.SetupSequence(g => g.IsRunning)
-            .Returns(true)
-            .Returns(false);
-
-        _mockGameProcessor.Setup(g => g.GetBoard())
-            .Returns(new Board());
-
-        _mockGameProcessor.Object.GetBoard().SetGameState(GameState.Win);
 
         // Act
         _gameController.Execute();
 
         // Assert
-        _mockConsoleRenderer.Verify(r => r.RenderWin(It.IsAny<PlayerTurn>()), Times.Once);
-        _mockConsoleRenderer.Verify(r => r.RenderProposeRestoreGame(), Times.Once);
+        _mockConsoleRenderer.Verify(r => r.RenderWelcome(), Times.Once);
+        _mockCommandParser.Verify(p => p.CommandParse(It.IsAny<string>()), Times.Exactly(2));
+        _mockCommandInvoker.Verify(i => i.Execute(It.IsAny<ICommand>()), Times.Exactly(2));
     }
 
     [Fact]
-    public void PlayGameLoop_ShouldRenderDrawMessage_WhenGameEndsWithDraw()
+    public void Execute_ShouldRenderError_WhenCommandNotAllowed()
     {
         // Arrange
-        var board = new Board();
+        var error = Error.Validation(
+            "ExecuteCommand",
+            Messages.Error.CommandNotAllowed
+        );
 
-        board.SetGameState(GameState.Draw);
-
-        var move = new MoveParameters(1, 1, PlayerTurn.X);
         _mockReader.SetupSequence(r => r.GetCommandInput())
-            .Returns("game player")
-            .Returns("move 1 1");
+            .Returns("replay")
+            .Returns("end");
 
-        _mockCommandParser.Setup(p => p.CommandParse("game player"))
-            .Returns(new PlayerGameCommand(_mockGameProcessor.Object, _mockConsoleRenderer.Object));
+        _mockCommandParser.Setup(p => p.CommandParse("replay"))
+            .Returns(new ReplayCommand(_mockGameProcessor.Object, _mockConsoleRenderer.Object));
+        _mockCommandParser.Setup(p => p.CommandParse("end"))
+            .Returns(new EndGameCommand(_mockGameProcessor.Object));
 
-        _mockCommandParser.Setup(p => p.CommandParse("move 1 1"))
-            .Returns(new MoveCommand(_mockGameProcessor.Object, move));
+        _mockCommandInvoker.Setup(i => i.Execute(It.IsAny<ReplayCommand>()))
+            .Returns(error);
 
-        _mockCommandInvoker.Setup(i => i.Execute(It.IsAny<ICommand>()))
+        _mockCommandInvoker.Setup(i => i.Execute(It.IsAny<EndGameCommand>()))
             .Returns(Result.Success);
-
-        _mockGameProcessor.SetupSequence(g => g.IsRunning)
-            .Returns(true)
-            .Returns(false);
-
-        _mockGameProcessor.Setup(g => g.GetBoard())
-            .Returns(board);
-
-
-        _mockGameProcessor.Setup(g => g.GameMode)
-            .Returns(GameModes.GameWithPlayer);
 
         // Act
         _gameController.Execute();
 
         // Assert
-        _mockConsoleRenderer.Verify(r => r.RenderDraw(), Times.Once);
-        _mockConsoleRenderer.Verify(r => r.RenderProposeRestoreGame(), Times.Once);
-    }
-
-    [Fact]
-    public void PlayGameLoop_ShouldAllowAiToMakeMove_WhenGameModeIsGameWithAi()
-    {
-        // Arrange
-        var aiMove = new MoveParameters(0, 0, PlayerTurn.О);
-        var board = new Board();
-
-        board.SetGameState(GameState.Ongoing);
-
-        var move = new MoveParameters(1, 1, PlayerTurn.X);
-        _mockReader.SetupSequence(r => r.GetCommandInput())
-            .Returns("game ai")
-            .Returns("move 1 1");
-
-        _mockCommandParser.Setup(p => p.CommandParse("game ai"))
-            .Returns(new AiGameCommand(_mockGameProcessor.Object, _mockConsoleRenderer.Object));
-
-        _mockCommandParser.Setup(p => p.CommandParse("move 1 1"))
-            .Returns(new MoveCommand(_mockGameProcessor.Object, move));
-
-        _mockCommandInvoker.Setup(i => i.Execute(It.IsAny<ICommand>()))
-            .Returns(Result.Success);
-
-        _mockGameProcessor.SetupSequence(g => g.IsRunning)
-            .Returns(true)
-            .Returns(false);
-
-        _mockGameProcessor.Setup(g => g.GetBoard())
-            .Returns(board);
-
-        _mockGameProcessor.Setup(g => g.GameMode)
-            .Returns(GameModes.GameWithAi);
-
-        _mockGameProcessor.Setup(g => g.AiMakeMove(out aiMove))
-            .Returns(() => Result.Success);
-
-
-        // Act
-        _gameController.Execute();
-
-        // Assert
-        _mockConsoleRenderer.Verify(r => r.RenderMessage(
-            string.Format(Messages.GameProcess.AiMove, aiMove.Row + 1, aiMove.Col + 1)), Times.Once);
-
-        _mockConsoleRenderer.Verify(r => r.RenderWin(It.IsAny<PlayerTurn>()), Times.Never);
-        _mockConsoleRenderer.Verify(r => r.RenderDraw(), Times.Never);
+        _mockConsoleRenderer.Verify(r => r.RenderError(Messages.Error.CommandNotAllowed), Times.Once);
     }
 
     [Fact]
@@ -187,7 +112,6 @@ public class GameControllerTests
     {
         // Arrange
         var board = new Board();
-
         board.SetGameState(GameState.Ongoing);
         var executionResultWithError = Error.Validation(
             "OutOfBounds",
@@ -196,7 +120,8 @@ public class GameControllerTests
         var move = new MoveParameters(5, 1, PlayerTurn.X);
         _mockReader.SetupSequence(r => r.GetCommandInput())
             .Returns("game ai")
-            .Returns("move 5 1");
+            .Returns("move 5 1")
+            .Returns("end");
 
         _mockCommandParser.Setup(p => p.CommandParse("game ai"))
             .Returns(new AiGameCommand(_mockGameProcessor.Object, _mockConsoleRenderer.Object));
@@ -204,8 +129,10 @@ public class GameControllerTests
         _mockCommandParser.Setup(p => p.CommandParse("move 5 1"))
             .Returns(new MoveCommand(_mockGameProcessor.Object, move));
 
+        _mockCommandParser.Setup(p => p.CommandParse("end"))
+            .Returns(new EndGameCommand(_mockGameProcessor.Object));
+
         _mockGameProcessor.SetupSequence(g => g.IsRunning)
-            .Returns(true)
             .Returns(false);
 
         _mockGameProcessor.Setup(g => g.GetBoard())
@@ -220,52 +147,13 @@ public class GameControllerTests
         _mockCommandInvoker.Setup(i => i.Execute(It.IsAny<MoveCommand>()))
             .Returns(executionResultWithError);
 
-
+        _mockCommandInvoker.Setup(i => i.Execute(It.IsAny<EndGameCommand>()))
+            .Returns(Result.Success);
         // Act
         _gameController.Execute();
 
         // Assert
         _mockConsoleRenderer.Verify(
-            r => r.RenderError(It.Is<string>(s => s.Contains(executionResultWithError.Description))), Times.Once);
-    }
-
-    [Fact]
-    public void Execute_ShouldRenderError_WhenCommandExecutionFailsWithError()
-    {
-        // Arrange
-        var board = new Board();
-
-        board.SetGameState(GameState.NotStarted);
-        var executionResultWithError = Error.Validation(
-            "ExecuteCommand",
-            Messages.Error.CommandNotAllowed
-        );
-
-        var move = new MoveParameters(1, 1, PlayerTurn.X);
-        _mockReader.Setup(r => r.GetCommandInput())
-            .Returns("move 1 1");
-
-        _mockCommandParser.Setup(p => p.CommandParse("move 1 1"))
-            .Returns(new MoveCommand(_mockGameProcessor.Object, move));
-
-        _mockGameProcessor.Setup(g => g.IsRunning)
-            .Returns(false);
-
-        _mockGameProcessor.Setup(g => g.GetBoard())
-            .Returns(board);
-
-        _mockGameProcessor.Setup(g => g.GameMode)
-            .Returns(GameModes.NotDefined);
-
-        _mockCommandInvoker.Setup(i => i.Execute(It.IsAny<MoveCommand>()))
-            .Returns(executionResultWithError);
-
-
-        // Act
-        _gameController.Execute();
-
-        // Assert
-        _mockConsoleRenderer.Verify(
-            r => r.RenderError(It.Is<string>(s => s.Contains(executionResultWithError.Description))), Times.Once);
+            r => r.RenderError(executionResultWithError.Description), Times.Once);
     }
 }

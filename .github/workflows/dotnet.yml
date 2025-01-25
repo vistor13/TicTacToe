@@ -70,6 +70,9 @@ jobs:
           mkdir -p ~/.sonar/scanner
           dotnet tool update dotnet-sonarscanner --tool-path ~/.sonar/scanner
 
+      - name: Install JetBrains dotCover
+        run: dotnet tool install --global JetBrains.dotCover.CommandLineTools --version 2023.3.0
+
       - name: Build and Analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
@@ -78,4 +81,5 @@ jobs:
           ~/.sonar/scanner/dotnet-sonarscanner begin /k:"vistor13_TicTacToe" /o:"vistor13" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           dotnet restore ./backend/TicTacToe/TicTacToe.sln
           dotnet build ./backend/TicTacToe/TicTacToe.sln
+          dotnet-dotCover cover-dotnet --AttributeFilters="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" --Filters="-:*.Tests" --Output=dotCover.Output.html --ReportType=HTML -- test "./backend/TicTacToe/TicTacToe.sln"
           ~/.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
