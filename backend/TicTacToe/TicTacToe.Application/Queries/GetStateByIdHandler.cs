@@ -1,11 +1,11 @@
 using ErrorOr;
 using MediatR;
 using TicTacToe.Application.Dto;
-using TicTacToe.Application.Services;
+using TicTacToe.Application.Interfaces;
 
 namespace TicTacToe.Application.Queries;
 
-public class GetStateByIdHandler(GameStateManager gameStateManager)
+public class GetStateByIdHandler(IGameStateManager gameStateManager)
     : IRequestHandler<GetStateByIdQuery, ErrorOr<GameStateDto>>
 {
     public Task<ErrorOr<GameStateDto>> Handle(GetStateByIdQuery request, CancellationToken cancellationToken)

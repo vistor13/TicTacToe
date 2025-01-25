@@ -1,12 +1,11 @@
 using ErrorOr;
 using MediatR;
 using TicTacToe.Application.Interfaces;
-using TicTacToe.Application.Services;
 using TicTacToe.Core.Models;
 
 namespace TicTacToe.Application.Commands.WebApi.MoveCommand;
 
-public class MoveHandler(IGameProcessor gameProcessor, GameStateManager gameStateManager)
+public class MoveHandler(IGameProcessor gameProcessor, IGameStateManager gameStateManager)
     : IRequestHandler<MoveCommand, ErrorOr<Success>>
 {
     public async Task<ErrorOr<Success>> Handle(MoveCommand request, CancellationToken cancellationToken)
