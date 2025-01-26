@@ -2,8 +2,8 @@ using MediatR;
 using TicTacToe.Api.Contracts.Requests;
 using TicTacToe.Api.Contracts.Responses;
 using TicTacToe.Api.Extensions;
-using TicTacToe.Application.Commands.WebApi.MoveCommand;
-using TicTacToe.Application.Commands.WebApi.StartGameCommand;
+using TicTacToe.Application.Commands.MoveCommand;
+using TicTacToe.Application.Commands.StartGameCommand;
 using TicTacToe.Application.Queries;
 
 namespace TicTacToe.Api.Endpoints;

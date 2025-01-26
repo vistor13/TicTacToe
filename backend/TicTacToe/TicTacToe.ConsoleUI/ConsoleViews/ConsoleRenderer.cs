@@ -1,4 +1,4 @@
-using TicTacToe.Core.Interfaces;
+using TicTacToe.ConsoleUI.Interfaces;
 using TicTacToe.Core.Models;
 
 namespace TicTacToe.ConsoleUI.ConsoleViews;

@@ -1,6 +1,6 @@
 using ErrorOr;
 using Moq;
-using TicTacToe.Application.Commands.WebApi.MoveCommand;
+using TicTacToe.Application.Commands.MoveCommand;
 using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.Core.CoreMessages;

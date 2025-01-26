@@ -1,7 +1,7 @@
 using Moq;
 using TicTacToe.ConsoleUI.ConsoleViews;
 using TicTacToe.ConsoleUI.InputProcessing;
-using TicTacToe.Core.Interfaces;
+using TicTacToe.ConsoleUI.Interfaces;
 
 namespace TicTacToe.Tests.ConsoleUITests;
 

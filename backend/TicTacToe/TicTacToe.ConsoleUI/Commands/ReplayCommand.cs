@@ -1,10 +1,10 @@
 using ErrorOr;
 using TicTacToe.Application.ApplicationMessages;
 using TicTacToe.Application.Interfaces;
-using TicTacToe.Core.Interfaces;
+using TicTacToe.ConsoleUI.Interfaces;
 using TicTacToe.Core.Models;
 
-namespace TicTacToe.Application.Commands.ConsoleUI;
+namespace TicTacToe.ConsoleUI.Commands;
 
 public class ReplayCommand(
     IGameProcessor gameProcessor,

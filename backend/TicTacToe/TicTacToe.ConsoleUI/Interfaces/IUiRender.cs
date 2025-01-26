@@ -1,6 +1,6 @@
 using TicTacToe.Core.Models;
 
-namespace TicTacToe.Core.Interfaces;
+namespace TicTacToe.ConsoleUI.Interfaces;
 
 public interface IUiRender
 {

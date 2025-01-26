@@ -11,7 +11,6 @@ namespace TicTacToe.Core.Models
         public const char EmptyCell = ' ';
 
         private readonly List<IValidator> _validators = InitializeValidators();
-
         public GameState State { get; private set; } = GameState.NotStarted;
 
         public PlayerTurn CurrentTurn { get; private set; }

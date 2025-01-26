@@ -3,20 +3,20 @@ using MediatR;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.Core.Models;
 
-namespace TicTacToe.Application.Commands.WebApi.MoveCommand;
+namespace TicTacToe.Application.Commands.MoveCommand;
 
 public class MoveHandler(IGameProcessor gameProcessor, IGameStateManager gameStateManager)
     : IRequestHandler<MoveCommand, ErrorOr<Success>>
 {
-    public async Task<ErrorOr<Success>> Handle(MoveCommand request, CancellationToken cancellationToken)
+    public Task<ErrorOr<Success>> Handle(MoveCommand request, CancellationToken cancellationToken)
     {
         var gameState = gameStateManager.GetGame(request.GameId);
 
         if (gameState == null)
-            return Error.NotFound(
+            return Task.FromResult<ErrorOr<Success>>(Error.NotFound(
                 "NotFoundGame",
                 "Game not found."
-            );
+            ));
 
         gameProcessor.LoadGameState(gameState);
 
@@ -31,6 +31,6 @@ public class MoveHandler(IGameProcessor gameProcessor, IGameStateManager gameSta
 
         gameStateManager.SaveGame(request.GameId, gameProcessor.GetGameState());
 
-        return result;
+        return Task.FromResult(result);
     }
 }

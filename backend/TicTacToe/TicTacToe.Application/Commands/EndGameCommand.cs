@@ -1,7 +1,7 @@
 using ErrorOr;
 using TicTacToe.Application.Interfaces;
 
-namespace TicTacToe.Application.Commands.ConsoleUI;
+namespace TicTacToe.Application.Commands;
 
 public class EndGameCommand(IGameProcessor gameProcessor) : ICommand
 {

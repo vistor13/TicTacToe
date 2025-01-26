@@ -1,8 +1,9 @@
 using Moq;
-using TicTacToe.Application.Commands.ConsoleUI;
+using TicTacToe.Application.Commands;
 using TicTacToe.Application.Interfaces;
+using TicTacToe.ConsoleUI.Commands;
 using TicTacToe.ConsoleUI.InputProcessing;
-using TicTacToe.Core.Interfaces;
+using TicTacToe.ConsoleUI.Interfaces;
 using TicTacToe.Core.Models;
 
 namespace TicTacToe.Tests.ConsoleUITests;
@@ -85,9 +86,9 @@ public class CommandParserTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.IsType<MoveCommand>(result);
+        Assert.IsType<MakeMoveCommand>(result);
 
-        var moveCommand = result as MoveCommand;
+        var moveCommand = result as MakeMoveCommand;
         Assert.NotNull(moveCommand);
     }
 
