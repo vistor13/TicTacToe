@@ -9,7 +9,7 @@ public class ShowBoardCommand(IGameProcessor gameProcessor, IUiRender renderer) 
     public ErrorOr<Success> Execute()
     {
         var board = gameProcessor.GetBoard();
-        renderer.RenderBoard(board);
+        renderer.RenderBoard(board.Grid);
         return Result.Success;
     }
 }

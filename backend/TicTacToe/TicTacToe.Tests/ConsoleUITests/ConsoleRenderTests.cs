@@ -65,7 +65,6 @@ public class ConsoleRendererTests
         Assert.Contains("Error : Invalid input", output);
     }
 
-
     [Fact]
     public void RenderBoard_ShouldDisplayFormattedBoard()
     {
@@ -75,7 +74,7 @@ public class ConsoleRendererTests
         board.Grid[1, 1] = 'O';
 
         // Act
-        _renderer.RenderBoard(board);
+        _renderer.RenderBoard(board.Grid);
 
         // Assert
         var output = _consoleOutput.ToString();

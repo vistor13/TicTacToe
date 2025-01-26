@@ -92,7 +92,7 @@ public class GameController(
     {
         if (gameProcessor.GetBoard().State == GameState.Win)
         {
-            consoleRenderer.RenderWin(gameProcessor.GetBoard().CurrentTurn);
+            consoleRenderer.RenderWin(gameProcessor.GetBoard().CurrentTurn.ToString());
             consoleRenderer.RenderProposeRestoreGame();
             return true;
         }
