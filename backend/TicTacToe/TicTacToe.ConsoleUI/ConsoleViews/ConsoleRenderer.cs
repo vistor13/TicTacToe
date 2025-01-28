@@ -1,5 +1,4 @@
-using TicTacToe.Core.Interfaces;
-using TicTacToe.Core.Models;
+using TicTacToe.ConsoleUI.Interfaces;
 
 namespace TicTacToe.ConsoleUI.ConsoleViews;
 
@@ -16,12 +15,13 @@ public class ConsoleRenderer : IUiRender
     private const ConsoleColor InputTextColor = ConsoleColor.Blue;
     private const ConsoleColor MessagesColor = ConsoleColor.Green;
 
-    public void RenderBoard(Board board)
+    public void RenderBoard(char[,] grid)
     {
-        for (var i = 0; i < Board.BoardSize; i++)
+        var boardSize = grid.Length;
+        for (var i = 0; i < boardSize; i++)
         {
-            RenderRow(board, i);
-            if (i < Board.BoardSize - 1) RenderRowDivider();
+            RenderRow(grid, i, boardSize);
+            if (i < boardSize - 1) RenderRowDivider(boardSize);
         }
     }
 
@@ -36,10 +36,11 @@ public class ConsoleRenderer : IUiRender
         RenderMessage(ConsoleMessages.GameMessages.DrawMessage);
     }
 
-    public void RenderWin(PlayerTurn playerTurn)
+
+    public void RenderWin(string currentPlayer)
     {
         Console.Clear();
-        RenderMessage(string.Format(ConsoleMessages.GameMessages.WinnerMessage, playerTurn));
+        RenderMessage(string.Format(ConsoleMessages.GameMessages.WinnerMessage, currentPlayer));
     }
 
     public void RenderWelcome()
@@ -67,20 +68,20 @@ public class ConsoleRenderer : IUiRender
         PrintColoredText($"Error : {text}", ErrorColor, true);
     }
 
-    private void RenderRow(Board board, int rowIndex)
+    private void RenderRow(char[,] grid, int rowIndex, int boardSize)
     {
-        for (var j = 0; j < Board.BoardSize; j++)
+        for (var j = 0; j < boardSize; j++)
         {
-            RenderCell(board.GetCell(rowIndex, j));
-            if (j < Board.BoardSize - 1) Console.Write(VerticalLine);
+            RenderCell(grid[rowIndex, j]);
+            if (j < boardSize - 1) Console.Write(VerticalLine);
         }
 
         Console.WriteLine();
     }
 
-    private void RenderRowDivider()
+    private void RenderRowDivider(int boardSize)
     {
-        var divider = string.Join(CornerLine, Enumerable.Repeat(HorizontalLine, Board.BoardSize));
+        var divider = string.Join(CornerLine, Enumerable.Repeat(HorizontalLine, boardSize));
         Console.WriteLine(divider);
     }
 

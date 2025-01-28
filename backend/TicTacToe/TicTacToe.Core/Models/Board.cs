@@ -11,11 +11,17 @@ namespace TicTacToe.Core.Models
         public const char EmptyCell = ' ';
 
         private readonly List<IValidator> _validators = InitializeValidators();
-
         public GameState State { get; private set; } = GameState.NotStarted;
 
         public PlayerTurn CurrentTurn { get; private set; }
-        public char[,] Grid { get; } = InitializeBoard();
+        public char[,] Grid { get; private set; } = InitializeBoard();
+
+        public void LoadState(GameStateParameters state)
+        {
+            Grid = state.Grid;
+            CurrentTurn = state.PlayerTurn;
+            State = state.State;
+        }
 
         public char GetCell(int row, int col)
         {

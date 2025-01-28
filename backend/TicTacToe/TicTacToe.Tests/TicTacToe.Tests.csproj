@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TicTacToe.Api\TicTacToe.Api.csproj"/>
     <ProjectReference Include="..\TicTacToe.ConsoleUI\TicTacToe.ConsoleUI.csproj"/>
     <ProjectReference Include="..\TicTacToe.Core\TicTacToe.Core.csproj" />
   </ItemGroup>

@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using TicTacToe.Application.Commands;
+using TicTacToe.Application.Interfaces;
+using TicTacToe.Application.Services;
 using TicTacToe.ConsoleUI;
+using TicTacToe.ConsoleUI.Commands;
 using TicTacToe.ConsoleUI.ConsoleViews;
 using TicTacToe.ConsoleUI.InputProcessing;
-using TicTacToe.Core.Commands;
-using TicTacToe.Core.Interfaces;
-using TicTacToe.Core.Services;
+using TicTacToe.ConsoleUI.Interfaces;
 
 var services = new ServiceCollection();
 

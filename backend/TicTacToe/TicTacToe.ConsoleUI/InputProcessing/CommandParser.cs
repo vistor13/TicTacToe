@@ -1,7 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
+using TicTacToe.Application.Commands;
+using TicTacToe.Application.Interfaces;
+using TicTacToe.ConsoleUI.Commands;
 using TicTacToe.ConsoleUI.ConsoleViews;
-using TicTacToe.Core.Commands;
-using TicTacToe.Core.Interfaces;
+using TicTacToe.ConsoleUI.Interfaces;
 using TicTacToe.Core.Models;
 
 namespace TicTacToe.ConsoleUI.InputProcessing;
@@ -43,7 +45,7 @@ public class CommandParser(
     {
         var moveData = input[4..].Trim();
         return TryParseMove(moveData, out var moveParameters)
-            ? new MoveCommand(gameProcessor, moveParameters)
+            ? new MakeMoveCommand(gameProcessor, moveParameters)
             : null;
     }
 

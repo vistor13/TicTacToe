@@ -1,6 +1,8 @@
-using TicTacToe.Core.Commands;
-using TicTacToe.Core.CoreMessages;
-using TicTacToe.Core.Interfaces;
+using TicTacToe.Application.ApplicationMessages;
+using TicTacToe.Application.Commands;
+using TicTacToe.Application.Interfaces;
+using TicTacToe.ConsoleUI.Commands;
+using TicTacToe.ConsoleUI.Interfaces;
 using TicTacToe.Core.Models;
 
 namespace TicTacToe.ConsoleUI;
@@ -21,7 +23,7 @@ public class GameController(
         do
         {
             _currentCommand = GetCommand();
-            var executionResult = commandInvoker.Execute(_currentCommand);
+            var executionResult = commandInvoker.Execute(_currentCommand, GameCommandRegistry.CommandsByState);
             if (executionResult.IsError)
             {
                 consoleRenderer.RenderError(executionResult.Errors.First().Description);
@@ -49,7 +51,7 @@ public class GameController(
         while (gameProcessor.IsRunning)
         {
             _currentCommand = GetCommand();
-            var executionResult = commandInvoker.Execute(_currentCommand);
+            var executionResult = commandInvoker.Execute(_currentCommand, GameCommandRegistry.CommandsByState);
 
             if (executionResult.IsError)
             {
@@ -57,7 +59,7 @@ public class GameController(
                 continue;
             }
 
-            if (_currentCommand is not MoveCommand) continue;
+            if (_currentCommand is not MakeMoveCommand) continue;
 
             PrintBoard();
 
@@ -90,7 +92,7 @@ public class GameController(
     {
         if (gameProcessor.GetBoard().State == GameState.Win)
         {
-            consoleRenderer.RenderWin(gameProcessor.GetBoard().CurrentTurn);
+            consoleRenderer.RenderWin(gameProcessor.GetBoard().CurrentTurn.ToString());
             consoleRenderer.RenderProposeRestoreGame();
             return true;
         }

@@ -1,0 +1,23 @@
+using ErrorOr;
+using MediatR;
+using TicTacToe.Application.Dto;
+using TicTacToe.Application.Interfaces;
+
+namespace TicTacToe.Application.Queries;
+
+public class GetStateByIdHandler(IGameStateManager gameStateManager)
+    : IRequestHandler<GetStateByIdQuery, ErrorOr<GameStateDto>>
+{
+    public Task<ErrorOr<GameStateDto>> Handle(GetStateByIdQuery request, CancellationToken cancellationToken)
+    {
+        var gameState = gameStateManager.GetGame(request.Id);
+
+        if (gameState == null)
+            return Task.FromResult<ErrorOr<GameStateDto>>(Error.NotFound(
+                "NotFoundGame",
+                "Game not found."
+            ));
+
+        return Task.FromResult<ErrorOr<GameStateDto>>(gameState);
+    }
+}

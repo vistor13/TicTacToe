@@ -1,5 +1,5 @@
 using TicTacToe.ConsoleUI.ConsoleViews;
-using TicTacToe.Core.Interfaces;
+using TicTacToe.ConsoleUI.Interfaces;
 
 namespace TicTacToe.ConsoleUI.InputProcessing;
 
