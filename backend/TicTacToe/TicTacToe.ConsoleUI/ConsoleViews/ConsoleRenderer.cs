@@ -17,7 +17,7 @@ public class ConsoleRenderer : IUiRender
 
     public void RenderBoard(char[,] grid)
     {
-        var boardSize = grid.Length;
+        var boardSize = grid.GetLength(0);
         for (var i = 0; i < boardSize; i++)
         {
             RenderRow(grid, i, boardSize);

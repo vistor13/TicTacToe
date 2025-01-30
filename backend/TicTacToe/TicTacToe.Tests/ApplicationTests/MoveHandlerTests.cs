@@ -71,13 +71,12 @@ public class MoveHandlerTests
         // Arrange
         var gameId = Guid.NewGuid();
         var board = new Board();
-        var command = new MoveCommand(gameId, 1, 1);
-        var move = new MoveParameters(5, 5, board.CurrentTurn);
+        var command = new MoveCommand(gameId, 5, 1);
         var gameState = new GameStateDto(GameModes.GameWithAi, PlayerTurn.X, GameState.Ongoing, new char[3, 3]);
 
         _gameStateManagerMock.Setup(gsm => gsm.GetGame(gameId)).Returns(gameState);
         _gameProcessorMock.Setup(gp => gp.GetBoard()).Returns(board);
-        _gameProcessorMock.Setup(gp => gp.MakeMove(move)).Returns(Error.Failure("OutOfBounds",
+        _gameProcessorMock.Setup(gp => gp.MakeMove(It.IsAny<MoveParameters>())).Returns(Error.Validation("OutOfBounds",
             Messages.Error.OutOfBoundsErrorMessage));
 
         // Act
