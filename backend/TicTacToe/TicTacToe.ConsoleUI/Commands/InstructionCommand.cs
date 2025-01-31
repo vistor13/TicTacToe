@@ -1,4 +1,5 @@
 using ErrorOr;
+using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.ConsoleUI.Interfaces;
 
@@ -6,9 +7,9 @@ namespace TicTacToe.ConsoleUI.Commands;
 
 public class InstructionCommand(IUiRender renderer) : ICommand
 {
-    public ErrorOr<Success> Execute()
+    public ErrorOr<GameStateDto>? Execute()
     {
         renderer.RenderInstruction();
-        return Result.Success;
+        return null;
     }
 }

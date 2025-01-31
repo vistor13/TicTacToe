@@ -1,5 +1,5 @@
 using ErrorOr;
-using TicTacToe.Application.ApplicationMessages;
+using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.ConsoleUI.Interfaces;
 
@@ -7,10 +7,10 @@ namespace TicTacToe.ConsoleUI.Commands;
 
 public class PlayerGameCommand(IGameProcessor gameProcessor, IUiRender consoleRenderer) : ICommand
 {
-    public ErrorOr<Success> Execute()
+    public ErrorOr<GameStateDto>? Execute()
     {
         gameProcessor.InitializeGame();
-        consoleRenderer.RenderMessage(Messages.GameProcess.WelcomeMessageGameWithPlayer);
-        return Result.Success;
+        consoleRenderer.RenderMessage(Constants.Messages.GameProcess.WelcomeMessageGameWithPlayer);
+        return null;
     }
 }

@@ -1,4 +1,3 @@
-using TicTacToe.Application.ApplicationMessages;
 using TicTacToe.Application.Commands;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.ConsoleUI.Commands;
@@ -24,12 +23,12 @@ public class GameController(
         {
             _currentCommand = GetCommand();
             var executionResult = commandInvoker.Execute(_currentCommand, GameCommandRegistry.CommandsByState);
-            if (executionResult.IsError)
+            if (executionResult!.Value.IsError)
             {
-                consoleRenderer.RenderError(executionResult.Errors.First().Description);
+                consoleRenderer.RenderError(executionResult.Value.Errors.First().Description);
             }
 
-            if (gameProcessor.GameMode != GameModes.NotDefined)
+            if (gameProcessor.IsRunning)
                 PlayGameLoop();
         } while (_currentCommand is not EndGameCommand);
     }
@@ -53,9 +52,9 @@ public class GameController(
             _currentCommand = GetCommand();
             var executionResult = commandInvoker.Execute(_currentCommand, GameCommandRegistry.CommandsByState);
 
-            if (executionResult.IsError)
+            if (executionResult!.Value.IsError)
             {
-                consoleRenderer.RenderError(executionResult.Errors.First().Description);
+                consoleRenderer.RenderError(executionResult.Value.Errors.First().Description);
                 continue;
             }
 
@@ -81,29 +80,24 @@ public class GameController(
 
     private void DoAiMove()
     {
-        if (gameProcessor.GameMode == GameModes.GameWithAi)
-        {
-            gameProcessor.AiMakeMove(out var aiMove);
-            consoleRenderer.RenderMessage(string.Format(Messages.GameProcess.AiMove, aiMove.Row + 1, aiMove.Col + 1));
-        }
+        if (gameProcessor.GameMode != GameModes.GameWithAi) return;
+        gameProcessor.AiMakeMove(out var aiMove);
+        consoleRenderer.RenderMessage(string.Format(Constants.Messages.GameProcess.AiMove, aiMove.Row + 1,
+            aiMove.Col + 1));
     }
 
     private bool IsGameInTerminateState()
     {
-        if (gameProcessor.GetBoard().State == GameState.Win)
-        {
-            consoleRenderer.RenderWin(gameProcessor.GetBoard().CurrentTurn.ToString());
-            consoleRenderer.RenderProposeRestoreGame();
-            return true;
-        }
+        var gameState = gameProcessor.GetGameResult();
+        if (!gameState.IsGameOver)
+            return false;
 
-        if (gameProcessor.GetBoard().State == GameState.Draw)
-        {
+        if (gameState.Winner is not null)
+            consoleRenderer.RenderWin(gameState.Winner);
+        else
             consoleRenderer.RenderDraw();
-            consoleRenderer.RenderProposeRestoreGame();
-            return true;
-        }
 
-        return false;
+        consoleRenderer.RenderProposeRestoreGame();
+        return true;
     }
 }

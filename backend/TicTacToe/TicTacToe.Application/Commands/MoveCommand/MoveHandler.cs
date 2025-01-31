@@ -1,5 +1,6 @@
 using ErrorOr;
 using MediatR;
+using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.Core.Models;
 
@@ -20,17 +21,23 @@ public class MoveHandler(IGameProcessor gameProcessor, IGameStateManager gameSta
 
         gameProcessor.LoadGameState(gameState);
 
-        var currentPlayer = gameProcessor.GetBoard().CurrentTurn;
+        var gameStateModel = GameStateModel.MapToModel(gameProcessor.GetGameState());
 
-        var move = new MoveParameters(request.Row - 1, request.Col - 1, currentPlayer);
+        var move = new MoveParameters(request.Row - 1, request.Col - 1, gameStateModel.CurrentPlayer);
 
         var result = gameProcessor.MakeMove(move);
 
-        if (!result.IsError && gameState is { GameModes: GameModes.GameWithAi, State: GameState.Ongoing })
-            gameProcessor.AiMakeMove(out _);
+        switch (result.IsError)
+        {
+            case true:
+                return Task.FromResult<ErrorOr<Success>>(result.Errors);
+            case false when gameStateModel is { Modes: GameModes.GameWithAi, State: GameState.Ongoing }:
+                gameProcessor.AiMakeMove(out _);
+                break;
+        }
 
-        gameStateManager.SaveGame(request.GameId, gameProcessor.GetGameState());
+        gameStateManager.SaveGame(request.GameId, GameStateModel.MapToModel(gameProcessor.GetGameState()));
 
-        return Task.FromResult(result);
+        return Task.FromResult<ErrorOr<Success>>(Result.Success);
     }
 }

@@ -16,8 +16,8 @@ public class StartGameHandler(IGameProcessor gameProcessor, IGameStateManager ga
 
         var gameId = Guid.NewGuid();
 
-        gameStateManager.SaveGame(gameId, gameState);
+        gameStateManager.SaveGame(gameId, GameStateModel.MapToModel(gameState));
 
-        return Task.FromResult(new GameInitializationDto(gameId, gameState.GameModes.ToString()));
+        return Task.FromResult(new GameInitializationDto(gameId, gameState.GameModes));
     }
 }

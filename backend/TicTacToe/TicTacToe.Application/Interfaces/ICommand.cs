@@ -1,8 +1,9 @@
 using ErrorOr;
+using TicTacToe.Application.Dto;
 
 namespace TicTacToe.Application.Interfaces;
 
 public interface ICommand
 {
-    ErrorOr<Success> Execute();
+    ErrorOr<GameStateDto>? Execute();
 }

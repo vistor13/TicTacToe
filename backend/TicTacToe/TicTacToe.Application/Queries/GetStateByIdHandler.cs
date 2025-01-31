@@ -19,7 +19,7 @@ public class GetStateByIdHandler(IGameStateManager gameStateManager)
             ));
 
         var gameStateDto = new GameStateDto(
-            gameState.GameModes.ToString(),
+            gameState.Modes.ToString(),
             gameState.CurrentPlayer.ToString(),
             gameState.State.ToString(),
             gameState.Grid);

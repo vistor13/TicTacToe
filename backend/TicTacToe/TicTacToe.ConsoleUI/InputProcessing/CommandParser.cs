@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using TicTacToe.Application.Commands;
+using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.ConsoleUI.Commands;
 using TicTacToe.ConsoleUI.ConsoleViews;
@@ -61,7 +62,8 @@ public class CommandParser(
             return false;
         }
 
-        moveParameters = new MoveParameters(row - 1, col - 1, gameProcessor.GetBoard().CurrentTurn);
+        var gameState = GameStateModel.MapToModel(gameProcessor.GetGameState());
+        moveParameters = new MoveParameters(row - 1, col - 1, gameState.CurrentPlayer);
         return true;
     }
 }

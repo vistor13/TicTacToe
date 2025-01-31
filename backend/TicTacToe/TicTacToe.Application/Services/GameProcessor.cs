@@ -13,24 +13,28 @@ public class GameProcessor(IMiniMaxAi aiBot) : IGameProcessor
     public bool IsRunning => GameBoard.State is GameState.Ongoing;
     public GameModes GameMode { get; private set; } = GameModes.NotDefined;
 
-    public ErrorOr<Success> AiMakeMove(out MoveParameters moveParameters)
+    public ErrorOr<GameStateDto> AiMakeMove(out MoveParameters moveParameters)
     {
         moveParameters = aiBot.FindBestMove(GameBoard);
         return MakeMove(moveParameters);
     }
 
-    public GameStateModel GetGameState()
+    public GameStateDto GetGameState()
     {
-        return new GameStateModel(GameMode, GameBoard.CurrentTurn, GameBoard.State, GameBoard.Grid);
+        return new GameStateDto
+        (GameMode.ToString(),
+            GameBoard.CurrentTurn.ToString(),
+            GameBoard.State.ToString(),
+            GameBoard.Grid);
     }
 
     public void LoadGameState(GameStateModel state)
     {
-        GameMode = state.GameModes;
+        GameMode = state.Modes;
         GameBoard.LoadState(new GameStateParameters(state.State, state.Grid, state.CurrentPlayer));
     }
 
-    public ErrorOr<Success> MakeMove(MoveParameters moveParameters)
+    public ErrorOr<GameStateDto> MakeMove(MoveParameters moveParameters)
     {
         if (GameBoard.State != GameState.Ongoing)
             return Error.Validation(
@@ -48,7 +52,13 @@ public class GameProcessor(IMiniMaxAi aiBot) : IGameProcessor
         if (makeMove.IsError)
             return makeMove.Errors;
 
-        return Result.Success;
+        var gameStateDto = new GameStateDto(
+            GameMode.ToString(),
+            GameBoard.CurrentTurn.ToString(),
+            GameBoard.State.ToString(),
+            GameBoard.Grid);
+
+        return gameStateDto;
     }
 
     public void Reset()
@@ -64,8 +74,13 @@ public class GameProcessor(IMiniMaxAi aiBot) : IGameProcessor
         GameBoard.InitializeGameState();
     }
 
-    public Board GetBoard()
+    public GameResultDto GetGameResult()
     {
-        return GameBoard;
+        return GameBoard.State switch
+        {
+            GameState.Win => new GameResultDto(true, GameBoard.CurrentTurn.ToString()),
+            GameState.Draw => new GameResultDto(true, null),
+            _ => new GameResultDto(false, null)
+        };
     }
 }
