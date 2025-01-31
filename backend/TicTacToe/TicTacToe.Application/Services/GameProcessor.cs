@@ -19,12 +19,12 @@ public class GameProcessor(IMiniMaxAi aiBot) : IGameProcessor
         return MakeMove(moveParameters);
     }
 
-    public GameStateDto GetGameState()
+    public GameStateModel GetGameState()
     {
-        return new GameStateDto(GameMode, GameBoard.CurrentTurn, GameBoard.State, GameBoard.Grid);
+        return new GameStateModel(GameMode, GameBoard.CurrentTurn, GameBoard.State, GameBoard.Grid);
     }
 
-    public void LoadGameState(GameStateDto state)
+    public void LoadGameState(GameStateModel state)
     {
         GameMode = state.GameModes;
         GameBoard.LoadState(new GameStateParameters(state.State, state.Grid, state.CurrentPlayer));

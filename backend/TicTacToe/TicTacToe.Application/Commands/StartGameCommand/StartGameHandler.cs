@@ -18,6 +18,6 @@ public class StartGameHandler(IGameProcessor gameProcessor, IGameStateManager ga
 
         gameStateManager.SaveGame(gameId, gameState);
 
-        return Task.FromResult(new GameInitializationDto(gameId, gameState.GameModes));
+        return Task.FromResult(new GameInitializationDto(gameId, gameState.GameModes.ToString()));
     }
 }

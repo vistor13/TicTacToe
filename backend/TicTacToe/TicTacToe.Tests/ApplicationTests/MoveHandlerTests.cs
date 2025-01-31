@@ -27,7 +27,7 @@ public class MoveHandlerTests
         // Arrange
         var gameId = Guid.NewGuid();
         var command = new MoveCommand(gameId, 1, 1);
-        _gameStateManagerMock.Setup(gsm => gsm.GetGame(gameId)).Returns((GameStateDto)null!);
+        _gameStateManagerMock.Setup(gsm => gsm.GetGame(gameId)).Returns((GameStateModel)null!);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -47,10 +47,10 @@ public class MoveHandlerTests
         var command = new MoveCommand(gameId, 1, 1);
         var move = new MoveParameters(1, 1, board.CurrentTurn);
 
-        var gameState = new GameStateDto(GameModes.GameWithAi, PlayerTurn.X, GameState.Ongoing, new char[3, 3]);
+        var gameState = new GameStateModel(GameModes.GameWithAi, PlayerTurn.X, GameState.Ongoing, new char[3, 3]);
         _gameStateManagerMock.Setup(gsm => gsm.GetGame(gameId)).Returns(gameState);
 
-        _gameProcessorMock.Setup(gp => gp.LoadGameState(It.IsAny<GameStateDto>()));
+        _gameProcessorMock.Setup(gp => gp.LoadGameState(It.IsAny<GameStateModel>()));
         _gameProcessorMock.Setup(gp => gp.MakeMove(move)).Returns(Result.Success);
         _gameProcessorMock.Setup(gp => gp.GetBoard()).Returns(board);
         _gameProcessorMock.Setup(gp => gp.GetGameState()).Returns(gameState);
@@ -62,7 +62,7 @@ public class MoveHandlerTests
 
         // Assert
         Assert.False(result.IsError);
-        _gameStateManagerMock.Verify(gsm => gsm.SaveGame(gameId, It.IsAny<GameStateDto>()), Times.Once);
+        _gameStateManagerMock.Verify(gsm => gsm.SaveGame(gameId, It.IsAny<GameStateModel>()), Times.Once);
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public class MoveHandlerTests
         var gameId = Guid.NewGuid();
         var board = new Board();
         var command = new MoveCommand(gameId, 5, 1);
-        var gameState = new GameStateDto(GameModes.GameWithAi, PlayerTurn.X, GameState.Ongoing, new char[3, 3]);
+        var gameState = new GameStateModel(GameModes.GameWithAi, PlayerTurn.X, GameState.Ongoing, new char[3, 3]);
 
         _gameStateManagerMock.Setup(gsm => gsm.GetGame(gameId)).Returns(gameState);
         _gameProcessorMock.Setup(gp => gp.GetBoard()).Returns(board);

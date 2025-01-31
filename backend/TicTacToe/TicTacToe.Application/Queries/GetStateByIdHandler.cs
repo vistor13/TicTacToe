@@ -18,6 +18,12 @@ public class GetStateByIdHandler(IGameStateManager gameStateManager)
                 "Game not found."
             ));
 
-        return Task.FromResult<ErrorOr<GameStateDto>>(gameState);
+        var gameStateDto = new GameStateDto(
+            gameState.GameModes.ToString(),
+            gameState.CurrentPlayer.ToString(),
+            gameState.State.ToString(),
+            gameState.Grid);
+
+        return Task.FromResult<ErrorOr<GameStateDto>>(gameStateDto);
     }
 }

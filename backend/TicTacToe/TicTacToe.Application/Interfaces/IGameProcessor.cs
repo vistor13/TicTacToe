@@ -13,6 +13,6 @@ public interface IGameProcessor
     Board GetBoard();
     ErrorOr<Success> AiMakeMove(out MoveParameters moveParameters);
     void Reset();
-    GameStateDto GetGameState();
-    void LoadGameState(GameStateDto state);
+    GameStateModel GetGameState();
+    void LoadGameState(GameStateModel state);
 }
