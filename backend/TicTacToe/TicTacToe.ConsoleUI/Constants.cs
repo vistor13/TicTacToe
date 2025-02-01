@@ -7,9 +7,7 @@ public static class Constants
         public static class GameProcess
         {
             public const string RestartNotification =
-                """
-                Game restarted!!!! The player {0} makes a move. 
-                """;
+                "Game restarted!!!! The player {0} makes a move. ";
 
             public const string WelcomeMessageGameWithPlayer =
                 """
@@ -32,9 +30,7 @@ public static class Constants
                 """;
 
             public const string AiMove =
-                """
-                The AI has made its : move row {0}, column {1}.
-                """;
+                "The AI has made its : move row {0}, column {1}.";
 
             public const string GameModeSelection =
                 """
