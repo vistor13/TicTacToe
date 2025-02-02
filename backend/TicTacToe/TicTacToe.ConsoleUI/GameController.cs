@@ -2,7 +2,6 @@ using TicTacToe.Application.Commands;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.ConsoleUI.Commands;
 using TicTacToe.ConsoleUI.Interfaces;
-using TicTacToe.Core.Models;
 
 namespace TicTacToe.ConsoleUI;
 
@@ -80,7 +79,7 @@ public class GameController(
 
     private void DoAiMove()
     {
-        if (gameProcessor.GameMode != GameModes.GameWithAi) return;
+        if (!gameProcessor.ShouldAiMove) return;
         gameProcessor.AiMakeMove(out var aiMove);
         consoleRenderer.RenderMessage(string.Format(Constants.Messages.GameProcess.AiMove, aiMove.Row + 1,
             aiMove.Col + 1));

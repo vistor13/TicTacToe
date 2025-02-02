@@ -2,7 +2,6 @@ using ErrorOr;
 using MediatR;
 using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
-using TicTacToe.Core.Models;
 
 namespace TicTacToe.Application.Commands.MoveCommand;
 
@@ -21,9 +20,9 @@ public class MoveHandler(IGameProcessor gameProcessor, IGameStateManager gameSta
 
         gameProcessor.LoadGameState(gameState);
 
-        var gameStateModel = GameStateModel.MapToModel(gameProcessor.GetGameState());
+        var gameStateModel = gameProcessor.GetGameState();
 
-        var move = new MoveParameters(request.Row - 1, request.Col - 1, gameStateModel.CurrentPlayer);
+        var move = new MoveParametersDto(request.Row - 1, request.Col - 1, gameStateModel.CurrentPlayer);
 
         var result = gameProcessor.MakeMove(move);
 
@@ -31,7 +30,7 @@ public class MoveHandler(IGameProcessor gameProcessor, IGameStateManager gameSta
         {
             case true:
                 return Task.FromResult<ErrorOr<Success>>(result.Errors);
-            case false when gameStateModel is { Modes: GameModes.GameWithAi, State: GameState.Ongoing }:
+            case false when gameStateModel is { IsRunning: true, ShouldAiMove: true }:
                 gameProcessor.AiMakeMove(out _);
                 break;
         }

@@ -1,4 +1,5 @@
 using Force.DeepCloner;
+using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.Core.Models;
 
@@ -9,7 +10,7 @@ public class MiniMaxAi : IMiniMaxAi
     private const int WinScore = 10;
     private const int DrawScore = 0;
 
-    public MoveParameters FindBestMove(Board board)
+    public MoveParametersDto FindBestMove(Board board)
     {
         var player = board.CurrentTurn;
         var opponent = player == PlayerTurn.X ? PlayerTurn.О : PlayerTurn.X;
@@ -35,7 +36,7 @@ public class MiniMaxAi : IMiniMaxAi
             bestMove = (row, col);
         }
 
-        return new MoveParameters(bestMove.row, bestMove.col, player);
+        return new MoveParametersDto(bestMove.row, bestMove.col, player.ToString());
     }
 
     private int MiniMax(Board board, bool isMaximizing, PlayerTurn player, PlayerTurn opponent)

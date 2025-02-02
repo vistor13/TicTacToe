@@ -8,9 +8,10 @@ public interface IGameProcessor
 {
     GameModes GameMode { get; }
     bool IsRunning { get; }
-    ErrorOr<GameStateDto> MakeMove(MoveParameters moveParameters);
+    bool ShouldAiMove { get; }
+    ErrorOr<GameStateDto> MakeMove(MoveParametersDto moveParameters);
     void InitializeGame(bool twoPlayerGame = true);
-    ErrorOr<GameStateDto> AiMakeMove(out MoveParameters moveParameters);
+    ErrorOr<GameStateDto> AiMakeMove(out MoveParametersDto moveParameters);
     void Reset();
     GameStateDto GetGameState();
     void LoadGameState(GameStateModel state);

@@ -1,4 +1,4 @@
-namespace TicTacToe.Core.Models;
+namespace TicTacToe.ConsoleUI.Commands;
 
 public enum Command
 {

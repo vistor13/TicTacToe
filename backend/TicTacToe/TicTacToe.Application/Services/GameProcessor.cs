@@ -11,9 +11,12 @@ public class GameProcessor(IMiniMaxAi aiBot) : IGameProcessor
     private Board GameBoard { get; set; } = new();
 
     public bool IsRunning => GameBoard.State is GameState.Ongoing;
+
+    public bool ShouldAiMove => GameMode is GameModes.GameWithAi;
+
     public GameModes GameMode { get; private set; } = GameModes.NotDefined;
 
-    public ErrorOr<GameStateDto> AiMakeMove(out MoveParameters moveParameters)
+    public ErrorOr<GameStateDto> AiMakeMove(out MoveParametersDto moveParameters)
     {
         moveParameters = aiBot.FindBestMove(GameBoard);
         return MakeMove(moveParameters);
@@ -25,7 +28,9 @@ public class GameProcessor(IMiniMaxAi aiBot) : IGameProcessor
         (GameMode.ToString(),
             GameBoard.CurrentTurn.ToString(),
             GameBoard.State.ToString(),
-            GameBoard.Grid);
+            GameBoard.Grid,
+            IsRunning,
+            ShouldAiMove);
     }
 
     public void LoadGameState(GameStateModel state)
@@ -34,9 +39,11 @@ public class GameProcessor(IMiniMaxAi aiBot) : IGameProcessor
         GameBoard.LoadState(new GameStateParameters(state.State, state.Grid, state.CurrentPlayer));
     }
 
-    public ErrorOr<GameStateDto> MakeMove(MoveParameters moveParameters)
+    public ErrorOr<GameStateDto> MakeMove(MoveParametersDto dto)
     {
-        if (GameBoard.State != GameState.Ongoing)
+        var moveParameters = new MoveParameters(dto.Row, dto.Col, Enum.Parse<PlayerTurn>(dto.Player));
+
+        if (!IsRunning)
             return Error.Validation(
                 "InvalidGameState",
                 Messages.Error.InvalidGameState
@@ -52,11 +59,13 @@ public class GameProcessor(IMiniMaxAi aiBot) : IGameProcessor
         if (makeMove.IsError)
             return makeMove.Errors;
 
-        var gameStateDto = new GameStateDto(
-            GameMode.ToString(),
+        var gameStateDto = new GameStateDto
+        (GameMode.ToString(),
             GameBoard.CurrentTurn.ToString(),
             GameBoard.State.ToString(),
-            GameBoard.Grid);
+            GameBoard.Grid,
+            IsRunning,
+            ShouldAiMove);
 
         return gameStateDto;
     }
