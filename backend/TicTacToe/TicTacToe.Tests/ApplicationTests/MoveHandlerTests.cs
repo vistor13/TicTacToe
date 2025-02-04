@@ -43,19 +43,24 @@ public class MoveHandlerTests
     {
         // Arrange
         var gameId = Guid.NewGuid();
-        var board = new Board();
         var command = new MoveCommand(gameId, 1, 1);
-        var move = new MoveParameters(1, 1, board.CurrentTurn);
+        var move = new MoveParametersDto(1, 1, "X");
 
-        var gameState = new GameStateModel(GameModes.GameWithAi, PlayerTurn.X, GameState.Ongoing, new char[3, 3]);
+        var gameStateDto = new GameStateDto(
+            GameModes.GameWithPlayer.ToString(),
+            PlayerTurn.X.ToString(),
+            GameState.Ongoing.ToString(),
+            new char[3, 3],
+            true,
+            false
+        );
+        var gameState = GameStateModel.MapToModel(gameStateDto);
         _gameStateManagerMock.Setup(gsm => gsm.GetGame(gameId)).Returns(gameState);
 
         _gameProcessorMock.Setup(gp => gp.LoadGameState(It.IsAny<GameStateModel>()));
-        _gameProcessorMock.Setup(gp => gp.MakeMove(move)).Returns(Result.Success);
-        _gameProcessorMock.Setup(gp => gp.GetBoard()).Returns(board);
-        _gameProcessorMock.Setup(gp => gp.GetGameState()).Returns(gameState);
-        _gameProcessorMock.Setup(gp => gp.AiMakeMove(out It.Ref<MoveParameters>.IsAny)).Returns(Result.Success);
-
+        _gameProcessorMock.Setup(gp => gp.MakeMove(It.IsAny<MoveParametersDto>())).Returns(gameStateDto);
+        _gameProcessorMock.Setup(gp => gp.GetGameState()).Returns(gameStateDto);
+        _gameProcessorMock.Setup(gp => gp.AiMakeMove(out It.Ref<MoveParametersDto>.IsAny)).Returns(gameStateDto);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -70,21 +75,31 @@ public class MoveHandlerTests
     {
         // Arrange
         var gameId = Guid.NewGuid();
-        var board = new Board();
         var command = new MoveCommand(gameId, 5, 1);
-        var gameState = new GameStateModel(GameModes.GameWithAi, PlayerTurn.X, GameState.Ongoing, new char[3, 3]);
+        var gameStateDto = new GameStateDto(
+            GameModes.GameWithPlayer.ToString(),
+            PlayerTurn.X.ToString(),
+            GameState.Ongoing.ToString(),
+            new char[3, 3],
+            true,
+            false
+        );
+        var gameState = GameStateModel.MapToModel(gameStateDto);
 
         _gameStateManagerMock.Setup(gsm => gsm.GetGame(gameId)).Returns(gameState);
-        _gameProcessorMock.Setup(gp => gp.GetBoard()).Returns(board);
-        _gameProcessorMock.Setup(gp => gp.MakeMove(It.IsAny<MoveParameters>())).Returns(Error.Validation("OutOfBounds",
-            Messages.Error.OutOfBoundsErrorMessage));
+
+
+        _gameProcessorMock.Setup(gp => gp.MakeMove(It.IsAny<MoveParametersDto>()))
+            .Returns(Error.Validation("OutOfBounds", Messages.Error.OutOfBoundsErrorMessage));
+        _gameProcessorMock.Setup(gp => gp.GetGameState()).Returns(gameStateDto);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         Assert.True(result.IsError);
-        Assert.Contains(result.Errors,
+        Assert.Contains(result.Errors, 
             e => e is { Code: "OutOfBounds", Description: Messages.Error.OutOfBoundsErrorMessage });
     }
+
 }
