@@ -69,9 +69,14 @@ public class ConsoleRendererTests
     public void RenderBoard_ShouldDisplayFormattedBoard()
     {
         // Arrange
-        var board = new Board();
-        board.Grid[0, 0] = 'X';
-        board.Grid[1, 1] = 'O';
+        var board = new Board
+        {
+            Grid =
+            {
+                [0, 0] = 'X',
+                [1, 1] = 'O'
+            }
+        };
 
         // Act
         _renderer.RenderBoard(board.Grid);

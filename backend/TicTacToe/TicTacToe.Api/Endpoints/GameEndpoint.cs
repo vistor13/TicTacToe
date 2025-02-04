@@ -66,7 +66,7 @@ public static class GameEndpoint
             (new GetStateByIdQuery(gameId));
 
         if (gameState.IsError)
-            return Results.BadRequest(gameState.Errors);
+            return Results.NotFound(gameState.Errors);
 
         var resultState = GameStateResponse.ToViewModel(gameState.Value);
 

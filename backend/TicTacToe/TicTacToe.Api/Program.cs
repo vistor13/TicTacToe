@@ -5,7 +5,7 @@ namespace TicTacToe.Api;
 /// <summary>
 ///     The entry point of the application
 /// </summary>
-public static class Program
+public class Program
 {
     internal static void Main(string[] args)
     {
