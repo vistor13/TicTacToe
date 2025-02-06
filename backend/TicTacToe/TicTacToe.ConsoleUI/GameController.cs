@@ -22,7 +22,7 @@ public class GameController(
         {
             _currentCommand = GetCommand();
             var executionResult = commandInvoker.Execute(_currentCommand, GameCommandRegistry.CommandsByState);
-            if (executionResult!.Value.IsError)
+            if (executionResult is not null && executionResult!.Value.IsError)
             {
                 consoleRenderer.RenderError(executionResult.Value.Errors.First().Description);
             }
