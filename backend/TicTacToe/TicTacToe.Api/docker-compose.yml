@@ -20,4 +20,4 @@
       - db_data:/var/lib/postgresql/data
     container_name: db_postgres
 volumes:
-  db-data:
+  db_data:
