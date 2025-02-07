@@ -7,13 +7,12 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["TicTacToe.Api/TicTacToe.Api.csproj", "TicTacToe.Api/"]
-COPY ["TicTacToe.Application/TicTacToe.Application.csproj", "TicTacToe.Application/"]
-COPY ["TicTacToe.Core/TicTacToe.Core.csproj", "TicTacToe.Core/"]
+COPY **/*.csproj ./
 RUN dotnet restore "TicTacToe.Api/TicTacToe.Api.csproj"
 COPY . .
 WORKDIR "/src/TicTacToe.Api"
 RUN dotnet build "TicTacToe.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
