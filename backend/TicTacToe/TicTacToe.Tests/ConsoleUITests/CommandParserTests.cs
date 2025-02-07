@@ -1,5 +1,6 @@
 using Moq;
 using TicTacToe.Application.Commands;
+using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.ConsoleUI.Commands;
 using TicTacToe.ConsoleUI.InputProcessing;
@@ -76,11 +77,16 @@ public class CommandParserTests
     public void CommandParse_ShouldReturnMoveCommand_WhenInputIsValidMove()
     {
         // Arrange
-        var board = new Board();
-        _gameProcessorMock.Setup(g => g.GetBoard()).Returns(board);
-
         var moveInput = "move 1 2";
-
+        var gameStateDto = new GameStateDto(
+            GameModes.GameWithPlayer.ToString(),
+            PlayerTurn.X.ToString(),
+            GameState.Ongoing.ToString(),
+            new char[3, 3],
+            true,
+            false
+        );
+        _gameProcessorMock.Setup(g => g.GetGameState()).Returns(gameStateDto);
         // Act
         var result = _commandParser.CommandParse(moveInput);
 

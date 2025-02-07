@@ -1,4 +1,5 @@
 using Moq;
+using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.Application.Services;
 using TicTacToe.Core.Models;
@@ -24,7 +25,7 @@ public class GameProcessorTests
 
         // Assert
         Assert.Equal(GameModes.GameWithAi, _gameProcessor.GameMode);
-        Assert.Equal(GameState.Ongoing, _gameProcessor.GetBoard().State);
+        Assert.Equal(GameState.Ongoing.ToString(), _gameProcessor.GetGameState().GameState);
     }
 
     [Fact]
@@ -38,7 +39,7 @@ public class GameProcessorTests
 
         // Assert
         Assert.Equal(GameModes.NotDefined, _gameProcessor.GameMode);
-        Assert.Equal(GameState.NotStarted, _gameProcessor.GetBoard().State);
+        Assert.Equal(GameState.NotStarted.ToString(), _gameProcessor.GetGameState().GameState);
     }
 
     [Fact]
@@ -47,25 +48,22 @@ public class GameProcessorTests
         // Arrange
         _gameProcessor.InitializeGame();
 
-        var move = new MoveParameters(0, 0, PlayerTurn.X);
+        var move = new MoveParametersDto(0, 0, "X");
 
         // Act
         var result = _gameProcessor.MakeMove(move);
 
         // Assert
         Assert.False(result.IsError);
-        Assert.Equal('X', _gameProcessor.GetBoard().GetCell(0, 0));
-        Assert.Equal(PlayerTurn.О, _gameProcessor.GetBoard().CurrentTurn);
+        Assert.Equal('X', _gameProcessor.GetGameState().Grid[0, 0]);
+        Assert.Equal(PlayerTurn.О.ToString(), _gameProcessor.GetGameState().CurrentPlayer);
     }
 
     [Fact]
     public void MakeMove_ShouldReturnError_WhenGameStateIsNotOngoing()
     {
         // Arrange
-        _gameProcessor.InitializeGame();
-        _gameProcessor.GetBoard().SetGameState(GameState.Draw);
-
-        var move = new MoveParameters(0, 0, PlayerTurn.X);
+        var move = new MoveParametersDto(0, 0, "X");
 
         // Act
         var result = _gameProcessor.MakeMove(move);
@@ -80,7 +78,7 @@ public class GameProcessorTests
     {
         // Arrange
         _gameProcessor.InitializeGame();
-        var move = new MoveParameters(0, 0, PlayerTurn.О);
+        var move = new MoveParametersDto(0, 0, PlayerTurn.О.ToString());
 
         // Act
         var result = _gameProcessor.MakeMove(move);
@@ -94,14 +92,14 @@ public class GameProcessorTests
     public void AiMakeMove_ShouldCallAiAndMakeMove()
     {
         // Arrange
-        var move = new MoveParameters(0, 0, PlayerTurn.X);
+        var move = new MoveParametersDto(0, 0, PlayerTurn.X.ToString());
 
-        var expectedMove = new MoveParameters(1, 1, PlayerTurn.О);
+        var expectedMove = new MoveParametersDto(1, 1, PlayerTurn.О.ToString());
 
         _aiBotMock.Setup(ai => ai.FindBestMove(It.IsAny<Board>())).Returns(expectedMove);
 
         _gameProcessor.InitializeGame(false);
-        _gameProcessor.MakeMove(move);
+        _gameProcessor.MakeMove(new MoveParametersDto(0, 0, PlayerTurn.X.ToString()));
 
         // Act
         var result = _gameProcessor.AiMakeMove(out var actualMove);
@@ -110,7 +108,7 @@ public class GameProcessorTests
         Assert.False(result.IsError);
         Assert.Equal(expectedMove.Row, actualMove.Row);
         Assert.Equal(expectedMove.Col, actualMove.Col);
-        Assert.Equal('O', _gameProcessor.GetBoard().GetCell(1, 1));
+        Assert.Equal('O', _gameProcessor.GetGameState().Grid[1, 1]);
 
         _aiBotMock.Verify(ai => ai.FindBestMove(It.IsAny<Board>()), Times.Once);
     }

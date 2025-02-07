@@ -5,14 +5,10 @@ public static class ConsoleMessages
     public static class Error
     {
         public const string InvalidInput =
-            """
-            Please, write a valid command (cannot be empty or just spaces)
-            """;
+            "Please, write a valid command (cannot be empty or just spaces)";
 
         public const string InvalidCommand =
-            """
-            Please, write a valid command
-            """;
+            "Please, write a valid command";
     }
 
     public static class GameMessages
@@ -91,8 +87,6 @@ public static class ConsoleMessages
             """;
 
         public const string CommandPrompt =
-            """
-            Write your command:
-            """;
+            "Write your command:";
     }
 }

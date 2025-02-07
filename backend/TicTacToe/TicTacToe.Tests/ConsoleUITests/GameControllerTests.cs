@@ -1,6 +1,7 @@
 using ErrorOr;
 using Moq;
 using TicTacToe.Application.Commands;
+using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.ConsoleUI;
 using TicTacToe.ConsoleUI.Commands;
@@ -43,8 +44,9 @@ public class GameControllerTests
             .Returns("end");
         _mockCommandParser.Setup(p => p.CommandParse("end"))
             .Returns(new EndGameCommand(_mockGameProcessor.Object));
-        _mockCommandInvoker.Setup(i => i.Execute(It.IsAny<ICommand>(), It.IsAny<Dictionary<string, List<Type>>>()))
-            .Returns(Result.Success);
+        _mockCommandInvoker
+            .Setup(i => i.Execute(It.IsAny<EndGameCommand>(), It.IsAny<Dictionary<string, List<Type>>>()))
+            .Returns((ErrorOr<GameStateDto>?)null);
 
         // Act
         _gameController.Execute();
@@ -65,7 +67,7 @@ public class GameControllerTests
         _mockCommandParser.Setup(p => p.CommandParse("end"))
             .Returns(new EndGameCommand(_mockGameProcessor.Object));
         _mockCommandInvoker.Setup(i => i.Execute(It.IsAny<ICommand>(), It.IsAny<Dictionary<string, List<Type>>>()))
-            .Returns(Result.Success);
+            .Returns((ErrorOr<GameStateDto>?)null);
 
         // Act
         _gameController.Execute();
@@ -100,7 +102,7 @@ public class GameControllerTests
 
         _mockCommandInvoker
             .Setup(i => i.Execute(It.IsAny<EndGameCommand>(), It.IsAny<Dictionary<string, List<Type>>>()))
-            .Returns(Result.Success);
+            .Returns((ErrorOr<GameStateDto>?)null);
 
         // Act
         _gameController.Execute(); // Assert
@@ -118,7 +120,7 @@ public class GameControllerTests
             "OutOfBounds",
             Core.CoreMessages.Messages.Error.OutOfBoundsErrorMessage
         );
-        var move = new MoveParameters(5, 1, PlayerTurn.X);
+        var move = new MoveParametersDto(5, 1, PlayerTurn.X.ToString());
         _mockReader.SetupSequence(r => r.GetCommandInput())
             .Returns("game ai")
             .Returns("move 5 1")
@@ -136,14 +138,11 @@ public class GameControllerTests
         _mockGameProcessor.SetupSequence(g => g.IsRunning)
             .Returns(false);
 
-        _mockGameProcessor.Setup(g => g.GetBoard())
-            .Returns(board);
-
         _mockGameProcessor.Setup(g => g.GameMode)
             .Returns(GameModes.GameWithAi);
 
         _mockCommandInvoker.Setup(i => i.Execute(It.IsAny<AiGameCommand>(), It.IsAny<Dictionary<string, List<Type>>>()))
-            .Returns(Result.Success);
+            .Returns((ErrorOr<GameStateDto>?)null);
 
         _mockCommandInvoker
             .Setup(i => i.Execute(It.IsAny<MakeMoveCommand>(), It.IsAny<Dictionary<string, List<Type>>>()))
@@ -151,7 +150,7 @@ public class GameControllerTests
 
         _mockCommandInvoker
             .Setup(i => i.Execute(It.IsAny<EndGameCommand>(), It.IsAny<Dictionary<string, List<Type>>>()))
-            .Returns(Result.Success);
+            .Returns((ErrorOr<GameStateDto>?)null);
         // Act
         _gameController.Execute();
 

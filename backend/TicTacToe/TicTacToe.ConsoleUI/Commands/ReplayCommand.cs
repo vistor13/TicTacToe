@@ -1,8 +1,7 @@
 using ErrorOr;
-using TicTacToe.Application.ApplicationMessages;
+using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.ConsoleUI.Interfaces;
-using TicTacToe.Core.Models;
 
 namespace TicTacToe.ConsoleUI.Commands;
 
@@ -10,11 +9,12 @@ public class ReplayCommand(
     IGameProcessor gameProcessor,
     IUiRender consoleRenderer) : ICommand
 {
-    public ErrorOr<Success> Execute()
+    public ErrorOr<GameStateDto>? Execute()
     {
-        gameProcessor.InitializeGame(gameProcessor.GameMode != GameModes.GameWithAi);
+        var gameState = gameProcessor.GetGameState();
+        gameProcessor.InitializeGame(!gameProcessor.ShouldAiMove);
         consoleRenderer.RenderMessage(
-            string.Format(Messages.GameProcess.RestartNotification, gameProcessor.GetBoard().CurrentTurn));
-        return Result.Success;
+            string.Format(Constants.Messages.GameProcess.RestartNotification, gameState.CurrentPlayer));
+        return null;
     }
 }

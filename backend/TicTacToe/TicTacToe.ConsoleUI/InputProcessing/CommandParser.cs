@@ -1,10 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using TicTacToe.Application.Commands;
+using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.ConsoleUI.Commands;
 using TicTacToe.ConsoleUI.ConsoleViews;
 using TicTacToe.ConsoleUI.Interfaces;
-using TicTacToe.Core.Models;
 
 namespace TicTacToe.ConsoleUI.InputProcessing;
 
@@ -49,7 +49,7 @@ public class CommandParser(
             : null;
     }
 
-    private bool TryParseMove(string input, out MoveParameters moveParameters)
+    private bool TryParseMove(string input, out MoveParametersDto moveParameters)
     {
         moveParameters = null!;
 
@@ -61,7 +61,8 @@ public class CommandParser(
             return false;
         }
 
-        moveParameters = new MoveParameters(row - 1, col - 1, gameProcessor.GetBoard().CurrentTurn);
+        var gameState = gameProcessor.GetGameState();
+        moveParameters = new MoveParametersDto(row - 1, col - 1, gameState.CurrentPlayer);
         return true;
     }
 }

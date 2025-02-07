@@ -1,5 +1,6 @@
 using Moq;
 using TicTacToe.Application.Commands;
+using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.Application.Services;
 using TicTacToe.ConsoleUI.Commands;
@@ -21,13 +22,28 @@ public class CommandInvokerTests
         _commandInvoker = new CommandInvoker(_gameProcessorMock.Object);
     }
 
+    private void SetupGameState(GameState state, GameModes gameMode = GameModes.NotDefined, string currentTurn = "X")
+    {
+        var grid = new char[3, 3];
+        var isRunning = state == GameState.Ongoing;
+        var shouldAiMove = gameMode == GameModes.GameWithAi;
+        var gameStateDto = new GameStateDto(
+            gameMode.ToString(),
+            currentTurn,
+            state.ToString(),
+            grid,
+            isRunning,
+            shouldAiMove
+        );
+
+        _gameProcessorMock.Setup(g => g.GetGameState()).Returns(gameStateDto);
+        _gameProcessorMock.Setup(g => g.GameMode).Returns(gameMode);
+    }
     [Fact]
     public void Execute_ShouldReturnSuccess_WhenPlayerGameCommandExecutedAndModeNotDefined()
     {
         // Arrange
-        _gameProcessorMock.Setup(g => g.GetBoard())
-            .Returns(new Board());
-        _gameProcessorMock.Setup(g => g.GameMode).Returns(GameModes.NotDefined);
+        SetupGameState(GameState.NotStarted);
         var command = new PlayerGameCommand(_gameProcessorMock.Object, _consoleRendererMock.Object);
         var commandsByState = new Dictionary<string, List<Type>>
         {
@@ -35,10 +51,9 @@ public class CommandInvokerTests
         };
 
         // Act
-        var result = _commandInvoker.Execute(command, commandsByState);
+        _commandInvoker.Execute(command, commandsByState);
 
         // Assert
-        Assert.False(result.IsError);
         _gameProcessorMock.Verify(g => g.InitializeGame(true), Times.Once);
         _consoleRendererMock.Verify(r => r.RenderMessage(It.IsAny<string>()), Times.Once);
     }
@@ -47,19 +62,18 @@ public class CommandInvokerTests
     public void Execute_ShouldReturnSuccess_WhenAiGameCommandExecutedAndModeNotDefined()
     {
         // Arrange
-        _gameProcessorMock.Setup(g => g.GetBoard())
-            .Returns(new Board());
-        _gameProcessorMock.Setup(g => g.GameMode).Returns(GameModes.NotDefined);
+        SetupGameState(GameState.NotStarted);
         var command = new AiGameCommand(_gameProcessorMock.Object, _consoleRendererMock.Object);
         var commandsByState = new Dictionary<string, List<Type>>
         {
             { GameState.NotStarted.ToString(), [typeof(AiGameCommand)] }
         };
+        
         // Act
         var result = _commandInvoker.Execute(command, commandsByState);
 
         // Assert
-        Assert.False(result.IsError);
+        Assert.Null(result);
         _gameProcessorMock.Verify(g => g.InitializeGame(false), Times.Once);
         _consoleRendererMock.Verify(r => r.RenderMessage(It.IsAny<string>()), Times.Once);
     }
@@ -68,33 +82,27 @@ public class CommandInvokerTests
     public void Execute_ShouldReturnError_WhenPlayerGameCommandNotExecutedAndModeGameAi()
     {
         // Arrange
-        _gameProcessorMock.Setup(g => g.GameMode).Returns(GameModes.GameWithAi);
-        _gameProcessorMock.Setup(g => g.GetBoard())
-            .Returns(new Board());
-
-        _gameProcessorMock.Object.GetBoard().SetGameState(GameState.Win);
-
+        SetupGameState(GameState.Ongoing, GameModes.GameWithAi);
         var command = new PlayerGameCommand(_gameProcessorMock.Object, _consoleRendererMock.Object);
         var commandsByState = new Dictionary<string, List<Type>>
         {
             { GameState.NotStarted.ToString(), [typeof(PlayerGameCommand)] }
         };
+        
         // Act
         var result = _commandInvoker.Execute(command, commandsByState);
-
-
+        
         // Assert
-        Assert.True(result.IsError);
-        Assert.Contains(result.Errors, e => e.Code == "ExecuteCommand");
+        Assert.True(result!.Value.IsError);
+        Assert.Contains(result.Value.Errors, e => e.Code == "ExecuteCommand");
     }
+    
 
     [Fact]
     public void Execute_ShouldReturnError_WhenReplayCommandIsExecutedAndGameNotStarted()
     {
         // Arrange
-        _gameProcessorMock.Setup(g => g.GetBoard())
-            .Returns(new Board());
-        _gameProcessorMock.Object.GetBoard().SetGameState(GameState.NotStarted);
+        SetupGameState(GameState.NotStarted);
 
         var command = new ReplayCommand(_gameProcessorMock.Object, _consoleRendererMock.Object);
         var commandsByState = new Dictionary<string, List<Type>>
@@ -106,18 +114,15 @@ public class CommandInvokerTests
         var result = _commandInvoker.Execute(command, commandsByState);
 
         // Assert
-        Assert.True(result.IsError);
-        Assert.Contains(result.Errors, e => e.Code == "ExecuteCommand");
+        Assert.True(result!.Value.IsError);
+        Assert.Contains(result.Value.Errors, e => e.Code == "ExecuteCommand");
     }
-
 
     [Fact]
     public void Execute_ShouldReturnSuccess_WhenReplayCommandIsExecutedAndGameIsOngoing()
     {
         // Arrange
-        _gameProcessorMock.Setup(g => g.GetBoard())
-            .Returns(new Board());
-        _gameProcessorMock.Object.GetBoard().SetGameState(GameState.Ongoing);
+        SetupGameState(GameState.Ongoing);
 
         var command = new ReplayCommand(_gameProcessorMock.Object, _consoleRendererMock.Object);
         var commandsByState = new Dictionary<string, List<Type>>
@@ -126,51 +131,49 @@ public class CommandInvokerTests
         };
 
         // Act
-        var result = _commandInvoker.Execute(command, commandsByState);
+        _commandInvoker.Execute(command, commandsByState);
 
         // Assert
-        Assert.False(result.IsError);
+        _gameProcessorMock.Verify(c => c.InitializeGame(It.IsAny<bool>()), Times.Once);
         _consoleRendererMock.Verify(c => c.RenderMessage(It.IsAny<string>()), Times.Once);
     }
 
     [Fact]
-    public void Execute_ShouldReturnSuccess_WhenInstructionCommandIsExucuted()
+    public void Execute_ShouldReturnSuccess_WhenInstructionCommandIsExecuted()
     {
         // Arrange
-        _gameProcessorMock.Setup(g => g.GetBoard())
-            .Returns(new Board());
+        SetupGameState(GameState.NotStarted);
 
         var command = new InstructionCommand(_consoleRendererMock.Object);
         var commandsByState = new Dictionary<string, List<Type>>
         {
             { GameState.NotStarted.ToString(), [typeof(InstructionCommand)] }
         };
+
         // Act
-        var result = _commandInvoker.Execute(command, commandsByState);
+        _commandInvoker.Execute(command, commandsByState);
 
         // Assert
-        Assert.False(result.IsError);
         _consoleRendererMock.Verify(c => c.RenderInstruction(), Times.Once);
     }
 
     [Fact]
-    public void Execute_ShouldReturnSuccess_WhenExitIsExecuted()
+    public void Execute_ShouldReturnSuccess_WhenExitCommandIsExecuted()
     {
         // Arrange
-        _gameProcessorMock.Setup(g => g.GetBoard())
-            .Returns(new Board());
-        _gameProcessorMock.Object.GetBoard().SetGameState(GameState.Ongoing);
-        _gameProcessorMock.Setup(g => g.GameMode).Returns(GameModes.GameWithAi);
+        SetupGameState(GameState.Ongoing, GameModes.GameWithAi);
+
         var command = new ExitCommand(_gameProcessorMock.Object, _consoleRendererMock.Object);
         var commandsByState = new Dictionary<string, List<Type>>
         {
             { GameState.Ongoing.ToString(), [typeof(ExitCommand)] }
         };
+
         // Act
         var result = _commandInvoker.Execute(command, commandsByState);
 
         // Assert
-        Assert.False(result.IsError);
+        Assert.Null(result);
         _consoleRendererMock.Verify(c => c.RenderMessage(It.IsAny<string>()), Times.Once);
     }
 
@@ -178,28 +181,28 @@ public class CommandInvokerTests
     public void Execute_ShouldReturnSuccess_WhenEndCommandIsExecuted()
     {
         // Arrange
-        _gameProcessorMock.Setup(g => g.GetBoard())
-            .Returns(new Board());
+        SetupGameState(GameState.NotStarted);
+
         var command = new EndGameCommand(_gameProcessorMock.Object);
         var commandsByState = new Dictionary<string, List<Type>>
         {
             { GameState.NotStarted.ToString(), [typeof(EndGameCommand)] }
         };
+
         // Act
         var result = _commandInvoker.Execute(command, commandsByState);
 
         // Assert
-        Assert.False(result.IsError);
+        Assert.Null(result);
     }
+
 
     [Fact]
     public void Execute_ShouldReturnError_WhenCommandIsNotAllowedInOngoingState()
     {
         // Arrange
-        _gameProcessorMock.Setup(g => g.GetBoard())
-            .Returns(new Board());
-        _gameProcessorMock.Object.GetBoard().SetGameState(GameState.Ongoing);
-        _gameProcessorMock.Setup(g => g.GameMode).Returns(GameModes.GameWithAi);
+        SetupGameState(GameState.Ongoing, GameModes.GameWithAi);
+
         var command = new PlayerGameCommand(_gameProcessorMock.Object, _consoleRendererMock.Object);
         var commandsByState = new Dictionary<string, List<Type>>
         {
@@ -210,18 +213,17 @@ public class CommandInvokerTests
         var result = _commandInvoker.Execute(command, commandsByState);
 
         // Assert
-        Assert.True(result.IsError);
-        Assert.Contains(result.Errors, e => e.Code == "ExecuteCommand");
+        Assert.True(result!.Value.IsError);
+        Assert.Contains(result.Value.Errors, e => e.Code == "ExecuteCommand");
     }
 
     [Fact]
     public void Execute_ShouldReturnError_WhenMoveCommandIsExecutedAfterGameIsFinished()
     {
         // Arrange
-        _gameProcessorMock.Setup(g => g.GetBoard())
-            .Returns(new Board());
-        _gameProcessorMock.Object.GetBoard().SetGameState(GameState.Win);
-        var moveX = new MoveParameters(0, 0, PlayerTurn.X);
+        SetupGameState(GameState.Win);
+
+        var moveX = new MoveParametersDto(0, 0, PlayerTurn.X.ToString());
         var command = new MakeMoveCommand(_gameProcessorMock.Object, moveX);
         var commandsByState = new Dictionary<string, List<Type>>
         {
@@ -232,7 +234,7 @@ public class CommandInvokerTests
         var result = _commandInvoker.Execute(command, commandsByState);
 
         // Assert
-        Assert.True(result.IsError);
-        Assert.Contains(result.Errors, e => e.Code == "ExecuteCommand");
+        Assert.True(result!.Value.IsError);
+        Assert.Contains(result.Value.Errors, e => e.Code == "ExecuteCommand");
     }
 }

@@ -2,6 +2,7 @@ using ErrorOr;
 using MediatR;
 using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
+using TicTacToe.Core.Models;
 
 namespace TicTacToe.Application.Queries;
 
@@ -18,6 +19,14 @@ public class GetStateByIdHandler(IGameStateManager gameStateManager)
                 "Game not found."
             ));
 
-        return Task.FromResult<ErrorOr<GameStateDto>>(gameState);
+        var gameStateDto = new GameStateDto(
+            gameState.Modes.ToString(),
+            gameState.CurrentPlayer.ToString(),
+            gameState.State.ToString(),
+            gameState.Grid,
+            gameState.State is GameState.Ongoing,
+            gameState.Modes is GameModes.GameWithAi);
+
+        return Task.FromResult<ErrorOr<GameStateDto>>(gameStateDto);
     }
 }

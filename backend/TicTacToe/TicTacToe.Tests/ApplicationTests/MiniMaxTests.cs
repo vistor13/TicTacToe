@@ -56,6 +56,6 @@ public class MiniMaxAiTests
         // Assert
         Assert.True(bestMove.Row is >= 0 and < Board.BoardSize);
         Assert.True(bestMove.Col is >= 0 and < Board.BoardSize);
-        Assert.Equal(PlayerTurn.X, bestMove.PlayerTurn);
+        Assert.Equal(PlayerTurn.X, Enum.Parse<PlayerTurn>(bestMove.Player));
     }
 }

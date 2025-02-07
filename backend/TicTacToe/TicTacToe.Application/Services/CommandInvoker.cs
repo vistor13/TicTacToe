@@ -1,19 +1,19 @@
 using ErrorOr;
 using TicTacToe.Application.ApplicationMessages;
+using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
 
 namespace TicTacToe.Application.Services;
 
 public class CommandInvoker(IGameProcessor gameProcessor) : ICommandInvoker
 {
-    public ErrorOr<Success> Execute(ICommand command, Dictionary<string, List<Type>> commandsByState)
+    public ErrorOr<GameStateDto>? Execute(ICommand command, Dictionary<string, List<Type>> commandsByState)
     {
         var commandType = command.GetType();
-        var currentState = gameProcessor.GetBoard().State;
+        var gameStateModel = GameStateModel.MapToModel(gameProcessor.GetGameState());
 
-
-        if (commandsByState.ContainsKey(currentState.ToString()) &&
-            commandsByState[currentState.ToString()].Contains(commandType))
+        if (commandsByState.ContainsKey(gameStateModel.State.ToString()) &&
+            commandsByState[gameStateModel.State.ToString()].Contains(commandType))
             return command.Execute();
 
         return Error.Validation(

@@ -45,10 +45,10 @@ public record GameStateResponse
 
         return new GameStateResponse
         {
-            State = gameState.State.ToString(),
+            State = gameState.GameState,
             Grid = gridList,
-            GameMode = gameState.GameModes.ToString(),
-            PlayerTurn = gameState.CurrentPlayer.ToString()
+            GameMode = gameState.GameModes,
+            PlayerTurn = gameState.CurrentPlayer
         };
     }
 
