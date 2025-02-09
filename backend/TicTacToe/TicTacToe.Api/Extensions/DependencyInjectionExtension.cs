@@ -1,5 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.Application.Services;
+using TicTacToe.Infrastructure.DataBase;
 
 namespace TicTacToe.Api.Extensions;
 
@@ -18,5 +20,15 @@ public static class DependencyInjectionExtension
         services.AddScoped<ICommandInvoker, CommandInvoker>();
         services.AddScoped<IMiniMaxAi, MiniMaxAi>();
         services.AddSingleton<IGameStateManager, GameStateManager>();
+    }
+
+    public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddDbContext<ApplicationDbContext>(opt =>
+        {
+            opt.UseNpgsql(configuration["Database:ConnectionString"],
+                b => b.MigrationsAssembly("TicTacToe.Infrastructure"));
+        });
+        return services;
     }
 }
