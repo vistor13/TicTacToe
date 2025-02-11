@@ -2,41 +2,55 @@ using ErrorOr;
 using MediatR;
 using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
+using TicTacToe.Infrastructure.DataBase.Specifications;
+using TicTacToe.Infrastructure.Entities;
+using TicTacToe.Infrastructure.Interfaces;
 
 namespace TicTacToe.Application.Commands.MoveCommand;
 
-public class MoveHandler(IGameProcessor gameProcessor, IGameStateManager gameStateManager)
+public class MoveHandler(IGameProcessor gameProcessor, IGameRepository gameRepository, IMoveRepository moveRepository)
     : IRequestHandler<MoveCommand, ErrorOr<Success>>
 {
-    public Task<ErrorOr<Success>> Handle(MoveCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<Success>> Handle(MoveCommand request, CancellationToken cancellationToken)
     {
-        var gameState = gameStateManager.GetGame(request.GameId);
+        var gameStateEntity = await gameRepository.GetFirstBySpecification(new ByIdGameSpecification(request.GameId));
 
-        if (gameState == null)
-            return Task.FromResult<ErrorOr<Success>>(Error.NotFound(
+        if (gameStateEntity is null)
+            return Error.NotFound(
                 "NotFoundGame",
                 "Game not found."
-            ));
+            );
 
-        gameProcessor.LoadGameState(gameState);
+        gameProcessor.LoadGameState(GameStateModel.MapToModel(gameStateEntity));
 
-        var gameStateModel = gameProcessor.GetGameState();
 
-        var move = new MoveParametersDto(request.Row - 1, request.Col - 1, gameStateModel.CurrentPlayer);
+        var move = new MoveParametersDto(request.Row - 1, request.Col - 1, gameStateEntity.CurrentPlayer.ToString());
 
         var result = gameProcessor.MakeMove(move);
+
+        var gameStateModel = gameProcessor.GetGameState();
 
         switch (result.IsError)
         {
             case true:
-                return Task.FromResult<ErrorOr<Success>>(result.Errors);
+                return result.Errors;
             case false when gameStateModel is { IsRunning: true, ShouldAiMove: true }:
                 gameProcessor.AiMakeMove(out _);
                 break;
         }
 
-        gameStateManager.SaveGame(request.GameId, GameStateModel.MapToModel(gameProcessor.GetGameState()));
+        var gameModel = gameProcessor.GetGameState();
 
-        return Task.FromResult<ErrorOr<Success>>(Result.Success);
+        var moveEntity = new MoveEntity
+        {
+            Row = request.Row,
+            Col = request.Col,
+            MoveSymbol = move.Player[0],
+            GameId = gameStateEntity.Id
+        };
+
+        await gameRepository.Update(request.GameId, GameStateModel.MapToEntity(gameModel));
+        await moveRepository.Create(moveEntity);
+        return Result.Success;
     }
 }

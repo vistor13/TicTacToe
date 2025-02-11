@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using TicTacToe.Application.Interfaces;
 using TicTacToe.Application.Services;
 using TicTacToe.Infrastructure.DataBase;
+using TicTacToe.Infrastructure.DataBase.Repositories;
+using TicTacToe.Infrastructure.Interfaces;
 
 namespace TicTacToe.Api.Extensions;
 
@@ -22,6 +24,20 @@ public static class DependencyInjectionExtension
         services.AddSingleton<IGameStateManager, GameStateManager>();
     }
 
+    /// <summary>
+    /// </summary>
+    /// <param name="services"></param>
+    public static void AddInfrastructure(this IServiceCollection services)
+    {
+        services.AddScoped<IGameRepository, GameRepository>();
+        services.AddScoped<IMoveRepository, MoveRepository>();
+    }
+
+    /// <summary>
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <returns></returns>
     public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ApplicationDbContext>(opt =>

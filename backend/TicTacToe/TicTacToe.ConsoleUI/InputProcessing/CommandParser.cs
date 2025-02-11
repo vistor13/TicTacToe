@@ -62,7 +62,7 @@ public class CommandParser(
         }
 
         var gameState = gameProcessor.GetGameState();
-        moveParameters = new MoveParametersDto(row - 1, col - 1, gameState.CurrentPlayer);
+        moveParameters = new MoveParametersDto(row - 1, col - 1, gameState.CurrentPlayer.ToString());
         return true;
     }
 }

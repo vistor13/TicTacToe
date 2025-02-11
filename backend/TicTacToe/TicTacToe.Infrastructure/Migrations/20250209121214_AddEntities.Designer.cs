@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TicTacToe.Infrastructure.DataBase;
@@ -11,9 +12,11 @@ using TicTacToe.Infrastructure.DataBase;
 namespace TicTacToe.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250209121214_AddEntities")]
+    partial class AddEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,8 +67,10 @@ namespace TicTacToe.Infrastructure.Migrations
                     b.Property<long>("GameId")
                         .HasColumnType("bigint");
 
-                    b.Property<char>("MoveSymbol")
-                        .HasColumnType("character(1)");
+                    b.Property<string>("MoveSymbol")
+                        .IsRequired()
+                        .HasMaxLength(1)
+                        .HasColumnType("character varying(1)");
 
                     b.Property<int>("Row")
                         .HasColumnType("integer");

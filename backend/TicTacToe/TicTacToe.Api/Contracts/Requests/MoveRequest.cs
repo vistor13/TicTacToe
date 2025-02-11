@@ -6,4 +6,4 @@ namespace TicTacToe.Api.Contracts.Requests;
 /// <param name="GameId"></param>
 /// <param name="Row"></param>
 /// <param name="Col"></param>
-public sealed record MoveRequest(Guid GameId, int Row, int Col);
+public sealed record MoveRequest(long GameId, int Row, int Col);

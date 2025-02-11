@@ -1,32 +1,24 @@
 using ErrorOr;
 using MediatR;
 using TicTacToe.Application.Dto;
-using TicTacToe.Application.Interfaces;
-using TicTacToe.Core.Models;
+using TicTacToe.Infrastructure.DataBase.Specifications;
+using TicTacToe.Infrastructure.Interfaces;
 
 namespace TicTacToe.Application.Queries;
 
-public class GetStateByIdHandler(IGameStateManager gameStateManager)
+public class GetStateByIdHandler(IGameRepository gameRepository)
     : IRequestHandler<GetStateByIdQuery, ErrorOr<GameStateDto>>
 {
-    public Task<ErrorOr<GameStateDto>> Handle(GetStateByIdQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<GameStateDto>> Handle(GetStateByIdQuery request, CancellationToken cancellationToken)
     {
-        var gameState = gameStateManager.GetGame(request.Id);
+        var gameStateEntity = await gameRepository.GetFirstBySpecification(new ByIdGameSpecification(request.Id));
 
-        if (gameState == null)
-            return Task.FromResult<ErrorOr<GameStateDto>>(Error.NotFound(
+        if (gameStateEntity is null)
+            return Error.NotFound(
                 "NotFoundGame",
                 "Game not found."
-            ));
+            );
 
-        var gameStateDto = new GameStateDto(
-            gameState.Modes.ToString(),
-            gameState.CurrentPlayer.ToString(),
-            gameState.State.ToString(),
-            gameState.Grid,
-            gameState.State is GameState.Ongoing,
-            gameState.Modes is GameModes.GameWithAi);
-
-        return Task.FromResult<ErrorOr<GameStateDto>>(gameStateDto);
+        return GameStateDto.MapToModel(gameStateEntity);
     }
 }

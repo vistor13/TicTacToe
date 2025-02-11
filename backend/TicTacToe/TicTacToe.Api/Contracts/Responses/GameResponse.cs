@@ -8,7 +8,7 @@ public record GameResponse
     /// <summary>
     ///     A unique identifier for the game instance.
     /// </summary>
-    public Guid Id { get; init; }
+    public long Id { get; init; }
 
     /// <summary>
     ///     The game mode.

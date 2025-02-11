@@ -12,5 +12,5 @@ public class MoveEntity : BaseEntity
 
     [Required] [Range(1, 3)] public int Col { get; set; }
 
-    [Required] [MaxLength(1)] public required string MoveSymbol { get; set; }
+    [Required] public required char MoveSymbol { get; set; }
 }
