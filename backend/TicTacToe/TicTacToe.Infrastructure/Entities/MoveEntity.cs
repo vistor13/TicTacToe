@@ -1,16 +1,10 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace TicTacToe.Infrastructure.Entities;
 
-public class MoveEntity : BaseEntity
+public class MoveEntity
 {
-    [Required] public long GameId { get; set; }
+    public int Row { get; set; }
 
-    public GameEntity? GameEntity { get; set; }
+    public int Col { get; set; }
 
-    [Required] [Range(1, 3)] public int Row { get; set; }
-
-    [Required] [Range(1, 3)] public int Col { get; set; }
-
-    [Required] public required char MoveSymbol { get; set; }
+    public required char MoveSymbol { get; set; }
 }

@@ -1,7 +1,5 @@
 using TicTacToe.Infrastructure.Entities;
 
-namespace TicTacToe.Application.Dto;
-
 public sealed record GameStateDto(
     string GameModes,
     string CurrentPlayer,
@@ -10,31 +8,25 @@ public sealed record GameStateDto(
     bool IsRunning,
     bool ShouldAiMove)
 {
-    public static GameStateDto MapToModel(GameEntity dto)
+    public static GameStateDto ToDto(GameEntity gameEntity)
     {
-        return new GameStateDto(
-            dto.Mode.ToString(),
-            dto.CurrentPlayer.ToString(),
-            dto.GameState.ToString(),
-            ConvertToArrayChar(dto.Moves),
-            dto.GameState is Core.Models.GameState.Ongoing,
-            dto.Mode is Core.Models.GameModes.GameWithAi);
-    }
-
-    private static char[,] ConvertToArrayChar(List<MoveEntity>? moves)
-    {
-        var result = new char[3, 3];
-
+        var grid = new char[3, 3];
 
         for (var i = 0; i < 3; i++)
         for (var j = 0; j < 3; j++)
-            result[i, j] = ' ';
+            grid[i, j] = ' ';
 
-        if (moves is { Count: 0 })
-            return result;
+        foreach (var move in gameEntity.Moves)
+            if (move.Row is >= 0 and < 3 && move.Col is >= 0 and < 3)
+                grid[move.Row, move.Col] = move.MoveSymbol;
 
-        foreach (var move in moves) result[move.Row - 1, move.Col - 1] = move.MoveSymbol;
-
-        return result;
+        return new GameStateDto(
+            gameEntity.Mode.ToString(),
+            gameEntity.CurrentPlayer.ToString(),
+            gameEntity.GameState.ToString(),
+            grid,
+            gameEntity.IsRunning,
+            gameEntity.ShouldAiMove
+        );
     }
 }

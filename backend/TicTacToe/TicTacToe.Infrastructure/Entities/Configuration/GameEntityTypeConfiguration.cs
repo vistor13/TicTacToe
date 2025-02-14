@@ -19,5 +19,6 @@ public class GameEntityTypeConfiguration : IEntityTypeConfiguration<GameEntity>
             .Property(b => b.Mode)
             .IsRequired()
             .HasConversion<string>();
+        builder.OwnsMany(x => x.Moves, contactBuilder => { contactBuilder.ToJson(); });
     }
 }

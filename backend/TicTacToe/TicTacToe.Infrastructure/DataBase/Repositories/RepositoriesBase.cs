@@ -31,11 +31,7 @@ public class RepositoriesBase<TEntity>(ApplicationDbContext context)
 
     public async Task<TEntity> GetFirstBySpecification(Specification<TEntity> specification)
     {
-        IQueryable<TEntity> query = context.Set<TEntity>();
-
-        query = specification.Includes.Aggregate(query, (current, include) => current.Include(include));
-
-        return await query.Where(specification.ToExpression()).FirstOrDefaultAsync();
+        return await context.Set<TEntity>().Where(specification.ToExpression()).FirstOrDefaultAsync();
     }
 
     public async Task Update(long id, TEntity entity)

@@ -11,58 +11,52 @@ public sealed record GameStateModel(
     bool IsRunning,
     bool ShouldAiMove)
 {
-    public static GameStateModel MapToModel(GameEntity dto)
+    public static GameEntity ToEntity(GameStateModel gameStateModel, GameEntity? existingEntity = null)
     {
-        return new GameStateModel
-        (
-            dto.Mode,
-            dto.GameState,
-            dto.CurrentPlayer,
-            ConvertToArrayChar(dto.Moves),
-            dto.GameState is GameState.Ongoing,
-            dto.Mode is GameModes.GameWithAi
-        );
-    }
+        var entity = existingEntity ?? new GameEntity();
 
-    private static char[,] ConvertToArrayChar(List<MoveEntity>? moves)
-    {
-        var result = new char[3, 3];
+        entity.GameState = gameStateModel.State;
+        entity.Mode = gameStateModel.Modes;
+        entity.CurrentPlayer = gameStateModel.CurrentPlayer;
+        entity.IsRunning = gameStateModel.IsRunning;
+        entity.ShouldAiMove = gameStateModel.ShouldAiMove;
+        entity.Moves.Clear();
 
-
-        for (var i = 0; i < 3; i++)
-        for (var j = 0; j < 3; j++) result[i, j] = ' ';
-
-        if (moves is null)
-            return result;
-
-        foreach (var move in moves) result[move.Row - 1, move.Col - 1] = move.MoveSymbol;
-
-        return result;
-    }
-
-    public static GameEntity MapToEntity(GameStateModel stateModel)
-    {
-        var moves = new List<MoveEntity>();
-
-        for (var i = 0; i < stateModel.Grid.GetLength(0); i++)
-        for (var j = 0; j < stateModel.Grid.GetLength(1); j++)
+        for (var row = 0; row < 3; row++)
+        for (var col = 0; col < 3; col++)
         {
-            var symbol = stateModel.Grid[i, j];
-            if (symbol == 'X' || symbol == 'O')
-                moves.Add(new MoveEntity
+            var moveSymbol = gameStateModel.Grid[row, col];
+            if (moveSymbol != '\0')
+                entity.Moves.Add(new MoveEntity
                 {
-                    Row = i + 1,
-                    Col = j + 1,
-                    MoveSymbol = symbol
+                    Row = row,
+                    Col = col,
+                    MoveSymbol = moveSymbol
                 });
         }
 
-        return new GameEntity
+        return entity;
+    }
+
+    public static GameStateModel ToModel(GameEntity gameEntity)
+    {
+        var grid = new char[3, 3];
+        for (var i = 0; i < 3; i++)
+        for (var j = 0; j < 3; j++)
+            grid[i, j] = ' ';
+
+        foreach (var move in gameEntity.Moves)
         {
-            GameState = stateModel.State,
-            Mode = stateModel.Modes,
-            CurrentPlayer = stateModel.CurrentPlayer,
-            Moves = moves
-        };
+            if (move.Row is >= 0 and < 3 && move.Col is >= 0 and < 3) grid[move.Row, move.Col] = move.MoveSymbol;
+        }
+
+        return new GameStateModel(
+            gameEntity.Mode,
+            gameEntity.GameState,
+            gameEntity.CurrentPlayer,
+            grid,
+            gameEntity.IsRunning,
+            gameEntity.ShouldAiMove
+        );
     }
 }

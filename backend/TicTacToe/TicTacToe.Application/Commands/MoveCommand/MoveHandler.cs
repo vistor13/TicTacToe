@@ -2,18 +2,16 @@ using ErrorOr;
 using MediatR;
 using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
-using TicTacToe.Infrastructure.DataBase.Specifications;
-using TicTacToe.Infrastructure.Entities;
 using TicTacToe.Infrastructure.Interfaces;
 
 namespace TicTacToe.Application.Commands.MoveCommand;
 
-public class MoveHandler(IGameProcessor gameProcessor, IGameRepository gameRepository, IMoveRepository moveRepository)
+public class MoveHandler(IGameProcessor gameProcessor, IGameRepository gameRepository)
     : IRequestHandler<MoveCommand, ErrorOr<Success>>
 {
     public async Task<ErrorOr<Success>> Handle(MoveCommand request, CancellationToken cancellationToken)
     {
-        var gameStateEntity = await gameRepository.GetFirstBySpecification(new ByIdGameSpecification(request.GameId));
+        var gameStateEntity = await gameRepository.GetById(request.GameId);
 
         if (gameStateEntity is null)
             return Error.NotFound(
@@ -21,14 +19,13 @@ public class MoveHandler(IGameProcessor gameProcessor, IGameRepository gameRepos
                 "Game not found."
             );
 
-        gameProcessor.LoadGameState(GameStateModel.MapToModel(gameStateEntity));
+        gameProcessor.LoadGameState(GameStateModel.ToModel(gameStateEntity));
 
+        var gameStateModel = gameProcessor.GetGameState();
 
         var move = new MoveParametersDto(request.Row - 1, request.Col - 1, gameStateEntity.CurrentPlayer.ToString());
 
         var result = gameProcessor.MakeMove(move);
-
-        var gameStateModel = gameProcessor.GetGameState();
 
         switch (result.IsError)
         {
@@ -39,18 +36,8 @@ public class MoveHandler(IGameProcessor gameProcessor, IGameRepository gameRepos
                 break;
         }
 
-        var gameModel = gameProcessor.GetGameState();
+        await gameRepository.Update(request.GameId, GameStateModel.ToEntity(gameStateModel, gameStateEntity));
 
-        var moveEntity = new MoveEntity
-        {
-            Row = request.Row,
-            Col = request.Col,
-            MoveSymbol = move.Player[0],
-            GameId = gameStateEntity.Id
-        };
-
-        await gameRepository.Update(request.GameId, GameStateModel.MapToEntity(gameModel));
-        await moveRepository.Create(moveEntity);
         return Result.Success;
     }
 }
