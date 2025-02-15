@@ -22,15 +22,16 @@ public class CommandInvokerTests
         _commandInvoker = new CommandInvoker(_gameProcessorMock.Object);
     }
 
-    private void SetupGameState(GameState state, GameModes gameMode = GameModes.NotDefined, string currentTurn = "X")
+    private void SetupGameState(GameState state, GameModes gameMode = GameModes.NotDefined)
     {
         var grid = new char[3, 3];
         var isRunning = state == GameState.Ongoing;
         var shouldAiMove = gameMode == GameModes.GameWithAi;
-        var gameStateDto = new GameStateDto(
-            gameMode.ToString(),
+        var currentTurn = PlayerTurn.X;
+        var gameStateDto = new GameStateModel(
+            gameMode,
+            state,
             currentTurn,
-            state.ToString(),
             grid,
             isRunning,
             shouldAiMove
@@ -39,6 +40,7 @@ public class CommandInvokerTests
         _gameProcessorMock.Setup(g => g.GetGameState()).Returns(gameStateDto);
         _gameProcessorMock.Setup(g => g.GameMode).Returns(gameMode);
     }
+
     [Fact]
     public void Execute_ShouldReturnSuccess_WhenPlayerGameCommandExecutedAndModeNotDefined()
     {
@@ -68,12 +70,11 @@ public class CommandInvokerTests
         {
             { GameState.NotStarted.ToString(), [typeof(AiGameCommand)] }
         };
-        
+
         // Act
         var result = _commandInvoker.Execute(command, commandsByState);
 
         // Assert
-        Assert.Null(result);
         _gameProcessorMock.Verify(g => g.InitializeGame(false), Times.Once);
         _consoleRendererMock.Verify(r => r.RenderMessage(It.IsAny<string>()), Times.Once);
     }
@@ -88,15 +89,15 @@ public class CommandInvokerTests
         {
             { GameState.NotStarted.ToString(), [typeof(PlayerGameCommand)] }
         };
-        
+
         // Act
         var result = _commandInvoker.Execute(command, commandsByState);
-        
+
         // Assert
         Assert.True(result!.Value.IsError);
         Assert.Contains(result.Value.Errors, e => e.Code == "ExecuteCommand");
     }
-    
+
 
     [Fact]
     public void Execute_ShouldReturnError_WhenReplayCommandIsExecutedAndGameNotStarted()

@@ -78,13 +78,13 @@ public class CommandParserTests
     {
         // Arrange
         var moveInput = "move 1 2";
-        var gameStateDto = new GameStateDto(
-            GameModes.GameWithPlayer.ToString(),
-            PlayerTurn.X.ToString(),
-            GameState.Ongoing.ToString(),
+        var gameStateDto = new GameStateModel(
+            GameModes.GameWithAi,
+            GameState.Ongoing,
+            PlayerTurn.X,
             new char[3, 3],
             true,
-            false
+            true
         );
         _gameProcessorMock.Setup(g => g.GetGameState()).Returns(gameStateDto);
         // Act
