@@ -18,8 +18,10 @@ public static class WebApplicationExtensions
 
         services.AddEndpointsApiExplorer();
         services.AddApplication();
+        services.AddInfrastructure();
         services.AddSwaggerGenTicTacToe();
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
+        services.AddDatabase(builder.Configuration);
     }
 
     /// <summary>

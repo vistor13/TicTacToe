@@ -44,7 +44,7 @@ public static class GameEndpoint
         var gameResponse = new GameResponse
         {
             Id = game.Id,
-            GameMode = game.Modes.ToString()
+            GameMode = game.Modes
         };
 
         return Results.Created("/api/game/start", gameResponse);
@@ -59,7 +59,7 @@ public static class GameEndpoint
         return result.ToResult();
     }
 
-    private static async Task<IResult> GetGameState(Guid gameId,
+    private static async Task<IResult> GetGameState(long gameId,
         IMediator mediator)
     {
         var gameState = await mediator.Send

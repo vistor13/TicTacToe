@@ -4,4 +4,4 @@ using TicTacToe.Application.Dto;
 
 namespace TicTacToe.Application.Queries;
 
-public sealed record GetStateByIdQuery(Guid Id) : IRequest<ErrorOr<GameStateDto>>;
+public sealed record GetStateByIdQuery(long Id) : IRequest<ErrorOr<GameStateDto>>;

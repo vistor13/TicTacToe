@@ -2,41 +2,42 @@ using ErrorOr;
 using MediatR;
 using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
+using TicTacToe.Infrastructure.Interfaces;
 
 namespace TicTacToe.Application.Commands.MoveCommand;
 
-public class MoveHandler(IGameProcessor gameProcessor, IGameStateManager gameStateManager)
+public class MoveHandler(IGameProcessor gameProcessor, IGameRepository gameRepository)
     : IRequestHandler<MoveCommand, ErrorOr<Success>>
 {
-    public Task<ErrorOr<Success>> Handle(MoveCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<Success>> Handle(MoveCommand request, CancellationToken cancellationToken)
     {
-        var gameState = gameStateManager.GetGame(request.GameId);
+        var gameStateEntity = await gameRepository.GetById(request.GameId);
 
-        if (gameState == null)
-            return Task.FromResult<ErrorOr<Success>>(Error.NotFound(
+        if (gameStateEntity is null)
+            return Error.NotFound(
                 "NotFoundGame",
                 "Game not found."
-            ));
+            );
 
-        gameProcessor.LoadGameState(gameState);
+        gameProcessor.LoadGameState(GameStateModel.ToModel(gameStateEntity));
 
         var gameStateModel = gameProcessor.GetGameState();
 
-        var move = new MoveParametersDto(request.Row - 1, request.Col - 1, gameStateModel.CurrentPlayer);
+        var move = new MoveParametersDto(request.Row - 1, request.Col - 1, gameStateEntity.CurrentPlayer.ToString());
 
         var result = gameProcessor.MakeMove(move);
 
         switch (result.IsError)
         {
             case true:
-                return Task.FromResult<ErrorOr<Success>>(result.Errors);
+                return result.Errors;
             case false when gameStateModel is { IsRunning: true, ShouldAiMove: true }:
                 gameProcessor.AiMakeMove(out _);
                 break;
         }
 
-        gameStateManager.SaveGame(request.GameId, GameStateModel.MapToModel(gameProcessor.GetGameState()));
+        await gameRepository.Update(request.GameId, GameStateModel.ToEntity(gameStateModel, gameStateEntity));
 
-        return Task.FromResult<ErrorOr<Success>>(Result.Success);
+        return Result.Success;
     }
 }

@@ -22,12 +22,12 @@ public class GameProcessor(IMiniMaxAi aiBot) : IGameProcessor
         return MakeMove(moveParameters);
     }
 
-    public GameStateDto GetGameState()
+    public GameStateModel GetGameState()
     {
-        return new GameStateDto
-        (GameMode.ToString(),
-            GameBoard.CurrentTurn.ToString(),
-            GameBoard.State.ToString(),
+        return new GameStateModel(
+            GameMode,
+            GameBoard.State,
+            GameBoard.CurrentTurn,
             GameBoard.Grid,
             IsRunning,
             ShouldAiMove);

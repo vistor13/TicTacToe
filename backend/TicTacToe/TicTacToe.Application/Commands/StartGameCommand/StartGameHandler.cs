@@ -1,23 +1,19 @@
 using MediatR;
 using TicTacToe.Application.Dto;
 using TicTacToe.Application.Interfaces;
+using TicTacToe.Infrastructure.Interfaces;
 
 namespace TicTacToe.Application.Commands.StartGameCommand;
 
-public class StartGameHandler(IGameProcessor gameProcessor, IGameStateManager gameStateManager)
+public class StartGameHandler(IGameProcessor gameProcessor, IGameRepository gameRepository)
     : IRequestHandler<StartGameCommand, GameInitializationDto>
 {
-    public Task<GameInitializationDto> Handle(StartGameCommand request,
+    public async Task<GameInitializationDto> Handle(StartGameCommand request,
         CancellationToken cancellationToken)
     {
         gameProcessor.InitializeGame(request.IsTwoPlayerMode);
 
-        var gameState = gameProcessor.GetGameState();
-
-        var gameId = Guid.NewGuid();
-
-        gameStateManager.SaveGame(gameId, GameStateModel.MapToModel(gameState));
-
-        return Task.FromResult(new GameInitializationDto(gameId, gameState.GameModes));
+        var createEntity = await gameRepository.Create(GameStateModel.ToEntity(gameProcessor.GetGameState()));
+        return new GameInitializationDto(createEntity.Id, createEntity.Mode.ToString());
     }
 }

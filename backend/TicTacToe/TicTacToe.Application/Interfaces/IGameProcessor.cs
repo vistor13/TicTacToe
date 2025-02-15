@@ -13,7 +13,7 @@ public interface IGameProcessor
     void InitializeGame(bool twoPlayerGame = true);
     ErrorOr<GameStateDto> AiMakeMove(out MoveParametersDto moveParameters);
     void Reset();
-    GameStateDto GetGameState();
+    GameStateModel GetGameState();
     void LoadGameState(GameStateModel state);
     GameResultDto GetGameResult();
 }

@@ -1,3 +1,3 @@
 namespace TicTacToe.Application.Dto;
 
-public sealed record GameInitializationDto(Guid Id, string Modes);
+public sealed record GameInitializationDto(long Id, string Modes);
