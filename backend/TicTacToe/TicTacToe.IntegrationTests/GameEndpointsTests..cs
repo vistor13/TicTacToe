@@ -4,7 +4,7 @@ using TicTacToe.Api;
 using TicTacToe.Api.Contracts.Requests;
 using TicTacToe.Api.Contracts.Responses;
 
-namespace TicTacToe.Tests.IntegrationTests;
+namespace TicTacToe.IntegrationTests;
 
 public class GameEndpointTests(CustomWebFactory<Program> factory) : TestsDataBaseIntegrationTests(factory)
 {
@@ -27,7 +27,6 @@ public class GameEndpointTests(CustomWebFactory<Program> factory) : TestsDataBas
     {
         // Act
         var response = await Client.PostAsync("/api/game/start?isTwoPlayerMode=false", null);
-
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -87,7 +86,7 @@ public class GameEndpointTests(CustomWebFactory<Program> factory) : TestsDataBas
         var startResponse = await Client.PostAsync("/api/game/start?isTwoPlayerMode=true", null);
         var game = await startResponse.Content.ReadFromJsonAsync<GameResponse>();
         var moveRequest1 = new MoveRequest(game.Id, 1, 1);
-        var moveRequest2 = new MoveRequest(game.Id, 2, 1);
+        var moveRequest2 = new MoveRequest(game.Id, 1, 1);
         await Client.PostAsJsonAsync("/api/game/move", moveRequest1);
 
         // Act
