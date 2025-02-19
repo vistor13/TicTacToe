@@ -39,11 +39,11 @@ public static class WebApplicationExtensions
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"); });
         }
 
-        app.UseGameEndpoints();
+        app.MapEndpoints();
     }
 
-    private static void UseGameEndpoints(this IEndpointRouteBuilder app)
+    private static void MapEndpoints(this IEndpointRouteBuilder app)
     {
-        app.AddGameEndpoints();
+        app.MapGameEndpoints();
     }
 }
