@@ -2,11 +2,11 @@ name: .NET CI
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
     paths:
       - 'backend/**'
   pull_request:
-    branches: [main]
+    branches: [ main ]
     paths:
       - 'backend/**'
   workflow_dispatch:
@@ -16,8 +16,9 @@ permissions: write-all
 env:
   BACKEND_PREFIX: backend
   APPLICATION_NAME: TicTacToe
+  SOURCES_PATH: backend/TicTacToe
   SOLUTION_NAME: TicTacToe.sln
-  SOLUTION_PATH: backend/TicTacToe.sln
+  SOLUTION_PATH: backend/TicTacToe/TicTacToe.sln
   DOTNET_SDK_VERSION: 8.x
 
 jobs:
@@ -43,7 +44,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
 
       - name: Restore NuGet packages
-        run: dotnet restore backend/${{ env.SOLUTION_NAME }}
+        run: dotnet restore ${{ env.SOLUTION_PATH }}
 
       - name: Cache updated NuGet packages
         uses: actions/cache@v4
@@ -56,14 +57,14 @@ jobs:
 
       - name: Build Backend API
         run: dotnet publish \
-          ${{ env.BACKEND_PREFIX }}/${{ env.APPLICATION_NAME }}/${{ env.APPLICATION_NAME }}.Api.csproj \
+          ${{ env.SOURCES_PATH }}/${{ env.APPLICATION_NAME }}.Api.csproj \
           --configuration Release \
           --no-restore \
           --output backend/output
 
       - name: Run tests
         run: dotnet test \
-          ${{ env.BACKEND_PREFIX }}/${{ env.APPLICATION_NAME }}/${{ env.SOLUTION_NAME }} \
+          ${{ env.SOURCES_PATH }}//${{ env.SOLUTION_NAME }} \
           --no-build \
           --verbosity normal
 
@@ -112,7 +113,7 @@ jobs:
 
       - name: Build and Analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           ~/.sonar/scanner/dotnet-sonarscanner begin /k:"vistor13_TicTacToe" /o:"vistor13" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
