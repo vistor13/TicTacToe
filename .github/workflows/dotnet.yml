@@ -57,7 +57,7 @@ jobs:
 
       - name: Build Backend API
         run: dotnet publish \
-          ${{ env.SOURCES_PATH }}/${{ env.APPLICATION_NAME }}.Api.csproj \
+          ${{ env.SOURCES_PATH }}/${{ env.APPLICATION_NAME }}.Api/${{ env.APPLICATION_NAME }}.Api.csproj \
           --configuration Release \
           --no-restore \
           --output backend/output
