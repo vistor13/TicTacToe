@@ -1,1 +1,12 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --fern-green: #4E7041;
+  --gunmetal: #2B2F36;
+  --white: #FFFFFF;
+}
+
+body{
+  background: var(--gunmetal);
+  color: var(--white);
+  margin: 0;
+}
+
