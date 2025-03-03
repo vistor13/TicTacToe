@@ -20,7 +20,7 @@ public record GameStateResponse(string GameMode, string State, List<List<char>> 
                 .ToList())
             .ToList();
 
-        return new GameStateResponse(gameState.GameModes, gameState.GameModes, gridList, gameState.CurrentPlayer);
+        return new GameStateResponse(gameState.GameModes, gameState.GameState, gridList, gameState.CurrentPlayer);
     }
 
     #endregion
