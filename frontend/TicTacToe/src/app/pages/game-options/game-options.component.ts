@@ -1,14 +1,19 @@
-import { Component } from '@angular/core';
-import {HeaderComponent} from '../../common-ui/header/header.component';
+import {Component, inject} from '@angular/core';
+import {GameService} from '../../data/game.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-game-options',
-  imports: [
-    HeaderComponent
-  ],
+  imports: [],
   templateUrl: './game-options.component.html',
   styleUrl: './game-options.component.scss'
 })
 export class GameOptionsComponent {
-
+  gameService : GameService= inject(GameService);
+  router : Router = inject(Router);
+  startGame(isTwoPlayerMode: boolean) {
+    this.gameService.startGame(isTwoPlayerMode).subscribe(() => {
+      this.router.navigate(['game']);
+    });
+  }
 }

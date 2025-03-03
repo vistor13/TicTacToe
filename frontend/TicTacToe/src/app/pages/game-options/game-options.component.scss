@@ -1,0 +1,38 @@
+:host{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-top: 80px;
+}
+
+
+.btn-config {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 250px;
+  height: 50px;
+  padding: 10px;
+  background: #4E7041;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 2px 2px 2px black;
+}
+
+.btn:hover {
+  background: #3D5A34;
+}
+

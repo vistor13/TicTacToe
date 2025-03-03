@@ -1,3 +1,15 @@
-<div>
-  <h1>fds</h1>
+<div class="game-container">
+  <h2>Гра "Хрестики-Нулики"</h2>
+  <div class="board">
+    <button *ngFor="let cell of board; let i = index"
+            (click)="makeMove(i)"
+            [disabled]="cell || winner">
+      {{ cell }}
+    </button>
+  </div>
+
+  <p *ngIf="winner" class="winner-message">
+    Переможець: <strong>{{ winner }}</strong>! 🎉
+  </p>
+
 </div>
