@@ -1,10 +1,10 @@
 import {Component, inject} from '@angular/core';
 import {GameService} from '../../data/game.service';
-import {Router} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-game-options',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './game-options.component.html',
   styleUrl: './game-options.component.scss'
 })
