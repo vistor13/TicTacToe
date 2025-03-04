@@ -8,6 +8,7 @@ export const routes: Routes =
 [
   {path: '', component: LayoutComponent, children: [
       {path : '', component : GameOptionsComponent },
-      {path : 'game', component : GameComponent}
+      {path : 'game', component : GameComponent},
+      {path : 'info', component : InfoComponent}
     ]}
 ];
