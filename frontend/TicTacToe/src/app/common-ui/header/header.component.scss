@@ -6,13 +6,15 @@
   width: 100%;
   height: 100px;
   justify-content: center;
-  background-color: var(--fern-green);
   position: relative;
+  font-size: 30px;
+  text-transform: uppercase;
+  color: var(--text-color);
+  text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.6);
+  margin-top: 16px;
 }
-
 
 .theme-button{
  position: absolute;
   right: 25px;
 }
-
