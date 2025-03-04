@@ -8,7 +8,7 @@
 }
 
 
-.btn-config {
+.btn-list {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -16,7 +16,6 @@
 
 
 .btn {
-  display: flex;
   justify-content: center;
   align-items: center;
   width: 250px;
@@ -30,9 +29,8 @@
   border-radius: 8px;
   cursor: pointer;
   box-shadow: 2px 2px 2px black;
-}
-
-.btn:hover {
-  background: #3D5A34;
+  &:hover {
+    background: #3D5A34;
+  }
 }
 
