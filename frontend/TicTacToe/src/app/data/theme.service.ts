@@ -1,24 +1,23 @@
-import { Injectable, Inject } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import {inject, Injectable} from '@angular/core';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
   private readonly themeKey = 'theme';
-
-  constructor(@Inject(DOCUMENT) private document: Document) {
+  cookieService : CookieService= inject(CookieService);
+  constructor() {
     this.loadTheme();
   }
 
   setTheme(theme: string) {
-    this.document.documentElement.setAttribute('data-theme', theme);
-    document.cookie = `${this.themeKey}=${theme}; path=/; max-age=${60 * 60 * 24 * 365}`;
+    document.documentElement.setAttribute('data-theme', theme);
+    this.cookieService.set(this.themeKey, theme, { expires: 365, path: '/' });
   }
 
   getTheme(): string {
-    const match = document.cookie.match(new RegExp('(^| )' + this.themeKey + '=([^;]+)'));
-    return match ? match[2] : 'dark';
+    return this.cookieService.get(this.themeKey) || 'dark';
   }
 
   private loadTheme() {
@@ -26,3 +25,4 @@ export class ThemeService {
     this.setTheme(savedTheme);
   }
 }
+
