@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TicTacToe.Infrastructure.Entities;
 
-public class BaseEntity
+public abstract class BaseEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long Id { get; set; } = default!;
+    public long Id { get; init; } = default!;
 }

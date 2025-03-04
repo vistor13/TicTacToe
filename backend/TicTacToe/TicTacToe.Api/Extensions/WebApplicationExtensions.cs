@@ -1,4 +1,6 @@
 using TicTacToe.Api.Endpoints;
+using TicTacToe.Application;
+using TicTacToe.Infrastructure;
 
 namespace TicTacToe.Api.Extensions;
 
@@ -17,10 +19,9 @@ public static class WebApplicationExtensions
         var services = builder.Services;
 
         services.AddEndpointsApiExplorer();
-        services.AddApplication();
         services.AddInfrastructure();
+        services.AddApplicationLayer();
         services.AddSwaggerGenTicTacToe();
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
         services.AddDatabase(builder.Configuration);
     }
 
@@ -38,11 +39,11 @@ public static class WebApplicationExtensions
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"); });
         }
 
-        app.UseGameEndpoints();
+        app.MapEndpoints();
     }
 
-    private static void UseGameEndpoints(this IEndpointRouteBuilder app)
+    private static void MapEndpoints(this IEndpointRouteBuilder app)
     {
-        app.AddGameEndpoints();
+        app.MapGameEndpoints();
     }
 }

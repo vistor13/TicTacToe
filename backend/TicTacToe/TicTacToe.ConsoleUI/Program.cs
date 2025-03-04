@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using TicTacToe.Application;
 using TicTacToe.Application.Commands;
-using TicTacToe.Application.Interfaces;
-using TicTacToe.Application.Services;
 using TicTacToe.ConsoleUI;
 using TicTacToe.ConsoleUI.Commands;
 using TicTacToe.ConsoleUI.ConsoleViews;
@@ -18,13 +17,12 @@ services.AddScoped<ReplayCommand>();
 services.AddScoped<ExitCommand>();
 services.AddScoped<EndGameCommand>();
 
-services.AddScoped<IGameProcessor, GameProcessor>();
 services.AddScoped<IUiRender, ConsoleRenderer>();
-services.AddScoped<ICommandInvoker, CommandInvoker>();
+;
 services.AddScoped<ICommandParser, CommandParser>();
 services.AddScoped<IInputProvider, InputProvider>();
-services.AddScoped<IMiniMaxAi, MiniMaxAi>();
 services.AddScoped<GameController>();
+services.AddApplicationLayer();
 
 var serviceProvider = services.BuildServiceProvider();
 var scopeFactory = serviceProvider.CreateScope();

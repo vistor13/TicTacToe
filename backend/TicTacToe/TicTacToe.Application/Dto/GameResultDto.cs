@@ -1,3 +1,3 @@
 namespace TicTacToe.Application.Dto;
 
-public record GameResultDto(bool IsGameOver, string? Winner);
+public sealed record GameResultDto(bool IsGameOver, string? Winner);

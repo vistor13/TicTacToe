@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using TicTacToe.Infrastructure.DataBase.Specifications;
 using TicTacToe.Infrastructure.Entities;
 using TicTacToe.Infrastructure.Interfaces;
 
@@ -27,11 +26,6 @@ public class RepositoriesBase<TEntity>(ApplicationDbContext context)
         await context.Set<TEntity>().AddAsync(entity);
         await context.SaveChangesAsync();
         return entity;
-    }
-
-    public async Task<TEntity> GetFirstBySpecification(Specification<TEntity> specification)
-    {
-        return await context.Set<TEntity>().Where(specification.ToExpression()).FirstOrDefaultAsync();
     }
 
     public async Task Update(long id, TEntity entity)
