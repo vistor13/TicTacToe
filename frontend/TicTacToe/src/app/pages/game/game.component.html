@@ -1,15 +1,21 @@
-<div class="game-container">
-  <h2>Гра "Хрестики-Нулики"</h2>
-  <div class="board">
-    <button *ngFor="let cell of board; let i = index"
-            (click)="makeMove(i)"
-            [disabled]="cell || winner">
-      {{ cell }}
+<h3 *ngIf="gameState?.state === 'Ongoing'">
+  It's Player <span class="highlight">{{ gameState?.playerTurn }}</span>'s Turn
+</h3>
+
+<h3 *ngIf="gameState?.state === 'Win'">
+  🎉 Player <span class="highlight">{{ gameState?.playerTurn }}</span> Wins! 🏆
+</h3>
+
+<h3 *ngIf="gameState?.state === 'Draw'">
+  It's a Draw! No Winner 🤝
+</h3>
+
+<div class="grid">
+  <ng-container *ngFor="let row of gameState?.grid; let rowIndex = index">
+    <button *ngFor="let cell of row; let colIndex = index"
+            (click)="makeMove(rowIndex+1, colIndex+1)">
+      {{ cell || '-' }}
     </button>
-  </div>
-
-  <p *ngIf="winner" class="winner-message">
-    Переможець: <strong>{{ winner }}</strong>! 🎉
-  </p>
-
+  </ng-container>
 </div>
+

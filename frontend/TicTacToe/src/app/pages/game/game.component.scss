@@ -1,1 +1,29 @@
+:host{
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 24px;
+  text-transform: uppercase;
+  color: var(--text-color);
+  text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+}
+
+.grid {
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  grid-template-columns: repeat(3, 90px);
+  gap: 9px;
+}
+
+button {
+  width: 90px;
+  height: 90px;
+  font-size: 40px;
+  text-align: center;
+  margin: 5px;
+}
 
