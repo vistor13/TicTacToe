@@ -10,5 +10,6 @@ export const routes: Routes =
       {path : '', component : GameOptionsComponent },
       {path : 'game', component : GameComponent},
       {path : 'info', component : InfoComponent}
-    ]}
+    ]
+  }
 ];

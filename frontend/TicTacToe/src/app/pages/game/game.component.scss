@@ -1,14 +1,33 @@
 :host{
   display: flex;
   flex-direction: column;
-  align-content: center;
+  margin-top: 6px;
+}
+
+.game-header {
+  display: flex;
+  align-items: center;
   justify-content: center;
-  text-align: center;
-  margin-top: 20px;
-  font-size: 24px;
-  text-transform: uppercase;
+}
+
+h3{
+  font-size: 36px;
   color: var(--text-color);
   text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+}
+
+.back-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  left: 45px;
+}
+
+.icon {
+  width: 45px;
+  height: 45px;
+  color: var(--text-color);
 }
 
 .grid {
@@ -19,7 +38,7 @@
   gap: 9px;
 }
 
-button {
+.grid-btn {
   width: 90px;
   height: 90px;
   font-size: 40px;

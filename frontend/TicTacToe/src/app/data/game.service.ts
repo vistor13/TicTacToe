@@ -1,8 +1,9 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {GameStateResponse, StartGameResponse} from '../inerfaces/game.interface';
+
 import {tap} from 'rxjs';
 import {CookieService} from 'ngx-cookie-service';
+import {GameStateResponse, StartGameResponse} from '../interfaces/game.interface';
 
 @Injectable({
   providedIn: 'root'
