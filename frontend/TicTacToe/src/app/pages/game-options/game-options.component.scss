@@ -2,11 +2,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  margin-top: 80px;
+  margin-top: 60px;
 }
 
+h1{
+  font-size: 40px;
+}
 
 .btn-list {
   display: flex;
@@ -14,13 +15,9 @@
   gap: 20px;
 }
 
-
 .btn {
-  justify-content: center;
-  align-items: center;
-  width: 250px;
-  height: 50px;
-  padding: 10px;
+  width: 270px;
+  height: 60px;
   background: #4E7041;
   color: var(--text-color);
   font-size: 16px;
