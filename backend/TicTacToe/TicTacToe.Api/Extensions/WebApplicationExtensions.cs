@@ -33,6 +33,9 @@ public static class WebApplicationExtensions
                         .AllowAnyHeader();
                 });
         });
+        services.AddAuthentication(builder.Configuration);
+        services.AddAuthorization();
+        services.ConfigureAuth0(builder.Configuration);
     }
 
     /// <summary>
@@ -49,6 +52,8 @@ public static class WebApplicationExtensions
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"); });
         }
 
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.UseCors("AllowAngular");
         app.MapEndpoints();
     }
@@ -56,5 +61,6 @@ public static class WebApplicationExtensions
     private static void MapEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGameEndpoints();
+        app.MapAuthEndpoints();
     }
 }
