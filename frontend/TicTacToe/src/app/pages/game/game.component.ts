@@ -1,15 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { GameService } from '../../data/game.service';
-import {GameStateResponse} from '../../interfaces/game.interface';
 import {NgForOf, NgIf} from '@angular/common';
-import {RouterLink} from '@angular/router';
 import {BackComponent} from '../../common-ui/back/back.component';
+import {GameStateResponse} from '../../interfaces/Game/gamestate.interface';
 
 @Component({
   selector: 'app-game',
   standalone: true,
   templateUrl: './game.component.html',
-  imports: [NgForOf, NgIf, RouterLink, BackComponent],
+  imports: [NgForOf, NgIf, BackComponent],
   styleUrl: './game.component.scss'
 })
 export class GameComponent {
