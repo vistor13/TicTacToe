@@ -23,7 +23,7 @@ public class MoveHandler(IGameProcessor gameProcessor, IGameRepository gameRepos
 
         var gameStateModel = gameProcessor.GetGameState();
 
-        var move = new MoveParametersDto(request.Row - 1, request.Col - 1, gameStateEntity.CurrentPlayer.ToString());
+        var move = new MoveParametersDto(request.Row - 1, request.Col - 1, gameStateModel.CurrentPlayer.ToString());
 
         var result = gameProcessor.MakeMove(move);
 
@@ -36,7 +36,9 @@ public class MoveHandler(IGameProcessor gameProcessor, IGameRepository gameRepos
                 break;
         }
 
-        await gameRepository.Update(request.GameId, GameStateModel.ToEntity(gameStateModel, gameStateEntity));
+        var gameStateDto = gameProcessor.GetGameState();
+
+        await gameRepository.Update(request.GameId, GameStateModel.ToEntity(gameStateDto, gameStateEntity));
 
         return Result.Success;
     }

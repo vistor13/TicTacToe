@@ -23,6 +23,16 @@ public static class WebApplicationExtensions
         services.AddApplicationLayer();
         services.AddSwaggerGenTicTacToe();
         services.AddDatabase(builder.Configuration);
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAngular",
+                policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+        });
     }
 
     /// <summary>
@@ -39,6 +49,7 @@ public static class WebApplicationExtensions
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"); });
         }
 
+        app.UseCors("AllowAngular");
         app.MapEndpoints();
     }
 

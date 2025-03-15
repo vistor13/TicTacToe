@@ -1,0 +1,28 @@
+:host{
+  display: flex;
+  flex-direction: column;
+  margin-top: 6px;
+  align-items: center;
+}
+
+h3{
+  font-size: 36px;
+  color: var(--text-color);
+  text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+}
+
+.grid {
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(3, 90px);
+  gap: 9px;
+}
+
+.grid-btn {
+  width: 90px;
+  height: 90px;
+  font-size: 40px;
+  text-align: center;
+  margin: 5px;
+}
+
