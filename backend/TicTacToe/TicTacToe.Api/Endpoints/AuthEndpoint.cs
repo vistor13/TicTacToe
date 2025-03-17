@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using TicTacToe.Api.Contracts.Requests;
 using TicTacToe.Api.Extensions;
 using TicTacToe.Application.Commands.AssignRolesCommand;
+using TicTacToe.Application.Commands.UnAssignRolesCommand;
 using TicTacToe.Infrastructure.Auth;
 
 namespace TicTacToe.Api.Endpoints;
@@ -29,6 +30,7 @@ public static class AuthEndpoint
         endpoints.MapPost("register", Register);
         endpoints.MapPost("roles", CreateRole);
         endpoints.MapPost("roles/assign", AssignRoles);
+        endpoints.MapPost("roles/unassign", UnAssignRoles);
     }
 
     private static async Task<IResult> Login([FromBody] SignInModel req,
@@ -93,6 +95,13 @@ public static class AuthEndpoint
         [FromServices] IMediator mediator)
     {
         var response = await mediator.Send(new AssignUserToRolesCommand(request.Auth0UserId, request.Roles));
+        return response.ToResult();
+    }
+
+    private static async Task<IResult> UnAssignRoles([FromBody] UnAssignRolesRequest request,
+        [FromServices] IMediator mediator)
+    {
+        var response = await mediator.Send(new UnAssignRolesCommand(request.Auth0UserId, request.Roles));
         return response.ToResult();
     }
 }
