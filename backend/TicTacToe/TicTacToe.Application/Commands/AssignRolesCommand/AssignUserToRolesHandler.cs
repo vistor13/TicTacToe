@@ -11,7 +11,7 @@ public class AssignUserToRolesHandler(IAuthService authService, IManagementApiCl
 {
     public async Task<ErrorOr<Success>> Handle(AssignUserToRolesCommand request, CancellationToken cancellationToken)
     {
-        if (request.Roles is null) throw new ArgumentNullException(nameof(request.Roles));
+        authService.ValidateRoles(request.Roles);
 
         var userRoles = await authService.GetUserRolesAsync(apiClient, request.UserId, cancellationToken);
 
@@ -21,7 +21,8 @@ public class AssignUserToRolesHandler(IAuthService authService, IManagementApiCl
 
         var roleIds = authService.GetRoleIds(newRoles, allRoles);
 
-        if (roleIds.Length == 0) return Error.Validation("Roles.Empty", "No valid roles found to assign.");
+        var validateRoleIds = authService.ValidateRoleIds(roleIds);
+        if (validateRoleIds is not null) return validateRoleIds.Value.FirstError;
 
         await apiClient.Users.AssignRolesAsync(request.UserId, new AssignRolesRequest { Roles = roleIds });
 

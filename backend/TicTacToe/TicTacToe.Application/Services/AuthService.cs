@@ -22,7 +22,7 @@ public class AuthService : IAuthService
 
     public ErrorOr<Success>? ValidateRoleIds(string[] roleIds)
     {
-        if (roleIds.Length == 0) return Error.Validation("Roles.Empty", "No valid roles found to assign.");
+        if (roleIds.Length == 0) return Error.Validation("Roles.Empty", "No valid roles found");
 
         return null;
     }
