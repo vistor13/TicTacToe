@@ -1,4 +1,9 @@
+using Auth0.AuthenticationApi;
+using Auth0.AuthenticationApi.Models;
+using Auth0.ManagementApi;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using TicTacToe.Infrastructure.Auth;
 using TicTacToe.Infrastructure.DataBase;
 
 namespace TicTacToe.Api.Extensions;
@@ -20,6 +25,30 @@ public static class DependencyInjectionExtension
             opt.UseNpgsql(configuration["Database:ConnectionString"],
                 b => b.MigrationsAssembly("TicTacToe.Infrastructure"));
         });
+        return services;
+    }
+
+    public static IServiceCollection AddAuth0ManagementApiClient(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddScoped<IManagementApiClient>(provider =>
+        {
+            var config = provider.GetRequiredService<IOptions<Auth0Options>>().Value;
+
+            var auth0AuthClient = new AuthenticationApiClient(new Uri($"https://{config.Domain}/"));
+
+            var tokenResponse = auth0AuthClient.GetTokenAsync(new ClientCredentialsTokenRequest
+            {
+                ClientId = config.ClientId,
+                ClientSecret = config.ClientSecret,
+                Audience = config.Audience
+            }).Result;
+
+            var auth0Client = new ManagementApiClient(tokenResponse.AccessToken, new Uri(config.Audience));
+
+            return auth0Client;
+        });
+
         return services;
     }
 }

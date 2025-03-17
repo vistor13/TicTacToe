@@ -3,10 +3,13 @@ using Auth0.AuthenticationApi;
 using Auth0.AuthenticationApi.Models;
 using Auth0.ManagementApi;
 using Auth0.ManagementApi.Models;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using TicTacToe.Api.Contracts.Requests;
+using TicTacToe.Api.Extensions;
+using TicTacToe.Application.Commands.AssignRolesCommand;
 using TicTacToe.Infrastructure.Auth;
 
 namespace TicTacToe.Api.Endpoints;
@@ -25,6 +28,7 @@ public static class AuthEndpoint
         endpoints.MapPost("login", Login);
         endpoints.MapPost("register", Register);
         endpoints.MapPost("roles", CreateRole);
+        endpoints.MapPost("roles/assign", AssignRoles);
     }
 
     private static async Task<IResult> Login([FromBody] SignInModel req,
@@ -73,25 +77,22 @@ public static class AuthEndpoint
     }
 
     private static async Task<IResult> CreateRole([FromBody] RoleRequest roleRequest,
-        [FromServices] IOptions<Auth0Options> auth0Options)
+        [FromServices] IOptions<Auth0Options> auth0Options, [FromServices] IManagementApiClient auth0Client)
     {
-        var auth0Info = auth0Options.Value;
-        var auth0AuthClient = new AuthenticationApiClient(auth0Info.Domain);
-        var tokenResponse = await auth0AuthClient.GetTokenAsync(new ClientCredentialsTokenRequest
-        {
-            ClientId = auth0Info.ClientId,
-            ClientSecret = auth0Info.ClientSecret,
-            Audience = auth0Info.Audience
-        });
-
         var roleCreate = new RoleCreateRequest
         {
             Description = roleRequest.Description,
             Name = roleRequest.Name
         };
-        var auth0Client = new ManagementApiClient(tokenResponse.AccessToken, new Uri(auth0Info.Audience));
 
         await auth0Client.Roles.CreateAsync(roleCreate);
         return Results.Ok();
+    }
+
+    private static async Task<IResult> AssignRoles([FromBody] AssignRoleRequest request,
+        [FromServices] IMediator mediator)
+    {
+        var response = await mediator.Send(new AssignUserToRolesCommand(request.Auth0UserId, request.Roles));
+        return response.ToResult();
     }
 }

@@ -12,5 +12,6 @@ public static class DependencyInjectionExtension
         services.AddScoped<ICommandInvoker, CommandInvoker>();
         services.AddScoped<IMiniMaxAi, MiniMaxAi>();
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
+        services.AddScoped<IAuthService, AuthService>();
     }
 }

@@ -23,6 +23,7 @@ public static class WebApplicationExtensions
         services.AddApplicationLayer();
         services.AddSwaggerGenTicTacToe();
         services.AddDatabase(builder.Configuration);
+        services.AddAuth0ManagementApiClient(builder.Configuration);
         services.AddCors(options =>
         {
             options.AddPolicy("AllowAngular",
