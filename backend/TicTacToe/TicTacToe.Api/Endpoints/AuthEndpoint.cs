@@ -1,9 +1,11 @@
+using System.Text;
 using Auth0.AuthenticationApi;
 using Auth0.AuthenticationApi.Models;
 using Auth0.ManagementApi;
 using Auth0.ManagementApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using TicTacToe.Api.Contracts.Requests;
 using TicTacToe.Infrastructure.Auth;
 
@@ -22,6 +24,7 @@ public static class AuthEndpoint
 
         endpoints.MapPost("login", Login);
         endpoints.MapPost("register", Register);
+        endpoints.MapPost("roles", CreateRole);
     }
 
     private static async Task<IResult> Login([FromBody] SignInModel req,
@@ -46,28 +49,27 @@ public static class AuthEndpoint
         [FromServices] IOptions<Auth0Options> auth0Options)
     {
         var auth0Info = auth0Options.Value;
-        var auth0AuthClient = new AuthenticationApiClient(auth0Info.Domain);
+        var httpClient = new HttpClient();
 
-        var tokenResponse = await auth0AuthClient.GetTokenAsync(new ClientCredentialsTokenRequest
+        var requestData = new
         {
-            ClientId = auth0Info.ClientId,
-            ClientSecret = auth0Info.ClientSecret,
-            Audience = auth0Info.Audience
-        });
-
-        var auth0Client = new ManagementApiClient(tokenResponse.AccessToken, new Uri(auth0Info.Audience));
-
-        var newUser = new UserCreateRequest
-        {
-            Email = req.Email,
-            Password = req.Password,
-            Connection = "Username-Password-Authentication",
-            FirstName = req.FirstName,
-            LastName = req.LastName
+            client_id = auth0Info.ClientId,
+            email = req.Email,
+            password = req.Password,
+            connection = "Username-Password-Authentication",
+            given_name = req.FirstName,
+            family_name = req.LastName
         };
 
-        var createdUser = await auth0Client.Users.CreateAsync(newUser);
-        return Results.Ok(createdUser.UserId);
+        var jsonRequest = JsonConvert.SerializeObject(requestData);
+        var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+        var response = await httpClient.PostAsync($"https://{auth0Info.Domain}/dbconnections/signup", content);
+        var responseContent = await response.Content.ReadAsStringAsync();
+
+        return !response.IsSuccessStatusCode
+            ? Results.BadRequest(new { Error = responseContent })
+            : Results.Ok();
     }
 
     private static async Task<IResult> CreateRole([FromBody] RoleRequest roleRequest,
