@@ -69,4 +69,27 @@ public static class AuthEndpoint
         var createdUser = await auth0Client.Users.CreateAsync(newUser);
         return Results.Ok(createdUser.UserId);
     }
+
+    private static async Task<IResult> CreateRole([FromBody] RoleRequest roleRequest,
+        [FromServices] IOptions<Auth0Options> auth0Options)
+    {
+        var auth0Info = auth0Options.Value;
+        var auth0AuthClient = new AuthenticationApiClient(auth0Info.Domain);
+        var tokenResponse = await auth0AuthClient.GetTokenAsync(new ClientCredentialsTokenRequest
+        {
+            ClientId = auth0Info.ClientId,
+            ClientSecret = auth0Info.ClientSecret,
+            Audience = auth0Info.Audience
+        });
+
+        var roleCreate = new RoleCreateRequest
+        {
+            Description = roleRequest.Description,
+            Name = roleRequest.Name
+        };
+        var auth0Client = new ManagementApiClient(tokenResponse.AccessToken, new Uri(auth0Info.Audience));
+
+        await auth0Client.Roles.CreateAsync(roleCreate);
+        return Results.Ok();
+    }
 }
