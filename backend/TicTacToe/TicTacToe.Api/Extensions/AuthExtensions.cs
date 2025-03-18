@@ -43,6 +43,12 @@ public static class AuthExtensions
             .AddAuthorizationBuilder()
             .AddPolicy("admin", policy =>
                 policy.RequireAuthenticatedUser()
-                    .RequireClaim("permissions", "access:admin"));
+                    .RequireClaim("permissions", "access:full"))
+            .AddPolicy("developer", policy =>
+                policy.RequireAuthenticatedUser()
+                    .RequireClaim("permissions", "access:full"))
+            .AddPolicy("player", policy =>
+                policy.RequireAuthenticatedUser()
+                    .RequireClaim("permissions", "create:game"));
     }
 }

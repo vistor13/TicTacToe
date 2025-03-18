@@ -31,7 +31,7 @@ public static class DependencyInjectionExtension
     public static IServiceCollection AddAuth0ManagementApiClient(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddScoped<IManagementApiClient>(provider =>
+        services.AddSingleton<IManagementApiClient>(provider =>
         {
             var config = provider.GetRequiredService<IOptions<Auth0Options>>().Value;
 
@@ -41,10 +41,11 @@ public static class DependencyInjectionExtension
             {
                 ClientId = config.ClientId,
                 ClientSecret = config.ClientSecret,
-                Audience = config.Audience
+                Audience = $"https://{config.Domain}/api/v2/"
             }).Result;
 
-            var auth0Client = new ManagementApiClient(tokenResponse.AccessToken, new Uri(config.Audience));
+            var auth0Client =
+                new ManagementApiClient(tokenResponse.AccessToken, new Uri($"https://{config.Domain}/api/v2/"));
 
             return auth0Client;
         });

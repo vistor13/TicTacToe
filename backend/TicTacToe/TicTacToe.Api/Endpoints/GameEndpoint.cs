@@ -1,5 +1,4 @@
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicTacToe.Api.Contracts.Requests;
 using TicTacToe.Api.Contracts.Responses;
@@ -22,14 +21,13 @@ public static class GameEndpoint
     {
         var endPoints = app.MapGroup("/api/game/").WithTags("Game");
 
-        endPoints.MapPost("start", StartGame);
+        endPoints.MapPost("start", StartGame).RequireAuthorization();
 
-        endPoints.MapPost("move", MakeMove);
+        endPoints.MapPost("move", MakeMove).RequireAuthorization();
 
-        endPoints.MapGet("state", GetGameState);
+        endPoints.MapGet("state", GetGameState).RequireAuthorization();
     }
 
-    [Authorize]
     private static async Task<IResult> StartGame(
         [FromQuery] bool isTwoPlayerMode,
         [FromServices] IMediator mediator)
@@ -42,7 +40,6 @@ public static class GameEndpoint
         return Results.Created("/api/game/start", gameResponse);
     }
 
-    [Authorize]
     private static async Task<IResult> MakeMove(
         [FromBody] MoveRequest moveRequest,
         [FromServices] IMediator mediator)
@@ -53,7 +50,6 @@ public static class GameEndpoint
         return result.ToResult();
     }
 
-    [Authorize]
     private static async Task<IResult> GetGameState(
         [FromQuery] long gameId,
         [FromServices] IMediator mediator)

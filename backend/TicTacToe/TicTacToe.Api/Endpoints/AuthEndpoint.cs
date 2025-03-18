@@ -28,9 +28,9 @@ public static class AuthEndpoint
 
         endpoints.MapPost("login", Login);
         endpoints.MapPost("register", Register);
-        endpoints.MapPost("roles", CreateRole);
-        endpoints.MapPost("roles/assign", AssignRoles);
-        endpoints.MapPost("roles/unassign", UnAssignRoles);
+        endpoints.MapPost("roles", CreateRole).RequireAuthorization("Admin");
+        endpoints.MapPost("roles/assign", AssignRoles).RequireAuthorization("Admin");
+        endpoints.MapPost("roles/unassign", UnAssignRoles).RequireAuthorization("Admin");
     }
 
     private static async Task<IResult> Login([FromBody] SignInModel req,
