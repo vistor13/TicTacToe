@@ -1,4 +1,3 @@
-using System.Text;
 using Auth0.AuthenticationApi;
 using Auth0.AuthenticationApi.Models;
 using Auth0.ManagementApi;
@@ -6,10 +5,10 @@ using Auth0.ManagementApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using TicTacToe.Api.Contracts.Requests;
 using TicTacToe.Api.Extensions;
 using TicTacToe.Application.Commands.AssignRolesCommand;
+using TicTacToe.Application.Commands.RegisterCommand;
 using TicTacToe.Application.Commands.UnAssignRolesCommand;
 using TicTacToe.Infrastructure.Auth;
 
@@ -52,30 +51,10 @@ public static class AuthEndpoint
     }
 
     private static async Task<IResult> Register([FromBody] SignUpModel req,
-        [FromServices] IOptions<Auth0Options> auth0Options)
+        [FromServices] IMediator mediator)
     {
-        var auth0Info = auth0Options.Value;
-        var httpClient = new HttpClient();
-
-        var requestData = new
-        {
-            client_id = auth0Info.ClientId,
-            email = req.Email,
-            password = req.Password,
-            connection = "Username-Password-Authentication",
-            given_name = req.FirstName,
-            family_name = req.LastName
-        };
-
-        var jsonRequest = JsonConvert.SerializeObject(requestData);
-        var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-
-        var response = await httpClient.PostAsync($"https://{auth0Info.Domain}/dbconnections/signup", content);
-        var responseContent = await response.Content.ReadAsStringAsync();
-
-        return !response.IsSuccessStatusCode
-            ? Results.BadRequest(new { Error = responseContent })
-            : Results.Ok();
+        var response = await mediator.Send(new RegisterCommand(req.Email, req.Password, req.FirstName, req.LastName));
+        return response.ToResult();
     }
 
     private static async Task<IResult> CreateRole([FromBody] RoleRequest roleRequest,

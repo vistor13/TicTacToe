@@ -2,6 +2,7 @@ using Auth0.ManagementApi;
 using Auth0.ManagementApi.Models;
 using Auth0.ManagementApi.Paging;
 using ErrorOr;
+using TicTacToe.Application.ApplicationMessages;
 using TicTacToe.Application.Interfaces;
 
 namespace TicTacToe.Application.Services;
@@ -22,10 +23,13 @@ public class AuthService : IAuthService
 
     public ErrorOr<Success>? ValidateRoleIds(string[] roleIds)
     {
-        if (roleIds.Length == 0) return Error.Validation("Roles.Empty", "No valid roles found");
+        if (roleIds.Length == 0)
+            return Error.Validation("Roles.Empty",
+                Messages.Error.NoValidRolesFound);
 
         return null;
     }
+
 
     public async Task<IPagedList<Role>> GetAllRolesAsync(IManagementApiClient apiClient)
     {
