@@ -3,7 +3,7 @@ namespace TicTacToe.Api.Contracts.Responses;
 /// <summary>
 ///     Represents the state view model.
 /// </summary>
-public record GameStateResponse(string GameMode, string State, List<List<char>> Grid, string PlayerTurn)
+public sealed record GameStateResponse(string GameMode, string State, List<List<char>> Grid, string PlayerTurn)
 {
     #region Mapping
 
