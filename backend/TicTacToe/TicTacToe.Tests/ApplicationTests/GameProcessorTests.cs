@@ -25,7 +25,7 @@ public class GameProcessorTests
 
         // Assert
         Assert.Equal(GameModes.GameWithAi, _gameProcessor.GameMode);
-        Assert.Equal(GameState.Ongoing.ToString(), _gameProcessor.GetGameState().GameState);
+        Assert.Equal(GameState.Ongoing, _gameProcessor.GetGameState().State);
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class GameProcessorTests
 
         // Assert
         Assert.Equal(GameModes.NotDefined, _gameProcessor.GameMode);
-        Assert.Equal(GameState.NotStarted.ToString(), _gameProcessor.GetGameState().GameState);
+        Assert.Equal(GameState.NotStarted, _gameProcessor.GetGameState().State);
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class GameProcessorTests
         // Assert
         Assert.False(result.IsError);
         Assert.Equal('X', _gameProcessor.GetGameState().Grid[0, 0]);
-        Assert.Equal(PlayerTurn.О.ToString(), _gameProcessor.GetGameState().CurrentPlayer);
+        Assert.Equal(PlayerTurn.О, _gameProcessor.GetGameState().CurrentPlayer);
     }
 
     [Fact]

@@ -1,22 +1,18 @@
 using System.Net;
 using System.Net.Http.Json;
-using Microsoft.AspNetCore.Mvc.Testing;
 using TicTacToe.Api;
 using TicTacToe.Api.Contracts.Requests;
 using TicTacToe.Api.Contracts.Responses;
 
-namespace TicTacToe.Tests.IntegrationTests;
+namespace TicTacToe.IntegrationTests;
 
-public class GameEndpointTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
+public class GameEndpointTests(CustomWebFactory<Program> factory) : TestsDataBaseIntegrationTests(factory)
 {
-    private readonly HttpClient _client = factory.CreateClient();
-
     [Fact]
     public async Task StartGame_ShouldReturnCreated_WithValidTwoPlayerGameResponse()
     {
         // Act
-        var response = await _client.PostAsync("/api/game/start?isTwoPlayerMode=true", null);
-
+        var response = await Client.PostAsync("/api/game/start?isTwoPlayerMode=true", null);
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -30,8 +26,7 @@ public class GameEndpointTests(WebApplicationFactory<Program> factory) : IClassF
     public async Task StartGame_ShouldReturnCreated_WithValidSinglePlayerGameResponse()
     {
         // Act
-        var response = await _client.PostAsync("/api/game/start?isTwoPlayerMode=false", null);
-
+        var response = await Client.PostAsync("/api/game/start?isTwoPlayerMode=false", null);
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -39,18 +34,18 @@ public class GameEndpointTests(WebApplicationFactory<Program> factory) : IClassF
         Assert.NotNull(gameResponse);
         Assert.False(string.IsNullOrEmpty(gameResponse.Id.ToString()));
         Assert.Equal("GameWithAi", gameResponse.GameMode);
+        Assert.Equal(1, gameResponse.Id);
     }
 
     [Fact]
     public async Task MakeMove_ShouldReturnSuccess_WhenMoveIsValid()
     {
         // Arrange
-        var startResponse = await _client.PostAsync("/api/game/start?isTwoPlayerMode=true", null);
+        var startResponse = await Client.PostAsync("/api/game/start?isTwoPlayerMode=true", null);
         var game = await startResponse.Content.ReadFromJsonAsync<GameResponse>();
         var moveRequest = new MoveRequest(game!.Id, 2, 3);
-
         // Act
-        var response = await _client.PostAsJsonAsync("/api/game/move", moveRequest);
+        var response = await Client.PostAsJsonAsync("/api/game/move", moveRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -60,12 +55,12 @@ public class GameEndpointTests(WebApplicationFactory<Program> factory) : IClassF
     public async Task MakeMove_ShouldReturnBadRequest_WhenMoveOutOfBounds()
     {
         // Arrange
-        var startResponse = await _client.PostAsync("/api/game/start?isTwoPlayerMode=true", null);
+        var startResponse = await Client.PostAsync("/api/game/start?isTwoPlayerMode=true", null);
         var game = await startResponse.Content.ReadFromJsonAsync<GameResponse>();
         var moveRequest = new MoveRequest(game!.Id, 0, 0);
 
         // Act
-        var response = await _client.PostAsJsonAsync("/api/game/move", moveRequest);
+        var response = await Client.PostAsJsonAsync("/api/game/move", moveRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -75,10 +70,10 @@ public class GameEndpointTests(WebApplicationFactory<Program> factory) : IClassF
     public async Task MakeMove_ShouldReturnNotFound_WhenGameIdNotCorrect()
     {
         // Arrange
-        var moveRequest = new MoveRequest(Guid.NewGuid(), 0, 0);
+        var moveRequest = new MoveRequest(1, 1, 1);
 
         // Act
-        var response = await _client.PostAsJsonAsync("/api/game/move", moveRequest);
+        var response = await Client.PostAsJsonAsync("/api/game/move", moveRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -88,14 +83,14 @@ public class GameEndpointTests(WebApplicationFactory<Program> factory) : IClassF
     public async Task MakeMove_ShouldReturnBadRequest_WhenMoveAndCellOccupied()
     {
         // Arrange
-        var startResponse = await _client.PostAsync("/api/game/start?isTwoPlayerMode=true", null);
+        var startResponse = await Client.PostAsync("/api/game/start?isTwoPlayerMode=true", null);
         var game = await startResponse.Content.ReadFromJsonAsync<GameResponse>();
-        var moveRequest1 = new MoveRequest(game!.Id, 0, 0);
-        var moveRequest2 = new MoveRequest(game!.Id, 0, 0);
-        await _client.PostAsJsonAsync("/api/game/move", moveRequest1);
+        var moveRequest1 = new MoveRequest(game.Id, 1, 1);
+        var moveRequest2 = new MoveRequest(game.Id, 1, 1);
+        await Client.PostAsJsonAsync("/api/game/move", moveRequest1);
 
         // Act
-        var response = await _client.PostAsJsonAsync("/api/game/move", moveRequest2);
+        var response = await Client.PostAsJsonAsync("/api/game/move", moveRequest2);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -105,11 +100,11 @@ public class GameEndpointTests(WebApplicationFactory<Program> factory) : IClassF
     public async Task GetGameState_ShouldReturnGameState_WhenGameExists()
     {
         // Arrange
-        var startResponse = await _client.PostAsync("/api/game/start?isTwoPlayerMode=true", null);
+        var startResponse = await Client.PostAsync("/api/game/start?isTwoPlayerMode=true", null);
         var game = await startResponse.Content.ReadFromJsonAsync<GameResponse>();
 
         // Act
-        var response = await _client.GetAsync($"/api/game/state?gameId={game!.Id}");
+        var response = await Client.GetAsync($"/api/game/state?gameId={game!.Id}");
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -120,8 +115,10 @@ public class GameEndpointTests(WebApplicationFactory<Program> factory) : IClassF
     [Fact]
     public async Task GetGameState_ShouldReturnNotFound_WhenGameIdNotCorrect()
     {
+        // Arrange
+        var id = 1;
         // Act
-        var response = await _client.GetAsync($"/api/game/state?gameId={Guid.NewGuid()}");
+        var response = await Client.GetAsync($"/api/game/state?gameId={id}");
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);

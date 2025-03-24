@@ -2,11 +2,24 @@ name: .NET CI
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
+    paths:
+      - 'backend/**'
   pull_request:
-    branches: [main]
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+  workflow_dispatch:
 
 permissions: write-all
+
+env:
+  BACKEND_PREFIX: backend
+  APPLICATION_NAME: TicTacToe
+  SOURCES_PATH: backend/TicTacToe
+  SOLUTION_NAME: TicTacToe.sln
+  SOLUTION_PATH: backend/TicTacToe/TicTacToe.sln
+  DOTNET_SDK_VERSION: 8.x
 
 jobs:
   build:
@@ -16,19 +29,45 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Restore NuGet packages cache
+        id: nuget-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}-${{ hashFiles('**/*.sln') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
 
-      - name: Restore dependencies
-        run: dotnet restore ./backend/TicTacToe/TicTacToe.sln
+      - name: Restore NuGet packages
+        run: dotnet restore ${{ env.SOLUTION_PATH }}
 
-      - name: Build project
-        run: dotnet build ./backend/TicTacToe/TicTacToe.sln
+      - name: Cache updated NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}-${{ hashFiles('**/*.sln') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+        if: steps.nuget-cache.outputs.cache-hit != 'true'
+
+      - name: Build Backend API
+        run: |
+          dotnet publish \
+          ${{ env.SOURCES_PATH }}/${{ env.APPLICATION_NAME }}.Api/${{ env.APPLICATION_NAME }}.Api.csproj \
+          --configuration Release \
+          --no-restore \
+          --output backend/output
 
       - name: Run tests
-        run: dotnet test ./backend/TicTacToe/TicTacToe.sln --no-build --verbosity normal
+        run: |
+          dotnet test \
+          ${{ env.SOLUTION_PATH }} \
+          --verbosity normal
 
   sonarcloud:
     runs-on: ubuntu-latest
@@ -75,7 +114,7 @@ jobs:
 
       - name: Build and Analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           ~/.sonar/scanner/dotnet-sonarscanner begin /k:"vistor13_TicTacToe" /o:"vistor13" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"

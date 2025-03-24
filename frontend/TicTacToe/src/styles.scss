@@ -1,0 +1,36 @@
+@import "fonts";
+:root {
+  --fern-green: #4E7041;
+  --gunmetal: #2B2F36;
+  --white: #FFFFFF;
+}
+
+[data-theme="light"] {
+  --background: var(--white);
+  --text-color: var(--black);
+}
+
+[data-theme="dark"] {
+  --background: var(--gunmetal);
+  --text-color: var(--white);
+}
+
+body {
+  background: var(--background);
+  color: var(--text-color);
+  margin: 0;
+  font-family: 'JetBrains Mono', sans-serif;
+}
+
+
+.theme-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+}
+
+
+

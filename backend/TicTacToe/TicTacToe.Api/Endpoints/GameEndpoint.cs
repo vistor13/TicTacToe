@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using TicTacToe.Api.Contracts.Requests;
 using TicTacToe.Api.Contracts.Responses;
 using TicTacToe.Api.Extensions;
@@ -16,42 +17,32 @@ public static class GameEndpoint
     /// <summary>
     /// </summary>
     /// <param name="app"></param>
-    public static void AddGameEndpoints(this IEndpointRouteBuilder app)
+    public static void MapGameEndpoints(this IEndpointRouteBuilder app)
     {
-        var endPoints =
-            app.MapGroup("/api/game/")
-                .WithTags("Game");
+        var endPoints = app.MapGroup("/api/game/").WithTags("Game");
 
-        endPoints.MapPost(
-            "start",
-            StartGame);
+        endPoints.MapPost("start", StartGame);
 
-        endPoints.MapPost(
-            "move",
-            MakeMove);
+        endPoints.MapPost("move", MakeMove);
 
-        endPoints.MapGet(
-            "state",
-            GetGameState);
+        endPoints.MapGet("state", GetGameState);
     }
 
-    private static async Task<IResult> StartGame(IMediator mediator,
-        bool isTwoPlayerMode)
+    private static async Task<IResult> StartGame(
+        [FromQuery] bool isTwoPlayerMode,
+        [FromServices] IMediator mediator)
     {
         var game = await mediator.Send
             (new StartGameCommand(isTwoPlayerMode));
 
-        var gameResponse = new GameResponse
-        {
-            Id = game.Id,
-            GameMode = game.Modes
-        };
+        var gameResponse = new GameResponse(game.Id, game.Modes);
 
         return Results.Created("/api/game/start", gameResponse);
     }
 
     private static async Task<IResult> MakeMove(
-        MoveRequest moveRequest, IMediator mediator)
+        [FromBody] MoveRequest moveRequest,
+        [FromServices] IMediator mediator)
     {
         var result = await mediator.Send
             (new MoveCommand(moveRequest.GameId, moveRequest.Row, moveRequest.Col));
@@ -59,8 +50,9 @@ public static class GameEndpoint
         return result.ToResult();
     }
 
-    private static async Task<IResult> GetGameState(long gameId,
-        IMediator mediator)
+    private static async Task<IResult> GetGameState(
+        [FromQuery] long gameId,
+        [FromServices] IMediator mediator)
     {
         var gameState = await mediator.Send
             (new GetStateByIdQuery(gameId));

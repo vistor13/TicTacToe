@@ -1,0 +1,23 @@
+<div class="game-header">
+  <app-back></app-back>
+  <h3 *ngIf="gameState?.state === 'Ongoing'">
+    It's Player <span class="highlight">{{ gameState?.playerTurn }}</span>'s Turn
+  </h3>
+
+  <h3 *ngIf="gameState?.state === 'Win'">
+    🎉 Player <span class="highlight">{{ gameState?.playerTurn }}</span> Wins! 🏆
+  </h3>
+
+  <h3 *ngIf="gameState?.state === 'Draw'">
+    It's a Draw! No Winner 🤝
+  </h3>
+
+<div class="grid">
+  <ng-container *ngFor="let row of gameState?.grid; let rowIndex = index">
+    <button class="grid-btn" *ngFor="let cell of row; let colIndex = index"
+            (click)="makeMove(rowIndex+1, colIndex+1)">
+      {{ cell || '-' }}
+    </button>
+  </ng-container>
+</div>
+

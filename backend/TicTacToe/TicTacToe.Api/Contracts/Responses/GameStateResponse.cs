@@ -1,33 +1,10 @@
-using TicTacToe.Application.Dto;
-
 namespace TicTacToe.Api.Contracts.Responses;
 
 /// <summary>
 ///     Represents the state view model.
 /// </summary>
-public record GameStateResponse
+public record GameStateResponse(string GameMode, string State, List<List<char>> Grid, string PlayerTurn)
 {
-    /// <summary>
-    ///     The current game mode.
-    /// </summary>
-    public required string GameMode { get; init; }
-
-    /// <summary>
-    ///     The current state of the game (draw, ongoing, win).
-    /// </summary>
-    public required string State { get; init; }
-
-    /// <summary>
-    ///     The game grid, represented as a list of lists of characters.
-    ///     It contains the positions of the game pieces.
-    /// </summary>
-    public required List<List<char>> Grid { get; init; }
-
-    /// <summary>
-    ///     The current player's turn .
-    /// </summary>
-    public required string PlayerTurn { get; init; }
-
     #region Mapping
 
     /// <summary>
@@ -43,13 +20,7 @@ public record GameStateResponse
                 .ToList())
             .ToList();
 
-        return new GameStateResponse
-        {
-            State = gameState.GameState,
-            Grid = gridList,
-            GameMode = gameState.GameModes,
-            PlayerTurn = gameState.CurrentPlayer
-        };
+        return new GameStateResponse(gameState.GameModes, gameState.GameState, gridList, gameState.CurrentPlayer);
     }
 
     #endregion
