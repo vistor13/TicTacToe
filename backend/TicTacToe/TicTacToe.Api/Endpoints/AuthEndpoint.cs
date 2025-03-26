@@ -1,16 +1,12 @@
-using Auth0.AuthenticationApi;
-using Auth0.AuthenticationApi.Models;
-using Auth0.ManagementApi;
-using Auth0.ManagementApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using TicTacToe.Api.Contracts.Requests;
 using TicTacToe.Api.Extensions;
 using TicTacToe.Application.Commands.AssignRolesCommand;
+using TicTacToe.Application.Commands.CreateRoleCommand;
+using TicTacToe.Application.Commands.LoginCommand;
 using TicTacToe.Application.Commands.RegisterCommand;
 using TicTacToe.Application.Commands.UnAssignRolesCommand;
-using TicTacToe.Infrastructure.Auth;
 
 namespace TicTacToe.Api.Endpoints;
 
@@ -27,60 +23,47 @@ public static class AuthEndpoint
 
         endpoints.MapPost("login", Login);
         endpoints.MapPost("register", Register);
-        endpoints.MapPost("roles", CreateRole).RequireAuthorization("Admin");
+        endpoints.MapPost("roles", CreateRole);
         endpoints.MapPost("roles/assign", AssignRoles).RequireAuthorization("Admin");
         endpoints.MapPost("roles/unassign", UnAssignRoles).RequireAuthorization("Admin");
     }
 
     private static async Task<IResult> Login([FromBody] SignInModel req,
-        [FromServices] IOptions<Auth0Options> auth0Options)
+        [FromServices] IMediator mediator)
     {
-        var auth0Info = auth0Options.Value;
-        var auth0Client = new AuthenticationApiClient(auth0Info.Domain);
-        var tokenResponse = await auth0Client.GetTokenAsync(new ResourceOwnerTokenRequest
-        {
-            Username = req.Login,
-            Password = req.Password,
-            ClientId = auth0Info.ClientId,
-            Audience = auth0Info.Audience,
-            ClientSecret = auth0Info.ClientSecret,
-            Scope = "openid"
-        });
-
-        return Results.Ok(new { access_token = tokenResponse.AccessToken });
+        var response = await mediator.Send(
+            new LoginCommand(req.Login, req.Password));
+        return Results.Ok(new { access_token = response.AccessToken });
     }
 
     private static async Task<IResult> Register([FromBody] SignUpModel req,
         [FromServices] IMediator mediator)
     {
-        var response = await mediator.Send(new RegisterCommand(req.Email, req.Password, req.FirstName, req.LastName));
+        var response = await mediator.Send(
+            new RegisterCommand(req.Email, req.Password, req.FirstName, req.LastName));
         return response.ToResult();
     }
 
-    private static async Task<IResult> CreateRole([FromBody] RoleRequest roleRequest,
-        [FromServices] IOptions<Auth0Options> auth0Options, [FromServices] IManagementApiClient auth0Client)
+    private static async Task<IResult> CreateRole([FromBody] RoleRequest roleRequest, [FromServices] IMediator mediator)
     {
-        var roleCreate = new RoleCreateRequest
-        {
-            Description = roleRequest.Description,
-            Name = roleRequest.Name
-        };
-
-        await auth0Client.Roles.CreateAsync(roleCreate);
-        return Results.Ok();
+        var response = await mediator.Send(
+            new CreateRoleCommand(roleRequest.Name, roleRequest.Description));
+        return response.ToResult();
     }
 
     private static async Task<IResult> AssignRoles([FromBody] AssignRoleRequest request,
         [FromServices] IMediator mediator)
     {
-        var response = await mediator.Send(new AssignUserToRolesCommand(request.Auth0UserId, request.Roles));
+        var response = await mediator.Send(
+            new AssignUserToRolesCommand(request.Auth0UserId, request.Roles));
         return response.ToResult();
     }
 
     private static async Task<IResult> UnAssignRoles([FromBody] UnAssignRolesRequest request,
         [FromServices] IMediator mediator)
     {
-        var response = await mediator.Send(new UnAssignRolesCommand(request.Auth0UserId, request.Roles));
+        var response = await mediator.Send(
+            new UnAssignRolesCommand(request.Auth0UserId, request.Roles));
         return response.ToResult();
     }
 }
