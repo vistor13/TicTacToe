@@ -12,5 +12,11 @@ public static class Messages
 
         public const string InvalidCurrentPlayer =
             "Invalid player turn.";
+
+        public const string UserCreationFailed =
+            "Failed to create a new user due to an unexpected error.";
+
+        public const string NoValidRolesFound =
+            "No valid roles found.";
     }
 }

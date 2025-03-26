@@ -21,11 +21,11 @@ public static class GameEndpoint
     {
         var endPoints = app.MapGroup("/api/game/").WithTags("Game");
 
-        endPoints.MapPost("start", StartGame);
+        endPoints.MapPost("start", StartGame).RequireAuthorization();
 
-        endPoints.MapPost("move", MakeMove);
+        endPoints.MapPost("move", MakeMove).RequireAuthorization();
 
-        endPoints.MapGet("state", GetGameState);
+        endPoints.MapGet("state", GetGameState).RequireAuthorization();
     }
 
     private static async Task<IResult> StartGame(

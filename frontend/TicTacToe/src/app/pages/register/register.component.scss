@@ -1,0 +1,27 @@
+:host {
+  background: var(--background);
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+h1 {
+  font-size: 40px;
+  text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.6);
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  width: 500px;
+  height: 90%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background-color: #7a7777;
+  border-radius: 15px;
+}
+

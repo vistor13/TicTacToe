@@ -30,6 +30,29 @@ public static class SwaggerExtensions
                     Url = new Uri("https://www.linkedin.com/in/viktor-polishchuk/")
                 }
             });
+            c.AddSecurityDefinition("Bearer",
+                new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Write your JWT",
+                    Name = "Authorization",
+                    Scheme = "bearer",
+                    Type = SecuritySchemeType.Http
+                });
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    []
+                }
+            });
         });
     }
 }

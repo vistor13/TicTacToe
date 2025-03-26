@@ -1,0 +1,41 @@
+<form class="register-form" action=""
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()">
+  <h1>Create an Account</h1>
+  <div class="text-control">
+    <label>Email</label>
+    <input
+      formControlName="email"
+      class="text-input" type="text" placeholder="Enter your email">
+  </div>
+
+  <div class="text-control">
+    <label>Password</label>
+    <input
+      formControlName="password"
+      class="text-input" type="password" placeholder="Enter your password">
+  </div>
+
+  <div class="text-control">
+    <label>FirstName</label>
+    <input
+      formControlName="firstName"
+      class="text-input" type="firstName" placeholder="Enter your firstname">
+  </div>
+
+  <div class="text-control">
+    <label>Lastname</label>
+    <input
+      formControlName="lastName"
+      class="text-input" type="lastName" placeholder="Enter your lastname">
+  </div>
+
+  <button class="login-button" type="submit">Sign Up</button>
+
+  <p class="auth-text">
+    Already have an account?
+    <a [routerLink]="['/login']" class="enter-link">Log In</a>
+  </p>
+
+</form>
+

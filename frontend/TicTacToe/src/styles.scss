@@ -3,10 +3,12 @@
   --fern-green: #4E7041;
   --gunmetal: #2B2F36;
   --white: #FFFFFF;
+  --dark-black: #000000;
+  --blue:#3c7ad6;
 }
 
 [data-theme="light"] {
-  --background: var(--white);
+  --background: var(--blue);
   --text-color: var(--black);
 }
 
@@ -32,5 +34,48 @@ body {
   padding: 8px;
 }
 
+.login-button {
+  height: 42px;
+  width:250px;
+  margin-top: 10px;
+  background: #4E7041;
+  color: white;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+  &:hover {
+    background: darken(#4E7041, 10%);
+  }
+}
 
+.auth-text {
+  color: white;
+  font-size: 12px;
+}
 
+.text-control{
+  font-size: 12px;
+}
+
+.text-input {
+  margin-top: 6px;
+  display: block;
+  background:var(--white);
+  color: var(--dark-black);
+  border: 1px solid;
+  border-radius: 15px;
+  padding: 12px 20px;
+  font-size: 14px;
+  height: 26px;
+  width: 230px;
+}
+.enter-link {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  &:hover {
+    text-decoration: underline;
+  }
+}
