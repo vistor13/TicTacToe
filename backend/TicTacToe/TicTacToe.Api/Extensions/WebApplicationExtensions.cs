@@ -1,5 +1,6 @@
 using TicTacToe.Api.Endpoints;
 using TicTacToe.Application;
+using TicTacToe.Application.Hubs;
 using TicTacToe.Infrastructure;
 
 namespace TicTacToe.Api.Extensions;
@@ -31,12 +32,15 @@ public static class WebApplicationExtensions
                 {
                     policy.WithOrigins("http://localhost:4200")
                         .AllowAnyMethod()
-                        .AllowAnyHeader();
+                        .AllowAnyHeader()
+                        .AllowCredentials();
                 });
         });
         services.AddAuthentication(builder.Configuration);
         services.AddAuthorization();
         services.ConfigureAuth0(builder.Configuration);
+        services.AddSignalR();
+        services.AddMemoryCache();
     }
 
     /// <summary>
@@ -53,10 +57,12 @@ public static class WebApplicationExtensions
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"); });
         }
 
+        app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseCors("AllowAngular");
         app.MapEndpoints();
+        app.MapHub<GameHub>("/gameHub");
     }
 
     private static void MapEndpoints(this IEndpointRouteBuilder app)
